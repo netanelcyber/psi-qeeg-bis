@@ -1,0 +1,14 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+build/
+dist/
+outputs/
+data/
+.DS_Store
+*.edf
+*.bdf
+*.vital
+*.joblib
+

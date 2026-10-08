@@ -1,0 +1,12 @@
+cff-version: 1.2.0
+message: "Cite the software and the VitalDB source separately when using the real-data example."
+title: "PSI qEEG/BIS Research Workbench"
+type: software
+version: 0.1.0
+date-released: 2026-10-08
+authors:
+  - family-names: Stern
+    given-names: Netanel
+license: MIT
+abstract: "Research EEG pipeline implementing the PSI article's arithmetic with explicit BIS electrode coverage, real-data provenance and missing-component handling."
+
