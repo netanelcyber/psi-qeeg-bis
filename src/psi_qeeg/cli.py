@@ -25,6 +25,18 @@ def main(argv=None) -> int:
     p.add_argument("--epoch-s", type=float, default=4)
     p.add_argument("--line-hz", type=float, choices=(50, 60))
     p.add_argument("--min-sqi", type=float, default=80)
+    p = sub.add_parser("convert", help="Convert EDF/BDF/EEGLAB/FIF to project CSV + metadata; optional BIS-proxy analysis")
+    p.add_argument("input", type=Path)
+    p.add_argument("--out", type=Path, required=True)
+    p.add_argument("--subject-id", required=True)
+    p.add_argument("--channels", nargs="+")
+    p.add_argument("--context", default="awake_observational_research")
+    p.add_argument("--license", default="unspecified")
+    p.add_argument("--proxy", action="store_true", help="Also run analyze and add an uncalibrated bis_proxy column")
+    p = sub.add_parser("convert-cohort", help="Batch-convert ASD / PSY / HC recordings from a manifest CSV into pooled, group-labelled features")
+    p.add_argument("manifest", type=Path)
+    p.add_argument("--out", type=Path, required=True)
+    p.add_argument("--epoch-s", type=float, default=4)
     p = sub.add_parser("fetch-vitaldb", help="Download real public BIS EEG and monitor numerics")
     p.add_argument("--caseid", type=int, default=1)
     p.add_argument("--start-s", type=float, default=332)
@@ -54,6 +66,24 @@ def main(argv=None) -> int:
             features, summary = analyze(recording, args.epoch_s, args.line_hz, QualityPolicy(min_sqi=args.min_sqi))
             write_report(recording, features, summary, args.out)
             print(json.dumps({k: summary[k] for k in ("complete_epochs", "accepted_epochs", "rejected_epochs", "SOI", "RDI", "classification")}))
+        elif args.command == "convert":
+            from .convert import convert, bis_proxy
+            meta = convert(args.input, args.out, args.subject_id, args.channels, args.context, license_id=args.license)
+            result = {"channels": meta["eeg_columns"], "sampling_rate_hz": meta["sampling_rate_hz"]}
+            if args.proxy:
+                from .recording import read_recording
+                from .analysis import analyze
+                from .report import write_report
+                recording = read_recording(args.out / "recording.csv", args.out / "metadata.json")
+                features, summary = analyze(recording)
+                for ch in recording.channels:
+                    features[f"{ch}__bis_proxy_uncalibrated"] = bis_proxy(features, ch)
+                write_report(recording, features, summary, args.out / "analysis")
+                result["accepted_epochs"] = summary["accepted_epochs"]
+            print(json.dumps(result))
+        elif args.command == "convert-cohort":
+            from .convert import convert_cohort
+            print(json.dumps({"subjects_per_group": convert_cohort(args.manifest, args.out, args.epoch_s)}))
         elif args.command == "fetch-vitaldb":
             from .vitaldb import download
             metadata = download(args.caseid, args.out, args.start_s, args.duration_s, args.cache)
