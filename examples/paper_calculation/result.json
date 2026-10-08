@@ -1,0 +1,39 @@
+{
+  "use": "research_only",
+  "classification": "indeterminate",
+  "indices": {
+    "SOI": {
+      "score": 100.0,
+      "components": {
+        "alpha_variance": 100.0,
+        "gating_efficiency": 100.0,
+        "posterior_gamma": 100.0,
+        "frontoparietal_plv": 100.0,
+        "autonomic_surge": 100.0
+      },
+      "missing": [],
+      "component_coverage": 1.0,
+      "calibration_issues": []
+    },
+    "RDI": {
+      "score": null,
+      "components": {
+        "temporal_csd": null,
+        "delta_alpha_ratio": null,
+        "bifrontal_bicoherence": null,
+        "hemispheric_asymmetry": null,
+        "frontotemporal_coherence": null
+      },
+      "missing": [
+        "temporal_csd",
+        "delta_alpha_ratio",
+        "bifrontal_bicoherence",
+        "hemispheric_asymmetry",
+        "frontotemporal_coherence"
+      ],
+      "component_coverage": 0.0,
+      "calibration_issues": []
+    }
+  },
+  "calibration_context": "illustrative_paper_example"
+}

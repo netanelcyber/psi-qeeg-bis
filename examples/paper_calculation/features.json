@@ -1,0 +1,13 @@
+{
+  "subject_id": "illustrative_Patient_A",
+  "medication_profile_id": "illustrative_unspecified",
+  "source_type": "illustrative_article_values_not_measured_patient_data",
+  "values": {
+    "alpha_variance": 0.38,
+    "gating_efficiency": 0.54,
+    "posterior_gamma": 8.9,
+    "frontoparietal_plv": 0.33,
+    "autonomic_surge": 0.11
+  }
+}
+

@@ -1,0 +1,15 @@
+{
+  "configuration": "expanded_PSI_research_acquisition_specification",
+  "physical_contacts": 10,
+  "eeg_channels": 8,
+  "scalp_sites": ["Fp1", "Fp2", "T7", "T8", "P3", "P4", "O1", "O2"],
+  "reference": "must_be_recorded_from_actual_acquisition",
+  "ground": "must_be_recorded_from_actual_acquisition",
+  "reference_verified": false,
+  "auxiliary_inputs": ["EDA_GSR", "PPG", "skin_temperature", "stimulus_events", "impedance", "medication_profile"],
+  "reference_frame": "International_10_20",
+  "article_extension": "Explicit eight scalp channels plus reference/ground; resolves P3/O1 notation by measuring both sites",
+  "device_safety_validation": "not_established",
+  "clinical_sufficiency_for_CSD": "not_established"
+}
+

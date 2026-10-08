@@ -1,0 +1,43 @@
+{
+  "test_suite": {
+    "tests": 62,
+    "failures": 0,
+    "errors": 0,
+    "command": "python -m unittest discover -s tests -v"
+  },
+  "real_data": {
+    "source": "VitalDB case 1",
+    "start_s": 332,
+    "duration_s": 120,
+    "channels": 2,
+    "sample_rate_hz": 128,
+    "samples_per_channel": 15360,
+    "accepted_epochs": 30,
+    "composites": "unavailable"
+  },
+  "paper_arithmetic": {
+    "SOI": 100,
+    "RDI": "unavailable_missing_components"
+  },
+  "environment": {
+    "python": "3.12.14",
+    "numpy": "2.3.5",
+    "scipy": "1.17.0",
+    "pandas": "2.2.3",
+    "matplotlib": "3.10.8"
+  },
+  "checks": [
+    "editable installation",
+    "62 offline tests",
+    "real EEG source checksum",
+    "real sample clock and spectral outputs",
+    "CLI analyze and report",
+    "article score CLI",
+    "wheel build",
+    "Python source compilation",
+    "visual inspection of scientific EEG figure"
+  ],
+  "ci_status": "workflow configured; remote execution pending repository creation",
+  "optional_edf_status": "implemented; not exercised on a real EDF recording in this session",
+  "github_status": "repository creation pending; connector has no repository-create action"
+}

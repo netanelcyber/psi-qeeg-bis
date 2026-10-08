@@ -1,0 +1,158 @@
+{
+  "use": "research_only",
+  "clinical_validation": "not_established",
+  "classification": "indeterminate",
+  "SOI": null,
+  "RDI": null,
+  "index_reason": "The ten article components and a documented 24-hour awake personal baseline are not supplied to this raw-EEG analysis",
+  "recording_context": "perioperative_anesthesia",
+  "sample_rate_hz": 128.0,
+  "samples": 15360,
+  "channels": [
+    "BIS_EEG1",
+    "BIS_EEG2"
+  ],
+  "epoch_s": 4,
+  "complete_epochs": 30,
+  "accepted_epochs": 30,
+  "rejected_epochs": 0,
+  "unused_tail_samples": 0,
+  "quality_policy": {
+    "min_sqi": 80,
+    "max_abs_uv": 300,
+    "flat_std_uv": 0.05,
+    "emg_warning_db": 40
+  },
+  "notch_hz": null,
+  "bicoherence": {
+    "estimator": "mean_squared_auto_bicoherence",
+    "history_s": 60,
+    "subsegment_s": 2,
+    "overlap": 0.5,
+    "f1_f2_hz": [
+      5,
+      15
+    ],
+    "claim": "experimental waveform descriptor; not the proprietary BIS algorithm or the article's calibrated bifrontal component"
+  },
+  "montage": {
+    "sensor": {
+      "family": "BIS",
+      "monitor": "BIS Vista",
+      "model": "not_reported",
+      "side": "not_reported",
+      "physical_channel_pairs": "not_reported"
+    },
+    "scalp_locations": {},
+    "reference_verified": false,
+    "bilateral_measurement": "not_established"
+  },
+  "article_components_required": {
+    "SOI": [
+      "alpha_variance",
+      "gating_efficiency",
+      "posterior_gamma",
+      "frontoparietal_plv",
+      "autonomic_surge"
+    ],
+    "RDI": [
+      "temporal_csd",
+      "delta_alpha_ratio",
+      "bifrontal_bicoherence",
+      "hemispheric_asymmetry",
+      "frontotemporal_coherence"
+    ]
+  },
+  "provenance": {
+    "sampling_rate_hz": 128.0,
+    "eeg_unit": "uV",
+    "eeg_columns": [
+      "BIS_EEG1",
+      "BIS_EEG2"
+    ],
+    "channel_locations": {},
+    "reference": "not_reported",
+    "reference_verified": false,
+    "sensor": {
+      "family": "BIS",
+      "monitor": "BIS Vista",
+      "model": "not_reported",
+      "side": "not_reported",
+      "physical_channel_pairs": "not_reported"
+    },
+    "recording_context": "perioperative_anesthesia",
+    "subject_id": "vitaldb-case-1",
+    "psychiatric_labels": null,
+    "source": "VitalDB Open Dataset",
+    "source_url": "https://vitaldb.net/dataset/",
+    "caseid": 1,
+    "excerpt": {
+      "start_s": 332.0,
+      "duration_s": 120.0,
+      "samples": 15360
+    },
+    "numeric_alignment": {
+      "method": "causal_last_observation",
+      "max_age_s": 5,
+      "backfill": false,
+      "waveform_interpolation": false
+    },
+    "license": "CC-BY-4.0",
+    "license_url": "https://creativecommons.org/licenses/by/4.0/",
+    "citation": "Lee HC et al. VitalDB. Scientific Data 9, 279 (2022). doi:10.1038/s41597-022-01411-5",
+    "retrieved_at_utc": "2026-10-08T19:29:00.454359+00:00",
+    "changes": "Excerpt selected; waveform clock reconstructed; numerics causally aligned; raw EEG amplitudes retained",
+    "recording_csv_sha256": "5397dc7ba773827654a730cc1b5e12b72956f09da628a50f2d5bec8663b2a5d9",
+    "source_tracks": [
+      {
+        "tname": "BIS/BIS",
+        "tid": "fd869e25ba82a66cc95b38ed47110bf4f14bb368",
+        "url": "https://api.vitaldb.net/fd869e25ba82a66cc95b38ed47110bf4f14bb368",
+        "decompressed_csv_sha256": "8625aa7415c1cdd146665fdf0c92456510c332d81dc37a2079da2fb1eac13947"
+      },
+      {
+        "tname": "BIS/EEG1_WAV",
+        "tid": "0aa685df768489a18a5e9f53af0d83bf60890c73",
+        "url": "https://api.vitaldb.net/0aa685df768489a18a5e9f53af0d83bf60890c73",
+        "decompressed_csv_sha256": "1d47672e63d4f4c762844eae51fc1abe803d1ca08868900642a2355613a41c41"
+      },
+      {
+        "tname": "BIS/EEG2_WAV",
+        "tid": "ad13b2c39b19193c8ae4a2de4f8315f18d61a57e",
+        "url": "https://api.vitaldb.net/ad13b2c39b19193c8ae4a2de4f8315f18d61a57e",
+        "decompressed_csv_sha256": "9e902653b1d54ff1fd3afcccdbeb2b9b53690bed79b6e8093bfbf6cd05195ea1"
+      },
+      {
+        "tname": "BIS/EMG",
+        "tid": "2525603efe18d982764dbca457affe7a45e766a9",
+        "url": "https://api.vitaldb.net/2525603efe18d982764dbca457affe7a45e766a9",
+        "decompressed_csv_sha256": "e37f74bf6f1ec00846745123aa7175fdf78c60ebba4d4ac08567555bdca0e3ce"
+      },
+      {
+        "tname": "BIS/SEF",
+        "tid": "1c91aec859304840dec75acf4a35da78be0e8ef0",
+        "url": "https://api.vitaldb.net/1c91aec859304840dec75acf4a35da78be0e8ef0",
+        "decompressed_csv_sha256": "b83c49b29b59dc40761385e971161c58e28247327c40ba58b1e8af490cfd95c1"
+      },
+      {
+        "tname": "BIS/SQI",
+        "tid": "087670cd3f03109ff5028f268587a9801865afca",
+        "url": "https://api.vitaldb.net/087670cd3f03109ff5028f268587a9801865afca",
+        "decompressed_csv_sha256": "de7ebee4554081584643ea0f81e69361c7d47c8e5432ca552a6bf300481a48d6"
+      },
+      {
+        "tname": "BIS/SR",
+        "tid": "5154b6395a8636ea82d0e2648f2957227f0ad816",
+        "url": "https://api.vitaldb.net/5154b6395a8636ea82d0e2648f2957227f0ad816",
+        "decompressed_csv_sha256": "c9e87d6e8353f4e7b82eed117baf51d81f746c04f76bcf57dbeb16c63373ab28"
+      },
+      {
+        "tname": "BIS/TOTPOW",
+        "tid": "11785e179322dd451895c9d97f8b3c40720416b4",
+        "url": "https://api.vitaldb.net/11785e179322dd451895c9d97f8b3c40720416b4",
+        "decompressed_csv_sha256": "9b180405eb887e4094e55229d939edc3c8da377c99920cc3a6b751935165aa8d"
+      }
+    ],
+    "original_eeg_unit": "uV"
+  }
+}

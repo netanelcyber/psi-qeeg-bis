@@ -1,0 +1,23 @@
+{
+  "configuration": "conventional_bis_quatro_documentation_only",
+  "physical_contacts": 4,
+  "eeg_derivations": 2,
+  "laterality": "unilateral",
+  "contacts": [
+    {"number": 1, "role": "shared_reference", "position": "midline_forehead_approximately_5cm_above_nose"},
+    {"number": 2, "role": "ground", "position": "integral_forehead_strip_contact_follow_model_specific_IFU"},
+    {"number": 3, "role": "signal", "position": "temple_between_outer_eye_corner_and_hairline"},
+    {"number": 4, "role": "signal", "position": "above_and_adjacent_to_eyebrow"}
+  ],
+  "pair_contacts": [[3, 1], [4, 1]],
+  "export_channel_order_verified": false,
+  "exact_10_20_positions": null,
+  "applies_to_vitaldb_example": false,
+  "reference_note": "Product specification does not establish an actual recording's sensor, side or channel order",
+  "sources": [
+    "https://www.medtronic.com/covidien/pt-pt/support/products/brain-monitoring/bis-complete-2-channel-monitor.html",
+    "https://www.frontiersin.org/journals/systems-neuroscience/articles/10.3389/fnsys.2017.00024/full",
+    "https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0258647"
+  ]
+}
+

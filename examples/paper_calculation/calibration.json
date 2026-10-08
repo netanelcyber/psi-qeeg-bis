@@ -1,0 +1,18 @@
+{
+  "subject_id": "illustrative_Patient_A",
+  "medication_profile_id": "illustrative_unspecified",
+  "context": "illustrative_paper_example",
+  "duration_s": 86400,
+  "source_type": "hypothetical_calibration_from_article_not_a_real_recording",
+  "SOI": {
+    "components": {
+      "alpha_variance": {"mean": 0.12, "sd": 0.07},
+      "gating_efficiency": {"mean": 0.85, "sd": 0.10},
+      "posterior_gamma": {"mean": 4.2, "sd": 1.5},
+      "frontoparietal_plv": {"mean": 0.61, "sd": 0.09},
+      "autonomic_surge": {"mean": 0.02, "sd": 0.03}
+    }
+  },
+  "RDI": {"components": {}}
+}
+

@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="520" viewBox="0 0 1000 520" role="img" aria-labelledby="title desc">
+<title id="title">BIS Quatro contacts and additional PSI sites</title>
+<desc id="desc">Conceptual diagram of a unilateral forehead strip with reference contact 1, ground contact 2, signal contacts 4 above the eyebrow and 3 at the temple. Posterior and bilateral temporal sites require additional scalp electrodes.</desc>
+<rect width="1000" height="520" fill="#f5f7fc"/>
+<g font-family="system-ui,sans-serif" fill="#19243c">
+<text x="34" y="46" font-size="25" font-weight="700">BIS electrodes: distinguish contacts from channels</text>
+<text x="34" y="73" font-size="14" fill="#596579">Conceptual coverage only. Not a measured scalp map or sensor application guide.</text>
+<rect x="32" y="100" width="510" height="330" rx="16" fill="white" stroke="#d8deeb"/>
+<path d="M175 370 C95 315 90 178 210 132 C295 95 410 150 425 228 C436 304 392 360 359 382" fill="#edf2fa" stroke="#8798b4" stroke-width="3"/>
+<path d="M190 280 Q221 268 250 280 M297 280 Q327 268 354 280" fill="none" stroke="#65738b" stroke-width="3"/>
+<path d="M272 272 L264 310 L282 310" fill="none" stroke="#65738b" stroke-width="2"/>
+<path d="M260 182 L300 216 L351 239 L405 272" fill="none" stroke="#9ec8ff" stroke-width="28" stroke-linecap="round"/>
+<g fill="#2563eb" stroke="white" stroke-width="3">
+<circle cx="260" cy="182" r="19"/><circle cx="300" cy="216" r="19"/><circle cx="351" cy="239" r="19"/><circle cx="405" cy="272" r="19"/>
+</g><g fill="white" text-anchor="middle" font-size="18" font-weight="700"><text x="260" y="189">1</text><text x="300" y="223">2</text><text x="351" y="246">4</text><text x="405" y="279">3</text></g>
+<text x="58" y="403" font-size="16" font-weight="600">4 physical contacts → 2 EEG derivations</text>
+<rect x="565" y="100" width="402" height="330" rx="16" fill="white" stroke="#d8deeb"/>
+<text x="590" y="137" font-size="20" font-weight="700">Additional PSI measurements</text>
+<text x="590" y="177" font-size="17">Frontal: verified Fp1 / Fp2</text>
+<text x="590" y="210" font-size="17">Temporal: T7 / T8</text>
+<text x="590" y="243" font-size="17">Parietal: P3 / P4</text>
+<text x="590" y="276" font-size="17">Occipital: O1 / O2</text>
+<text x="590" y="309" font-size="17">Autonomic: EDA / PPG</text>
+<text x="590" y="350" font-size="14" fill="#596579">The two exported BIS channels do not</text>
+<text x="590" y="372" font-size="14" fill="#596579">establish bilateral or posterior coverage.</text>
+<text x="34" y="465" font-size="15">1: shared reference  ·  2: ground  ·  3: temple signal  ·  4: supra-brow signal</text>
+<text x="34" y="493" font-size="13" fill="#596579">Sources and unknown recording mappings: docs/BIS_ELECTRODES.md</text>
+</g></svg>
+
