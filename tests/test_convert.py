@@ -79,3 +79,31 @@ class ScaleTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class BisMontageTests(unittest.TestCase):
+    def frame(self, cols):
+        import pandas as pd
+        n = 8
+        return pd.DataFrame({"time_s": np.arange(n) / 128, **{c: np.full(n, float(i + 1)) for i, c in enumerate(cols)}})
+
+    def test_left_montage_algebra_and_names(self):
+        from psi_qeeg.convert import bis_montage
+        f = self.frame(["EEG Fp1-LE", "EEG Fp2-LE", "EEG F7-LE", "EEG Fpz-LE"])
+        out, loc, ref = bis_montage(f, "left")
+        self.assertEqual(ref, "Fpz")
+        self.assertEqual(loc, {"BISlike_Fp1_minus_ref": "Fp1", "BISlike_F7_minus_ref": "F7"})
+        self.assertTrue((out["BISlike_Fp1_minus_ref"] == 1 - 4).all())
+        self.assertTrue((out["BISlike_F7_minus_ref"] == 3 - 4).all())
+
+    def test_fpz_approximated_and_flagged(self):
+        from psi_qeeg.convert import bis_montage
+        _, _, ref = bis_montage(self.frame(["Fp1", "Fp2", "F7"]), "left")
+        self.assertIn("approximate", ref)
+
+    def test_missing_electrodes_rejected(self):
+        from psi_qeeg.convert import bis_montage
+        with self.assertRaises(ValueError):
+            bis_montage(self.frame(["Fp1", "Fp2", "Cz"]), "left")
+        with self.assertRaises(ValueError):
+            bis_montage(self.frame(["F7", "Cz"]), "left")

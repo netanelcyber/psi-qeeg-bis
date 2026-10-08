@@ -32,6 +32,8 @@ def main(argv=None) -> int:
     p.add_argument("--channels", nargs="+")
     p.add_argument("--context", default="awake_observational_research")
     p.add_argument("--license", default="unspecified")
+    p.add_argument("--bis-montage", choices=("left", "right"), help="Re-derive BIS-like Fp/F7 (or Fp2/F8) minus Fpz from a standard scan")
+    p.add_argument("--bis-reference", help="Scan channel to use as reference when Fpz is absent (default: mean of Fp1,Fp2)")
     p.add_argument("--proxy", action="store_true", help="Also run analyze and add an uncalibrated bis_proxy column")
     p = sub.add_parser("convert-cohort", help="Batch-convert ASD / PSY / HC recordings from a manifest CSV into pooled, group-labelled features")
     p.add_argument("manifest", type=Path)
@@ -78,7 +80,8 @@ def main(argv=None) -> int:
             print(json.dumps({k: summary[k] for k in ("complete_epochs", "accepted_epochs", "rejected_epochs", "SOI", "RDI", "classification")}))
         elif args.command == "convert":
             from .convert import convert, bis_proxy
-            meta = convert(args.input, args.out, args.subject_id, args.channels, args.context, license_id=args.license)
+            meta = convert(args.input, args.out, args.subject_id, args.channels, args.context, license_id=args.license,
+                           bis_side=args.bis_montage, bis_reference=args.bis_reference)
             result = {"channels": meta["eeg_columns"], "sampling_rate_hz": meta["sampling_rate_hz"]}
             if args.proxy:
                 from .recording import read_recording

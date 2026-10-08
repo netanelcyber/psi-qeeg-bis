@@ -5,6 +5,7 @@ transparent 0-100 descriptor of spectral slowing, for ranking epochs within one 
 """
 
 import json
+import re
 from pathlib import Path
 
 import numpy as np
@@ -46,19 +47,71 @@ def bis_proxy(features: pd.DataFrame, channel: str) -> pd.Series:
     return 100 * parts.mean(axis=1, skipna=False)
 
 
+# Conventional unilateral Quatro-like derivations (Giattino 2017: ~F7 and ~Fp1 vs Fpz). Approximate, never verified.
+BIS_MONTAGES = {"left": ("Fp1", "F7"), "right": ("Fp2", "F8")}
+
+
+def site_of(name: str) -> str:
+    """'EEG Fp1-REF' / 'Fp1-LE' / 'FP1' -> 'fp1'."""
+    name = re.sub(r"^EEG[ _-]*", "", str(name).strip(), flags=re.I)
+    return re.split(r"[-_ /.]", name)[0].lower()
+
+
+def bis_montage(frame: pd.DataFrame, side: str = "left", reference: str | None = None):
+    """Re-derive a BIS-Quatro-like montage from a standard scalp recording.
+
+    Signals are ``site - reference`` for the two sites of ``side`` (algebraically independent of the
+    original common reference). Reference is Fpz, else the named ``reference`` channel, else the mean
+    of Fp1 and Fp2 (flagged ``approximate``; with it the Fp derivation is only half of Fp1-Fp2).
+    Returns (new frame, derivation->site map, reference description). Raises if electrodes are missing.
+    """
+    if side not in BIS_MONTAGES:
+        raise ValueError(f"bis montage side must be one of {sorted(BIS_MONTAGES)}")
+    by_site = {site_of(c): c for c in frame.columns if c != "time_s"}
+    need = list(BIS_MONTAGES[side])
+    missing = [s for s in need if s.lower() not in by_site]
+    if missing:
+        raise ValueError(f"Scan lacks electrodes BIS relies on: {missing}; available: {sorted(by_site)}")
+    if reference:
+        if reference.lower() not in by_site:
+            raise ValueError(f"Reference channel {reference} not in scan")
+        ref, ref_desc = frame[by_site[reference.lower()]], f"{reference}_scan_channel"
+    elif "fpz" in by_site:
+        ref, ref_desc = frame[by_site["fpz"]], "Fpz"
+    elif "fp1" in by_site and "fp2" in by_site:
+        ref, ref_desc = (frame[by_site["fp1"]] + frame[by_site["fp2"]]) / 2, "approximate_Fpz_as_mean_Fp1_Fp2"
+    else:
+        raise ValueError("No Fpz and no Fp1+Fp2 to approximate it; pass a reference channel")
+    out = frame[["time_s"]].copy()
+    locations = {}
+    for site in need:
+        name = f"BISlike_{site}_minus_ref"
+        out[name] = frame[by_site[site.lower()]] - ref
+        locations[name] = site
+    return out, locations, ref_desc
+
+
 def convert(path, out_dir, subject_id, channels=None, context="awake_observational_research",
-            reference="documented_common_reference", reference_verified=False, license_id="unspecified", source=""):
+            reference="documented_common_reference", reference_verified=False, license_id="unspecified", source="",
+            bis_side=None, bis_reference=None):
     frame, fs, names = load_raw(path, channels)
+    locations, note = {}, None
+    if bis_side:
+        frame, locations, ref_desc = bis_montage(frame, bis_side, bis_reference)
+        names = [c for c in frame.columns if c != "time_s"]
+        reference, reference_verified = ref_desc, False
+        note = ("BIS-like re-derivation of a standard scan, side=%s, reference=%s. Approximate: not a Quatro sensor, "
+                "not the BIS algorithm; electrode correspondence is not verified." % (bis_side, ref_desc))
     out = Path(out_dir)
     out.mkdir(parents=True, exist_ok=True)
     frame.to_csv(out / "recording.csv", index=False)
-    meta = {"sampling_rate_hz": fs, "eeg_unit": "uV", "eeg_columns": names, "channel_locations": {},
+    meta = {"sampling_rate_hz": fs, "eeg_unit": "uV", "eeg_columns": names, "channel_locations": locations,
             "reference": reference, "reference_verified": bool(reference_verified),
             "sensor": {"family": "research_eeg", "model": "not_reported"},
             "recording_context": context, "subject_id": subject_id, "psychiatric_labels": None,
             "source": source or str(path), "license": license_id,
             "changes": "Converted to uV CSV; no filtering, resampling or interpolation",
-            "bis_proxy": PROXY_NOTE}
+            "bis_proxy": PROXY_NOTE, "bis_montage_note": note}
     (out / "metadata.json").write_text(json.dumps(meta, indent=2) + "\n", encoding="utf-8")
     return meta
 
@@ -78,7 +131,8 @@ def _process_one(job):
         channels = row["channels"].split() if row.get("channels") else None
         convert(manifest_dir / row["file"], sub, row["subject_id"], channels,
                 row.get("context") or "awake_observational_research",
-                license_id=row.get("license") or "unspecified", source=row.get("source", ""))
+                license_id=row.get("license") or "unspecified", source=row.get("source", ""),
+                bis_side=row.get("bis_montage") or None, bis_reference=row.get("bis_reference") or None)
         rec = read_recording(sub / "recording.csv", sub / "metadata.json")
         features, _ = analyze(rec, epoch_s)
         for ch in rec.channels:
@@ -120,7 +174,7 @@ def convert_cohort(manifest, out_dir, epoch_s=4.0, workers=1, keep_raw=False, ma
 
     ``manifest`` CSV columns: ``file, subject_id, group`` (ASD, PSY or HC), optional ``site``
     (device/site, used to detect group-site confounding), ``channels`` (space separated), ``context``,
-    ``license``, ``source``. ``group`` is NOT written to ``research_label``: the trainer's state labels
+    ``license``, ``source``, ``bis_montage`` (left/right) and ``bis_reference``. ``group`` is NOT written to ``research_label``: the trainer's state labels
     describe episodes, not diagnosis, and must come from independent annotation.
     """
     from concurrent.futures import ProcessPoolExecutor
