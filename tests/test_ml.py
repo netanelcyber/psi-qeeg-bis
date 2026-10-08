@@ -55,3 +55,48 @@ class ResearchTrainingTests(unittest.TestCase):
         self.frame["label_source"]="EEG_guess"
         with self.assertRaises(ValueError):self.run_training()
 
+
+
+@unittest.skipUnless(importlib.util.find_spec("sklearn"),"Optional scikit-learn extra not installed")
+class GroupTrainingTests(unittest.TestCase):
+    """Synthetic data: accuracy here is not evidence about any population."""
+    def setUp(self):
+        from psi_qeeg.ml import train_group_model
+        self.train=train_group_model
+        self.tmp=tempfile.TemporaryDirectory()
+        self.addCleanup(self.tmp.cleanup)
+        self.root=Path(self.tmp.name)
+        import numpy as np
+        rng=np.random.default_rng(0)
+        rows=[]
+        for g,name in enumerate(("autism_spectrum","psychosis_spectrum","healthy_control")):
+            for s in range(3):
+                for i in range(10):
+                    rows.append({"subject_id":f"{name}-{s}","group":name,"site":f"site{s%2}","accepted":True,
+                                 "f1":g+rng.normal(0,.2),"f2":rng.normal()})
+        self.frame=pd.DataFrame(rows)
+
+    def run_train(self,features=("f1","f2")):
+        p=self.root/"c.csv"
+        self.frame.to_csv(p,index=False)
+        return self.train(p,self.root/"out",list(features))
+
+    def test_separable_groups_and_subject_votes(self):
+        r=self.run_train()
+        self.assertEqual(r["subject_balanced_accuracy"],1.0)
+        self.assertTrue((self.root/"out/held_out_subject_predictions.csv").exists())
+
+    def test_single_subject_group_rejected(self):
+        self.frame=self.frame[~self.frame.subject_id.isin(["healthy_control-1","healthy_control-2"])]
+        with self.assertRaises(ValueError):self.run_train()
+
+    def test_site_group_confounding_rejected(self):
+        self.frame["site"]=self.frame.group
+        with self.assertRaises(ValueError):self.run_train()
+
+    def test_group_not_a_feature(self):
+        with self.assertRaises(ValueError):self.run_train(["group"])
+
+    def test_surgical_context_rejected(self):
+        self.frame["recording_context"]="perioperative_anesthesia"
+        with self.assertRaises(ValueError):self.run_train()

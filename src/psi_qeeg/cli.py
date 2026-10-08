@@ -37,6 +37,12 @@ def main(argv=None) -> int:
     p.add_argument("manifest", type=Path)
     p.add_argument("--out", type=Path, required=True)
     p.add_argument("--epoch-s", type=float, default=4)
+    p.add_argument("--workers", type=int, default=1, help="Parallel processes for thousands of scans")
+    p.add_argument("--keep-raw", action="store_true", help="Keep per-subject recording.csv (large)")
+    p.add_argument("--max-failures", type=int, help="Abort after more than this many failed scans")
+    p = sub.add_parser("make-manifest", help="Scan ROOT/{ASD,PSY,HC}/ for EDF/BDF/SET/FIF files into a manifest CSV")
+    p.add_argument("root", type=Path)
+    p.add_argument("--out", type=Path, required=True)
     p = sub.add_parser("fetch-vitaldb", help="Download real public BIS EEG and monitor numerics")
     p.add_argument("--caseid", type=int, default=1)
     p.add_argument("--start-s", type=float, default=332)
@@ -52,6 +58,10 @@ def main(argv=None) -> int:
     p.add_argument("--subject-id", required=True)
     p.add_argument("--out", type=Path, required=True)
     p = sub.add_parser("train", help="Optional labelled-cohort SVM with leave-one-subject-out validation")
+    p.add_argument("input", type=Path)
+    p.add_argument("--features", nargs="+", required=True)
+    p.add_argument("--out", type=Path, required=True)
+    p = sub.add_parser("train-groups", help="Leave-one-subject-out ASD / PSY / HC classifier on cohort_features.csv")
     p.add_argument("input", type=Path)
     p.add_argument("--features", nargs="+", required=True)
     p.add_argument("--out", type=Path, required=True)
@@ -83,7 +93,10 @@ def main(argv=None) -> int:
             print(json.dumps(result))
         elif args.command == "convert-cohort":
             from .convert import convert_cohort
-            print(json.dumps({"subjects_per_group": convert_cohort(args.manifest, args.out, args.epoch_s)}))
+            print(json.dumps(convert_cohort(args.manifest, args.out, args.epoch_s, args.workers, args.keep_raw, args.max_failures)))
+        elif args.command == "make-manifest":
+            from .convert import build_manifest
+            print(json.dumps({"files": build_manifest(args.root, args.out)}))
         elif args.command == "fetch-vitaldb":
             from .vitaldb import download
             metadata = download(args.caseid, args.out, args.start_s, args.duration_s, args.cache)
@@ -112,6 +125,10 @@ def main(argv=None) -> int:
             from .ml import train_research_model
             result = train_research_model(args.input, args.out, args.features)
             print(json.dumps({k: result[k] for k in ("subjects", "rows", "balanced_accuracy", "macro_f1")}))
+        elif args.command == "train-groups":
+            from .ml import train_group_model
+            result = train_group_model(args.input, args.out, args.features)
+            print(json.dumps({k: result[k] for k in ("subjects_per_group", "epochs", "subject_balanced_accuracy", "epoch_balanced_accuracy")}))
     except (ValueError, OSError, KeyError) as exc:
         print(f"Error: {exc}", file=sys.stderr)
         return 2

@@ -66,17 +66,64 @@ def convert(path, out_dir, subject_id, channels=None, context="awake_observation
 GROUPS = {"ASD": "autism_spectrum", "PSY": "psychosis_spectrum", "HC": "healthy_control"}
 
 
-def convert_cohort(manifest, out_dir, epoch_s=4.0):
-    """Batch-convert a multi-group cohort and pool epoch features with a ``group`` column.
-
-    ``manifest`` CSV columns: ``file, subject_id, group`` (ASD, PSY or HC), optional
-    ``channels`` (space separated), ``context``, ``license``, ``source``. ``group`` is a
-    diagnostic-group label from the dataset's own documentation. It is deliberately NOT written to
-    ``research_label``: the trainer's state labels (baseline, pre_psychotic, ...) describe episodes,
-    not diagnosis, and must come from independent annotation.
-    """
+def _process_one(job):
+    """Worker: convert + analyze one recording. Returns (subject_id, error or None). Resumable."""
     from .analysis import analyze
     from .recording import read_recording
+    manifest_dir, sub, row, epoch_s, keep_raw = job
+    try:
+        done = sub / "features.csv"
+        if done.exists():
+            return row["subject_id"], None
+        channels = row["channels"].split() if row.get("channels") else None
+        convert(manifest_dir / row["file"], sub, row["subject_id"], channels,
+                row.get("context") or "awake_observational_research",
+                license_id=row.get("license") or "unspecified", source=row.get("source", ""))
+        rec = read_recording(sub / "recording.csv", sub / "metadata.json")
+        features, _ = analyze(rec, epoch_s)
+        for ch in rec.channels:
+            features[f"{ch}__bis_proxy_uncalibrated"] = bis_proxy(features, ch)
+        if row.get("site"):
+            features.insert(0, "site", row["site"])
+        features.insert(0, "group", GROUPS[row["group"]])
+        features.insert(0, "subject_id", row["subject_id"])
+        features.to_csv(sub / "features.tmp", index=False)
+        (sub / "features.tmp").replace(done)  # atomic marker: only finished subjects are skipped on resume
+        if not keep_raw:
+            (sub / "recording.csv").unlink(missing_ok=True)
+        return row["subject_id"], None
+    except Exception as exc:  # one bad scan must not abort thousands
+        return row["subject_id"], f"{type(exc).__name__}: {exc}"
+
+
+def build_manifest(root, out_csv):
+    """Scan ``root/{ASD,PSY,HC}/**/*.{edf,bdf,set,fif}`` into a manifest; subject_id = '<group>_<relative path stem>'."""
+    root = Path(root)
+    rows = []
+    for group in GROUPS:
+        for f in sorted((root / group).rglob("*")):
+            if f.suffix.lower() in {".edf", ".bdf", ".set", ".fif"}:
+                rel = f.relative_to(root)
+                rows.append({"file": str(rel), "subject_id": f"{group}_" + "_".join(rel.with_suffix("").parts[1:]), "group": group})
+    if not rows:
+        raise ValueError(f"No EEG files found under {root}/ASD, PSY or HC")
+    pd.DataFrame(rows).to_csv(out_csv, index=False)
+    return len(rows)
+
+
+def convert_cohort(manifest, out_dir, epoch_s=4.0, workers=1, keep_raw=False, max_failures=None):
+    """Batch-convert thousands of recordings into pooled, group-labelled features.
+
+    Parallel (``workers``), resumable (finished subjects are skipped), memory-bounded (features are
+    streamed to disk, never concatenated in RAM) and fault tolerant (failures go to ``failures.csv``).
+    Raw per-subject CSVs are deleted after analysis unless ``keep_raw``.
+
+    ``manifest`` CSV columns: ``file, subject_id, group`` (ASD, PSY or HC), optional ``site``
+    (device/site, used to detect group-site confounding), ``channels`` (space separated), ``context``,
+    ``license``, ``source``. ``group`` is NOT written to ``research_label``: the trainer's state labels
+    describe episodes, not diagnosis, and must come from independent annotation.
+    """
+    from concurrent.futures import ProcessPoolExecutor
 
     table = pd.read_csv(manifest, dtype=str).fillna("")
     for col in ("file", "subject_id", "group"):
@@ -87,22 +134,49 @@ def convert_cohort(manifest, out_dir, epoch_s=4.0):
         raise ValueError(f"group must be one of {sorted(GROUPS)}; got {bad}")
     if table.subject_id.duplicated().any():
         raise ValueError("subject_id must be unique per manifest row")
+    if table.subject_id.str.contains(r"[\\/]|^\.").any():
+        raise ValueError("subject_id must be a plain name (no path separators)")
     out = Path(out_dir)
-    pooled = []
-    for row in table.itertuples():
-        sub = out / "subjects" / row.subject_id
-        channels = row.channels.split() if getattr(row, "channels", "") else None
-        convert(Path(manifest).parent / row.file, sub, row.subject_id, channels,
-                getattr(row, "context", "") or "awake_observational_research",
-                license_id=getattr(row, "license", "") or "unspecified", source=getattr(row, "source", ""))
-        rec = read_recording(sub / "recording.csv", sub / "metadata.json")
-        features, _ = analyze(rec, epoch_s)
-        for ch in rec.channels:
-            features[f"{ch}__bis_proxy_uncalibrated"] = bis_proxy(features, ch)
-        features.insert(0, "group", GROUPS[row.group])
-        features.insert(0, "subject_id", row.subject_id)
-        pooled.append(features)
-    result = pd.concat(pooled, ignore_index=True)
-    out.mkdir(parents=True, exist_ok=True)
-    result.to_csv(out / "cohort_features.csv", index=False)
-    return result.groupby("group").subject_id.nunique().to_dict()
+    manifest_dir = Path(manifest).resolve().parent
+    jobs = []
+    for row in table.to_dict("records"):
+        sub = out / "subjects" / row["subject_id"]
+        sub.mkdir(parents=True, exist_ok=True)
+        jobs.append((manifest_dir, sub, row, epoch_s, keep_raw))
+    failures = []
+    if workers > 1:
+        with ProcessPoolExecutor(workers) as pool:
+            results = pool.map(_process_one, jobs, chunksize=4)
+            for n, (sid, err) in enumerate(results, 1):
+                if err:
+                    failures.append({"subject_id": sid, "error": err})
+                if max_failures is not None and len(failures) > max_failures:
+                    raise ValueError(f"Aborted after {len(failures)} failures; last: {err}")
+                if n % 100 == 0:
+                    print(f"{n}/{len(jobs)} processed", flush=True)
+    else:
+        for n, job in enumerate(jobs, 1):
+            sid, err = _process_one(job)
+            if err:
+                failures.append({"subject_id": sid, "error": err})
+            if max_failures is not None and len(failures) > max_failures:
+                raise ValueError(f"Aborted after {len(failures)} failures; last: {err}")
+            if n % 100 == 0:
+                print(f"{n}/{len(jobs)} processed", flush=True)
+    done = [j[1] / "features.csv" for j in jobs if (j[1] / "features.csv").exists()]
+    if not done:
+        raise ValueError("No recording converted successfully; see failures.csv")
+    columns = []  # union header from files' first rows only
+    for f in done:
+        columns += [c for c in pd.read_csv(f, nrows=0).columns if c not in columns]
+    counts = {}
+    with open(out / "cohort_features.csv", "w", newline="", encoding="utf-8") as handle:
+        first = True
+        for f in done:
+            part = pd.read_csv(f).reindex(columns=columns)
+            part.to_csv(handle, header=first, index=False)
+            first = False
+            group = part.group.iat[0]
+            counts[group] = counts.get(group, 0) + 1
+    pd.DataFrame(failures, columns=["subject_id", "error"]).to_csv(out / "failures.csv", index=False)
+    return {"subjects_per_group": counts, "converted": len(done), "failed": len(failures), "total": len(jobs)}
