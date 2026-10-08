@@ -4,6 +4,7 @@ The commercial BIS algorithm is proprietary and is not reproduced. ``bis_proxy``
 transparent 0-100 descriptor of spectral slowing, for ranking epochs within one study only.
 """
 
+import hashlib
 import json
 import re
 from pathlib import Path
@@ -28,11 +29,17 @@ def load_raw(path, channels=None):
     if reader is None:
         raise ValueError(f"Unsupported EEG format: {path.suffix}")
     raw = reader(str(path), preload=True, verbose="ERROR")
-    picks = channels or [c for c, t in zip(raw.ch_names, raw.get_channel_types()) if t == "eeg"]
-    missing = [c for c in picks if c not in raw.ch_names]
+    types = dict(zip(raw.ch_names, raw.get_channel_types()))
+    picks = channels or [c for c, t in types.items() if t == "eeg"]
+    missing = [c for c in picks if c not in types]
     if missing or not picks:
         raise ValueError(f"EEG channels not found in file: {missing or 'none typed eeg'}")
-    frame = pd.DataFrame(raw.get_data(picks=picks).T * 1e6, columns=picks)  # MNE volts -> uV, once
+    not_eeg = [c for c in picks if types[c] != "eeg"]
+    if not_eeg:
+        raise ValueError(f"Selected channels are not typed EEG (EOG/ECG/monitor?): {not_eeg}")
+    # BAD-annotated spans become NaN so the quality check rejects those epochs; the sample clock is kept.
+    data = raw.get_data(picks=picks, reject_by_annotation="NaN")
+    frame = pd.DataFrame(data.T * 1e6, columns=picks)  # MNE volts -> uV, once
     frame.insert(0, "time_s", raw.times)
     return frame, float(raw.info["sfreq"]), list(picks)
 
@@ -51,10 +58,16 @@ def bis_proxy(features: pd.DataFrame, channel: str) -> pd.Series:
 BIS_MONTAGES = {"left": ("Fp1", "F7"), "right": ("Fp2", "F8")}
 
 
+_SCALP = re.compile(r"^(fp|af|f|ft|fc|t|c|tp|cp|p|po|o)(z|\d{1,2})$", re.I)
+
+
 def site_of(name: str) -> str:
     """'EEG Fp1-REF' / 'Fp1-LE' / 'FP1' -> 'fp1'."""
     name = re.sub(r"^EEG[ _-]*", "", str(name).strip(), flags=re.I)
-    return re.split(r"[-_ /.]", name)[0].lower()
+    parts = re.split(r"[-_ /.]", name)
+    if len(parts) > 1 and _SCALP.match(parts[0]) and _SCALP.match(parts[1]):
+        raise ValueError(f"Bipolar derivation {name!r} cannot be re-referenced; supply common-reference channels")
+    return parts[0].lower()
 
 
 def bis_montage(frame: pd.DataFrame, side: str = "left", reference: str | None = None):
@@ -73,9 +86,12 @@ def bis_montage(frame: pd.DataFrame, side: str = "left", reference: str | None =
     if missing:
         raise ValueError(f"Scan lacks electrodes BIS relies on: {missing}; available: {sorted(by_site)}")
     if reference:
-        if reference.lower() not in by_site:
+        exact = reference if reference in frame.columns else None
+        key = site_of(reference)
+        column = exact or by_site.get(key)
+        if column is None:
             raise ValueError(f"Reference channel {reference} not in scan")
-        ref, ref_desc = frame[by_site[reference.lower()]], f"{reference}_scan_channel"
+        ref, ref_desc = frame[column], f"{key}_scan_channel"
     elif "fpz" in by_site:
         ref, ref_desc = frame[by_site["fpz"]], "Fpz"
     elif "fp1" in by_site and "fp2" in by_site:
@@ -92,7 +108,7 @@ def bis_montage(frame: pd.DataFrame, side: str = "left", reference: str | None =
 
 
 def convert(path, out_dir, subject_id, channels=None, context="awake_observational_research",
-            reference="documented_common_reference", reference_verified=False, license_id="unspecified", source="",
+            reference="not_reported", reference_verified=False, license_id="unspecified", source="",
             bis_side=None, bis_reference=None):
     frame, fs, names = load_raw(path, channels)
     locations, note = {}, None
@@ -125,9 +141,15 @@ def _process_one(job):
     from .recording import read_recording
     manifest_dir, sub, row, epoch_s, keep_raw = job
     try:
-        done = sub / "features.csv"
+        done, sig_file = sub / "features.csv", sub / "features.sig"
+        source = manifest_dir / row["file"]
+        st = source.stat()
+        signature = hashlib.sha256(json.dumps([row, epoch_s, st.st_size, st.st_mtime_ns], sort_keys=True).encode()).hexdigest()
         if done.exists():
-            return row["subject_id"], None
+            if sig_file.exists() and sig_file.read_text() == signature:
+                return row["subject_id"], None
+            done.unlink()  # inputs or settings changed: never pool stale features
+        sig_file.unlink(missing_ok=True)
         channels = row["channels"].split() if row.get("channels") else None
         convert(manifest_dir / row["file"], sub, row["subject_id"], channels,
                 row.get("context") or "awake_observational_research",
@@ -137,11 +159,13 @@ def _process_one(job):
         features, _ = analyze(rec, epoch_s)
         for ch in rec.channels:
             features[f"{ch}__bis_proxy_uncalibrated"] = bis_proxy(features, ch)
+        features.insert(0, "recording_context", row.get("context") or "awake_observational_research")
         if row.get("site"):
             features.insert(0, "site", row["site"])
         features.insert(0, "group", GROUPS[row["group"]])
         features.insert(0, "subject_id", row["subject_id"])
         features.to_csv(sub / "features.tmp", index=False)
+        sig_file.write_text(signature)
         (sub / "features.tmp").replace(done)  # atomic marker: only finished subjects are skipped on resume
         if not keep_raw:
             (sub / "recording.csv").unlink(missing_ok=True)
@@ -151,17 +175,23 @@ def _process_one(job):
 
 
 def build_manifest(root, out_csv):
-    """Scan ``root/{ASD,PSY,HC}/**/*.{edf,bdf,set,fif}`` into a manifest; subject_id = '<group>_<relative path stem>'."""
+    """Scan ``root/{ASD,PSY,HC}/**/*.{edf,bdf,set,fif}`` into a manifest; subject_id = '<group>_<relative path stem>'.
+
+    Files are stored as absolute paths, so the manifest may live anywhere."""
     root = Path(root)
     rows = []
     for group in GROUPS:
         for f in sorted((root / group).rglob("*")):
             if f.suffix.lower() in {".edf", ".bdf", ".set", ".fif"}:
                 rel = f.relative_to(root)
-                rows.append({"file": str(rel), "subject_id": f"{group}_" + "_".join(rel.with_suffix("").parts[1:]), "group": group})
+                rows.append({"file": str(f.resolve()), "subject_id": f"{group}_" + "_".join(rel.with_suffix("").parts[1:]),
+                             "group": group, "_rel": rel.as_posix()})
     if not rows:
         raise ValueError(f"No EEG files found under {root}/ASD, PSY or HC")
-    pd.DataFrame(rows).to_csv(out_csv, index=False)
+    table = pd.DataFrame(rows)
+    clash = table.subject_id.duplicated(keep=False)  # 'a_b.edf' vs 'a/b.edf' map to one id: disambiguate by path hash
+    table.loc[clash, "subject_id"] += "_" + table.loc[clash, "_rel"].map(lambda r: hashlib.sha1(r.encode()).hexdigest()[:6])
+    table.drop(columns="_rel").to_csv(out_csv, index=False)
     return len(rows)
 
 
@@ -198,25 +228,39 @@ def convert_cohort(manifest, out_dir, epoch_s=4.0, workers=1, keep_raw=False, ma
         sub.mkdir(parents=True, exist_ok=True)
         jobs.append((manifest_dir, sub, row, epoch_s, keep_raw))
     failures = []
+    out.mkdir(parents=True, exist_ok=True)
+
+    def record(sid, err):
+        if err:
+            failures.append({"subject_id": sid, "error": err})
+        return max_failures is not None and len(failures) > max_failures
+
+    def write_failures():
+        pd.DataFrame(failures, columns=["subject_id", "error"]).to_csv(out / "failures.csv", index=False)
+
+    aborted = None
     if workers > 1:
+        from concurrent.futures import as_completed
         with ProcessPoolExecutor(workers) as pool:
-            results = pool.map(_process_one, jobs, chunksize=4)
-            for n, (sid, err) in enumerate(results, 1):
-                if err:
-                    failures.append({"subject_id": sid, "error": err})
-                if max_failures is not None and len(failures) > max_failures:
-                    raise ValueError(f"Aborted after {len(failures)} failures; last: {err}")
+            futures = [pool.submit(_process_one, job) for job in jobs]
+            for n, future in enumerate(as_completed(futures), 1):
+                if record(*future.result()):
+                    aborted = f"Aborted after {len(failures)} failures; last: {failures[-1]['error']}"
+                    for f in futures:
+                        f.cancel()  # queued scans are dropped; only running ones finish
+                    break
                 if n % 100 == 0:
                     print(f"{n}/{len(jobs)} processed", flush=True)
     else:
         for n, job in enumerate(jobs, 1):
-            sid, err = _process_one(job)
-            if err:
-                failures.append({"subject_id": sid, "error": err})
-            if max_failures is not None and len(failures) > max_failures:
-                raise ValueError(f"Aborted after {len(failures)} failures; last: {err}")
+            if record(*_process_one(job)):
+                aborted = f"Aborted after {len(failures)} failures; last: {failures[-1]['error']}"
+                break
             if n % 100 == 0:
                 print(f"{n}/{len(jobs)} processed", flush=True)
+    write_failures()
+    if aborted:
+        raise ValueError(aborted + "; see failures.csv")
     done = [j[1] / "features.csv" for j in jobs if (j[1] / "features.csv").exists()]
     if not done:
         raise ValueError("No recording converted successfully; see failures.csv")
@@ -232,5 +276,4 @@ def convert_cohort(manifest, out_dir, epoch_s=4.0, workers=1, keep_raw=False, ma
             first = False
             group = part.group.iat[0]
             counts[group] = counts.get(group, 0) + 1
-    pd.DataFrame(failures, columns=["subject_id", "error"]).to_csv(out / "failures.csv", index=False)
     return {"subjects_per_group": counts, "converted": len(done), "failed": len(failures), "total": len(jobs)}

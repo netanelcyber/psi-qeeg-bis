@@ -107,3 +107,80 @@ class BisMontageTests(unittest.TestCase):
             bis_montage(self.frame(["Fp1", "Fp2", "Cz"]), "left")
         with self.assertRaises(ValueError):
             bis_montage(self.frame(["F7", "Cz"]), "left")
+
+
+class ReviewFixTests(unittest.TestCase):
+    def test_bipolar_rejected_and_reference_normalised(self):
+        import pandas as pd
+        from psi_qeeg.convert import bis_montage
+        n = 8
+        base = {"time_s": np.arange(n) / 128}
+        bip = pd.DataFrame({**base, "EEG Fp1-F7": np.ones(n), "EEG F7-T3": np.ones(n), "EEG Fp2-F8": np.ones(n)})
+        with self.assertRaises(ValueError):
+            bis_montage(bip, "left")
+        f = pd.DataFrame({**base, "EEG Fp1-REF": np.ones(n), "EEG F7-REF": 2 * np.ones(n), "EEG Cz-REF": 5 * np.ones(n)})
+        out, _, ref = bis_montage(f, "left", reference="EEG Cz-REF")
+        self.assertEqual(ref, "cz_scan_channel")
+        self.assertTrue((out["BISlike_F7_minus_ref"] == -3).all())
+
+    def test_manifest_ids_unique_and_absolute(self):
+        import tempfile
+        import pandas as pd
+        from psi_qeeg.convert import build_manifest
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            (root / "ASD" / "a").mkdir(parents=True)
+            (root / "ASD" / "a_b.edf").write_bytes(b"x")
+            (root / "ASD" / "a" / "b.edf").write_bytes(b"x")
+            build_manifest(root, root / "elsewhere.csv")
+            m = pd.read_csv(root / "elsewhere.csv")
+            self.assertFalse(m.subject_id.duplicated().any())
+            self.assertTrue(all(Path(p).is_absolute() for p in m.file))
+
+    def test_context_kept_resume_invalidates_and_failures_persist(self):
+        import tempfile
+        from unittest import mock
+        import pandas as pd
+        from psi_qeeg import convert as cv
+
+        def fake_load(path, channels=None):
+            if "bad" in str(path):
+                raise ValueError("corrupt")
+            return pd.read_csv(CASE / "recording.csv")[["time_s", "BIS_EEG1"]], 128.0, ["BIS_EEG1"]
+
+        with tempfile.TemporaryDirectory() as d, mock.patch.object(cv, "load_raw", fake_load):
+            root = Path(d)
+            (root / "a.edf").write_bytes(b"x")
+            (root / "bad.edf").write_bytes(b"x")
+            m = root / "m.csv"
+            m.write_text("file,subject_id,group,context\na.edf,s1,HC,awake_observational_research\n")
+            cv.convert_cohort(m, root / "out")
+            self.assertIn("recording_context", pd.read_csv(root / "out/cohort_features.csv"))
+            m.write_text("file,subject_id,group,context\na.edf,s1,PSY,awake_observational_research\n")
+            cv.convert_cohort(m, root / "out")  # group changed: stale features must not be reused
+            self.assertEqual(set(pd.read_csv(root / "out/cohort_features.csv").group), {"psychosis_spectrum"})
+            m.write_text("file,subject_id,group\nbad.edf,s2,HC\n")
+            with self.assertRaises(ValueError):
+                cv.convert_cohort(m, root / "out2")
+            self.assertIn("corrupt", (root / "out2/failures.csv").read_text())
+
+    def test_default_reference_not_reported(self):
+        import inspect
+        from psi_qeeg.convert import convert
+        self.assertEqual(inspect.signature(convert).parameters["reference"].default, "not_reported")
+
+
+try:
+    import sklearn  # noqa: F401
+    _SK = True
+except ImportError:
+    _SK = False
+
+
+@unittest.skipUnless(_SK, "scikit-learn not installed")
+class MajorityTests(unittest.TestCase):
+    def test_tie_is_not_resolved_alphabetically(self):
+        import pandas as pd
+        from psi_qeeg.ml import _majority
+        self.assertEqual(_majority(pd.Series(["autism_spectrum", "healthy_control"])), "no_majority")
+        self.assertEqual(_majority(pd.Series(["healthy_control", "healthy_control", "autism_spectrum"])), "healthy_control")

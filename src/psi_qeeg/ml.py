@@ -64,6 +64,12 @@ def train_research_model(table_path, out: Path, feature_columns: list[str]) -> d
 
 
 
+def _majority(predictions):
+    """Strict plurality; a tie is 'no_majority' (counted wrong), never resolved by label order."""
+    top = predictions.value_counts()
+    return top.index[0] if len(top) == 1 or top.iloc[0] > top.iloc[1] else "no_majority"
+
+
 GROUP_LABELS = {"autism_spectrum", "psychosis_spectrum", "healthy_control"}
 
 
@@ -115,7 +121,7 @@ def train_group_model(table_path, out: Path, feature_columns: list[str]) -> dict
     for train, test in LeaveOneGroupOut().split(x, y, subjects):
         predicted[test] = factory().fit(x[train], y[train]).predict(x[test])
     votes = pd.DataFrame({"subject_id": subjects, "truth": y, "pred": predicted})
-    per_subject = votes.groupby("subject_id").agg(truth=("truth", "first"), pred=("pred", lambda s: s.mode().iloc[0]),
+    per_subject = votes.groupby("subject_id").agg(truth=("truth", "first"), pred=("pred", _majority),
                                                   epochs=("pred", "size")).reset_index()
     result = {"use": "research_only", "clinical_validation": "not_established", "evaluation": "leave_one_subject_out",
               "classes": classes, "subjects_per_group": per_group.to_dict(), "epochs": len(frame), "features": feature_columns,
@@ -124,6 +130,7 @@ def train_group_model(table_path, out: Path, feature_columns: list[str]) -> dict
               "subject_balanced_accuracy": float(balanced_accuracy_score(per_subject.truth, per_subject.pred)),
               "subject_confusion_matrix": {"labels": classes, "rows_true_cols_pred":
                   confusion_matrix(per_subject.truth, per_subject.pred, labels=classes).tolist()},
+              "subjects_without_majority": int((per_subject.pred == "no_majority").sum()),
               "site_checked": "site" in frame,
               "limitations": "Group = documented diagnosis in the supplied cohort. Without a site column, group may be confounded "
                              "with device, site or age. Subject-level metrics are the meaningful ones. No diagnostic claim."}
