@@ -4,7 +4,21 @@ A working Python research project based on Netanel Stern's **Toward a Psychiatri
 
 The repository contains a real, attributed VitalDB BIS EEG excerpt, a reproducible qEEG pipeline, electrode specifications, the article's SOI/RDI arithmetic, an offline report, and optional subject-held-out SVM training for a separately supplied labelled cohort.
 
-**Research status:** signal processing and mathematical implementation. Psychiatric classification has not been clinically validated. The included surgical recording has no meltdown or psychosis labels; its SOI/RDI scores remain unavailable and its psychiatric state is `indeterminate`.
+**Research status:** signal processing, mathematical implementation and exploratory diagnosis-group benchmarking on a public human cohort. Psychiatric classification has not been clinically validated. The included surgical recording has no meltdown or psychosis labels; its SOI/RDI scores remain unavailable and its psychiatric state is `indeterminate`.
+
+## Public psychiatric cohort and model-organism comparison
+
+```bash
+python -m pip install -e '.[edf,ml]'
+python scripts/validate_public_schizophrenia_cohort.py
+python scripts/compare_model_organism.py
+```
+
+The human runner verifies the 28 RepOD source EDFs, analyzes a fixed first 120 seconds per subject, and evaluates full-scalp (19 channels), left Fp1/F7 and right Fp2/F8 feature sets using identical accepted epochs and leave-one-subject-out folds. The regional sets retain the source reference: they approximate electrode coverage, not actual BIS sensor derivations. All three results are reported without selecting a winning side.
+
+The second runner verifies public processed auditory-gating measurements from **22 Fmr1-KO2/WT mice** against OSF source SHA-256 hashes. It summarizes seven paired-tone intervals without treating repeated measurements as independent animals. These experimental sensory-response labels are not autistic-meltdown or psychosis-onset labels. Human resting-state data have no corresponding S1/S2 events, so a numerical cross-species gating comparison remains unavailable.
+
+See [recorded results and protocol](docs/research/PUBLIC_COHORT.md) and [model-organism evidence and measurement comparison](docs/research/MODEL_ORGANISM_COMPARISON.md). Aggregate results are retained in the repository; raw clinical/model-organism files and trained models remain local or in temporary workflow outputs.
 
 ## Run the real-data example
 

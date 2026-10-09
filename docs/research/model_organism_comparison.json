@@ -1,0 +1,212 @@
+{
+  "status": "descriptive_model_organism_comparison_completed",
+  "event_validation_status": "not_possible_with_these_labels",
+  "mouse_source": "https://doi.org/10.17605/OSF.IO/CVEFK",
+  "source_readme": "Raw EDFs available on author request; processed ERPs and gating CSV are public",
+  "mouse_provenance": [
+    {
+      "local_filename": "paired_tone_gating.csv",
+      "source_filename": "PairedTone_SenGat_GLM.csv",
+      "file_id": "611cd921d2109700616b1857",
+      "source_api": "https://api.osf.io/v2/files/611cd921d2109700616b1857/",
+      "source_url": "https://osf.io/download/scwfx/",
+      "sha256": "04b3aaa6e7b9c0104850774af54950723fd16994cd612b04a32e94e3f845fb07",
+      "bytes": 3592,
+      "source_modified": "2021-08-18T09:55:45.211582"
+    },
+    {
+      "local_filename": "paired_tone_analysis.m",
+      "source_filename": "Paired_Tone_analysis.m",
+      "file_id": "611cd9222dab24005c25bbc5",
+      "source_api": "https://api.osf.io/v2/files/611cd9222dab24005c25bbc5/",
+      "source_url": "https://osf.io/download/5zu4s/",
+      "sha256": "148309fc3e304b609ba04bd3b4b6d1dd14b615a2fa918ed6d1e8f303950453a7",
+      "bytes": 8349,
+      "source_modified": "2021-08-18T09:55:46.641480"
+    },
+    {
+      "local_filename": "description.txt",
+      "source_filename": "Description file.txt",
+      "file_id": "611cd8a12dab24005925ba64",
+      "source_api": "https://api.osf.io/v2/files/611cd8a12dab24005925ba64/",
+      "source_url": "https://osf.io/download/pbu8c/",
+      "sha256": "df42b1c82211fcd3bf3babf786da71bf68602b9d692b4988366054e30c8d1cf2",
+      "bytes": 936,
+      "source_modified": "2021-08-18T09:53:37.062717"
+    }
+  ],
+  "mouse": {
+    "species": "Mus musculus",
+    "model": "Fmr1 KO2; source labels wt / hem",
+    "experimental_state": "freely behaving, paired auditory stimulation",
+    "data_type": "Published processed per-animal ERP gating ratios, not raw EEG",
+    "measure": "S2/S1 peak-to-peak P1-N1 response ratio; larger values indicate less suppression",
+    "source_channel_aggregation": "Source MATLAB script averages ERP channels 2 and 3 before extracting peaks",
+    "animals_per_genotype": {
+      "hem": 12,
+      "wt": 10
+    },
+    "rows": 154,
+    "conditions": [
+      {
+        "isi_ms": 100,
+        "groups": {
+          "hem": {
+            "animals": 12,
+            "mean_ratio": 0.3490328020833333,
+            "sd_ratio": 0.10969311592600127
+          },
+          "wt": {
+            "animals": 10,
+            "mean_ratio": 0.3322240732,
+            "sd_ratio": 0.1250547052637128
+          }
+        },
+        "mean_difference_hem_minus_wt": 0.01680872888333329
+      },
+      {
+        "isi_ms": 200,
+        "groups": {
+          "hem": {
+            "animals": 12,
+            "mean_ratio": 0.3781856024166666,
+            "sd_ratio": 0.09698893319211192
+          },
+          "wt": {
+            "animals": 10,
+            "mean_ratio": 0.3279501446,
+            "sd_ratio": 0.08543783584556383
+          }
+        },
+        "mean_difference_hem_minus_wt": 0.05023545781666661
+      },
+      {
+        "isi_ms": 300,
+        "groups": {
+          "hem": {
+            "animals": 12,
+            "mean_ratio": 0.45057233575,
+            "sd_ratio": 0.0804377919102347
+          },
+          "wt": {
+            "animals": 10,
+            "mean_ratio": 0.43875897210000003,
+            "sd_ratio": 0.10745584589193942
+          }
+        },
+        "mean_difference_hem_minus_wt": 0.011813363649999964
+      },
+      {
+        "isi_ms": 400,
+        "groups": {
+          "hem": {
+            "animals": 12,
+            "mean_ratio": 0.5808877865000001,
+            "sd_ratio": 0.1288985506016966
+          },
+          "wt": {
+            "animals": 10,
+            "mean_ratio": 0.5057955342,
+            "sd_ratio": 0.10632145652216858
+          }
+        },
+        "mean_difference_hem_minus_wt": 0.07509225230000005
+      },
+      {
+        "isi_ms": 500,
+        "groups": {
+          "hem": {
+            "animals": 12,
+            "mean_ratio": 0.628010705,
+            "sd_ratio": 0.12294237259741572
+          },
+          "wt": {
+            "animals": 10,
+            "mean_ratio": 0.5634869502,
+            "sd_ratio": 0.05812079857398016
+          }
+        },
+        "mean_difference_hem_minus_wt": 0.06452375480000005
+      },
+      {
+        "isi_ms": 750,
+        "groups": {
+          "hem": {
+            "animals": 12,
+            "mean_ratio": 0.7292059820833333,
+            "sd_ratio": 0.08054468500537233
+          },
+          "wt": {
+            "animals": 10,
+            "mean_ratio": 0.7131902468,
+            "sd_ratio": 0.08791578511395662
+          }
+        },
+        "mean_difference_hem_minus_wt": 0.016015735283333332
+      },
+      {
+        "isi_ms": 1000,
+        "groups": {
+          "hem": {
+            "animals": 12,
+            "mean_ratio": 0.8276708146666668,
+            "sd_ratio": 0.10647899840792874
+          },
+          "wt": {
+            "animals": 10,
+            "mean_ratio": 0.7687430031999999,
+            "sd_ratio": 0.11034470304898628
+          }
+        },
+        "mean_difference_hem_minus_wt": 0.058927811466666924
+      }
+    ],
+    "animal_mean_across_all_isis": {
+      "hem": {
+        "animals": 12,
+        "mean_ratio": 0.5633665755,
+        "sd_between_animal_means": 0.0737386815318575
+      },
+      "wt": {
+        "animals": 10,
+        "mean_ratio": 0.5214498463285714,
+        "sd_between_animal_means": 0.06792273116853376
+      }
+    },
+    "inference": "Descriptive only; no hypothesis test, event detector or clinical interpretation",
+    "meltdown_labels": "not_available",
+    "psychosis_onset_labels": "not_available",
+    "SOI": null,
+    "RDI": null
+  },
+  "human": {
+    "dataset": "EEG in schizophrenia (RepOD, CC0)",
+    "source": "https://doi.org/10.18150/repod.0107441",
+    "subjects_per_group": {
+      "healthy_control": 14,
+      "psychosis_spectrum": 14
+    },
+    "accepted_epochs": 821,
+    "subject_balanced_accuracy": 0.6428571428571429
+  },
+  "comparison": {
+    "human_sensory_gating": null,
+    "reason": "Human resting-state cohort has no paired-stimulus timestamps or S1/S2 ERPs; the same gating ratio cannot be calculated",
+    "animal_spectral_classification": null,
+    "spectral_reason": "Published averaged ERPs and ratios cannot substitute for continuous single-trial EEG when estimating the human spectral benchmark",
+    "human_vs_mouse_episode_accuracy": null,
+    "episode_reason": "Neither dataset provides independently adjudicated autistic-meltdown or psychosis-onset events",
+    "cross_species_model_transfer": "not_run; incompatible labels, acquisition and task"
+  },
+  "psychosis_model_evidence": {
+    "source": "https://doi.org/10.3389/fnins.2022.1001869",
+    "species": "Mus musculus",
+    "signal": "mPFC / CA1 intracranial LFP",
+    "experimental_label": "NMDAR-antagonist exposure; a schizophrenia-related pharmacological model",
+    "data_access": "Article and supplementary results; no public raw LFP repository identified in its data-availability statement",
+    "measured_here": false,
+    "band_comparison": "Source high gamma 60-100 Hz and HFO 150-200 Hz are outside the project's 0.5-40 Hz features; 128 Hz BIS EEG cannot span those bands",
+    "onset_interpretation": "Experimental intervention time is not documented spontaneous human psychosis onset"
+  },
+  "clinical_validation": "not_established"
+}

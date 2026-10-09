@@ -5,6 +5,7 @@ on:
     paths:
       - '.github/workflows/public-cohort-validation.yml'
       - 'scripts/validate_public_schizophrenia_cohort.py'
+      - 'scripts/compare_model_organism.py'
       - 'src/**'
       - 'pyproject.toml'
   workflow_dispatch:
@@ -26,6 +27,8 @@ jobs:
         run: python -m unittest discover -s tests -v
       - name: Download public cohort, verify provenance, convert and evaluate
         run: python scripts/validate_public_schizophrenia_cohort.py
+      - name: Verify processed mouse auditory-gating data and compare measurement scope
+        run: python scripts/compare_model_organism.py
       - name: Upload evaluation and provenance (not raw EEG)
         if: always()
         uses: actions/upload-artifact@v4
@@ -35,8 +38,12 @@ jobs:
             outputs/repod_schizophrenia/public_cohort_validation.json
             outputs/repod_schizophrenia/group_evaluation.json
             outputs/repod_schizophrenia/held_out_subject_predictions.csv
+            outputs/repod_schizophrenia/electrode_comparison.json
+            outputs/repod_schizophrenia/electrode_comparison/*/group_evaluation.json
+            outputs/repod_schizophrenia/electrode_comparison/*/held_out_subject_predictions.csv
             outputs/repod_schizophrenia/failures.csv
             data/public_schizophrenia/provenance.json
             data/public_schizophrenia/manifest.csv
+            outputs/model_organism/comparison.json
           if-no-files-found: warn
           retention-days: 14

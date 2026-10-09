@@ -5,10 +5,8 @@ The source dataset is CC0: https://doi.org/10.18150/repod.0107441
 """
 import hashlib
 import json
-import os
 from pathlib import Path
-import subprocess
-import sys
+from importlib.metadata import version as package_version
 from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 
@@ -43,8 +41,8 @@ def main():
     payload = get_json(API)
     if payload.get("status") != "OK":
         raise RuntimeError(f"RepOD API did not return OK: {payload.get('status')}")
-    version = payload["data"]["latestVersion"]
-    files = version["files"]
+    dataset_version = payload["data"]["latestVersion"]
+    files = dataset_version["files"]
     by_name = {str(item.get("label", item.get("dataFile", {}).get("filename", ""))).lower(): item
                for item in files}
     missing = sorted(EXPECTED - set(by_name))
@@ -86,6 +84,7 @@ def main():
         "dataset": "EEG in schizophrenia", "persistent_id": PERSISTENT_ID,
         "citation": "Olejarczyk E, Jernajczyk W (2017), RepOD v1",
         "license": "CC0 1.0", "api_url": API, "files": downloaded,
+        "dataset_version": {k: dataset_version.get(k) for k in ("versionNumber", "versionMinorNumber", "releaseTime")},
         "groups": {"HC": sum(x["group"] == "HC" for x in downloaded),
                    "PSY": sum(x["group"] == "PSY" for x in downloaded)},
         "note": "Diagnostic-group labels from dataset documentation; not episode/state labels.",
@@ -119,6 +118,7 @@ def main():
         (target_dir / "metadata.json").write_text(json.dumps(metadata, indent=2) + "\n", encoding="utf-8")
         recording = read_recording(target_dir / "recording.csv", target_dir / "metadata.json")
         part, summary = analyze(recording, compute_bicoherence=False)
+        part.insert(0, "recording_context", row["context"])
         part.insert(0, "site", row["site"])
         part.insert(0, "group", "psychosis_spectrum" if row["group"] == "PSY" else "healthy_control")
         part.insert(0, "subject_id", sid)
@@ -143,8 +143,9 @@ def main():
                                             "__sef95_hz", "__spectral_entropy")))
     if len(feature_columns) < 4:
         raise RuntimeError(f"Too few common, comparable EEG features for LOSO evaluation: {feature_columns}")
-    from psi_qeeg.ml import train_group_model
-    result = train_group_model(feature_file, OUT, feature_columns)
+    from psi_qeeg.cohort import compare_electrode_coverage
+    comparison = compare_electrode_coverage(feature_file, OUT)
+    result = comparison["comparisons"]["full_scalp"]
     accepted = features[features["accepted"].astype(str).str.lower() == "true"]
     report = {
         "status": "completed",
@@ -162,7 +163,12 @@ def main():
         "epoch_balanced_accuracy": result["epoch_balanced_accuracy"],
         "subject_balanced_accuracy": result["subject_balanced_accuracy"],
         "subject_confusion_matrix": result["subject_confusion_matrix"],
-        "site_checked": result["site_checked"],
+        "site_checked": True,
+        "electrode_comparison": comparison["comparisons"],
+        "cohort_features_sha256": comparison["cohort_features_sha256"],
+        "software_versions": {name: package_version(name) for name in
+                              ("psi-qeeg-bis", "numpy", "scipy", "pandas", "mne", "scikit-learn")},
+        "runner_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
         "clinical_validation": "not_established",
         "interpretation": "Exploratory schizophrenia-vs-healthy-control diagnosis-group benchmark only. It does not test autistic meltdown, psychosis onset, episode-state prediction, or clinical utility.",
         "limitations": [
