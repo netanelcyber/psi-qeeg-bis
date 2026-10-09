@@ -86,3 +86,51 @@ class EvaluationTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class LongRunTests(unittest.TestCase):
+    """26 h synthetic rodent-like day: circadian slow/fast alternation plus one injected abnormal episode."""
+    FS = 100
+
+    def day(self, abnormal_hour=20, hours=26):
+        from psi_qeeg.realtime import LongRunMonitor
+        rng = np.random.default_rng(7)
+        mon = LongRunMonitor(self.FS, ["a"])
+        events = []
+        for h in range(hours):
+            n = self.FS * 3600
+            t = np.arange(n) / self.FS
+            block = np.where(((t // 600) % 2 == 0)[:, None], 1.0, 0.0)          # 10 min slow / 10 min fast
+            x = rng.normal(0, 5, (n, 1)) + block * 40 * np.sin(2 * np.pi * 2 * t)[:, None] \
+                + (1 - block) * 12 * np.sin(2 * np.pi * 7 * t)[:, None]
+            if h == abnormal_hour:
+                m = (t > 900) & (t < 2700)                                          # 30 min of 12-Hz hypersynchrony
+                x[m, 0] += 60 * np.sin(2 * np.pi * 12 * t[m])
+            for i in range(0, n, self.FS * 60):
+                events += mon.push(x[i:i + self.FS * 60])
+        return mon, events
+
+    def test_24h_run_detects_episode_with_few_false_alerts(self):
+        mon, events = self.day()
+        st = mon.status()
+        self.assertTrue(st["meets_min_duration"])
+        alerts = [e["t_end_s"] for e in events if e["state"] == "alert"]
+        self.assertTrue(any(20 * 3600 + 900 <= a <= 20 * 3600 + 2700 + 600 for a in alerts))
+        self.assertEqual(len(mon.hourly_summary()), 26)
+        outside = [h for h in mon.hourly_summary() if h["hour"] != 20]
+        self.assertLessEqual(sum(h["alerts"] for h in outside), 1)
+        self.assertEqual(mon.hourly_summary()[20]["alerts"], 1)
+
+    def test_checkpoint_roundtrip(self):
+        import tempfile
+        from psi_qeeg.realtime import LongRunMonitor
+        mon, _ = self.day(hours=3)
+        with tempfile.TemporaryDirectory() as d:
+            mon.save(Path(d) / "ck.npz")
+            clone = LongRunMonitor(self.FS, ["a"]).load(Path(d) / "ck.npz")
+        self.assertEqual(mon.status()["baselines"], clone.status()["baselines"])
+        self.assertEqual(mon.hourly_summary(), clone.hourly_summary())
+
+    def test_short_run_is_flagged_incomplete(self):
+        mon, _ = self.day(hours=2)
+        self.assertFalse(mon.status()["meets_min_duration"])

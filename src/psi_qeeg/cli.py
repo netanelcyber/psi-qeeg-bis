@@ -53,6 +53,15 @@ def main(argv=None) -> int:
     p.add_argument("--baseline-epochs", type=int, default=30)
     p.add_argument("--alert-level", type=float, default=3.0)
     p.add_argument("--verbose", action="store_true", help="Print every epoch, not only state changes")
+    p = sub.add_parser("monitor-long", help="Multi-day (>= 24 h) streaming monitor with per-state baselines, hourly summary and checkpoints")
+    p.add_argument("input", type=Path, help="Raw CSV, read in bounded-memory chunks")
+    p.add_argument("--metadata", type=Path, required=True)
+    p.add_argument("--out", type=Path, required=True)
+    p.add_argument("--species", choices=("rodent", "human"), default="rodent")
+    p.add_argument("--min-hours", type=float, default=24)
+    p.add_argument("--epoch-s", type=float, default=10)
+    p.add_argument("--emg-active", type=float, help="EMG column threshold marking an 'active' state")
+    p.add_argument("--resume", action="store_true", help="Continue from out/checkpoint.npz")
     p = sub.add_parser("fetch-vitaldb", help="Download real public BIS EEG and monitor numerics")
     p.add_argument("--caseid", type=int, default=1)
     p.add_argument("--start-s", type=float, default=332)
@@ -135,6 +144,37 @@ def main(argv=None) -> int:
             transitions = run_stream(monitor, chunks(), verbose=args.verbose)
             print(json.dumps({"state_changes": len(transitions), "final_state": monitor.state,
                               "alerts": sum(t["state"] == "alert" for t in transitions)}), file=sys.stderr)
+        elif args.command == "monitor-long":
+            import pandas as pd
+            from .realtime import LongRunConfig, LongRunMonitor, MonitorConfig
+            meta = json.loads(args.metadata.read_text(encoding="utf-8"))
+            fs, cols = float(meta["sampling_rate_hz"]), meta["eeg_columns"]
+            monitor = LongRunMonitor(fs, cols, MonitorConfig(epoch_s=args.epoch_s, hop_s=args.epoch_s, species=args.species),
+                                     LongRunConfig(min_hours=args.min_hours, emg_active=args.emg_active))
+            args.out.mkdir(parents=True, exist_ok=True)
+            checkpoint, skip = args.out / "checkpoint.npz", 0
+            if args.resume and checkpoint.exists():
+                monitor.load(checkpoint)
+                skip = monitor._t0
+            usecols = ["time_s", *cols] + (["EMG"] if args.emg_active is not None else [])
+            seen, last_state, events_log = 0, None, open(args.out / "events.jsonl", "a", encoding="utf-8")
+            for chunk in pd.read_csv(args.input, usecols=usecols, chunksize=round(fs * 60)):
+                if seen + len(chunk) <= skip:
+                    seen += len(chunk)
+                    continue
+                chunk = chunk.iloc[max(0, skip - seen):]
+                seen += len(chunk) + max(0, skip - seen)
+                for r in monitor.push(chunk[cols].to_numpy(float), emg=chunk["EMG"].to_numpy(float) if "EMG" in chunk else None):
+                    if r["state"] != last_state:
+                        events_log.write(json.dumps(r) + "\n")
+                        events_log.flush()
+                        last_state = r["state"]
+                monitor.save(checkpoint)
+            _write_json({"status": monitor.status(), "hourly": monitor.hourly_summary(),
+                         "note": "Deviation from this animal's own per-state baseline; research only, not a validated predictor"},
+                        args.out / "summary.json")
+            st = monitor.status()
+            print(json.dumps({k: st[k] for k in ("duration_h", "meets_min_duration", "alerts", "state")}))
         elif args.command == "fetch-vitaldb":
             from .vitaldb import download
             metadata = download(args.caseid, args.out, args.start_s, args.duration_s, args.cache)

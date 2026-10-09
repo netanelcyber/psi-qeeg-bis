@@ -17,7 +17,11 @@ def band_integral(f: np.ndarray, psd: np.ndarray, low: float, high: float) -> fl
     return float(trapezoid(pp, ff))
 
 
-def spectral_features(x: np.ndarray, fs: float, line_hz: float | None = None) -> dict:
+# Rodent EEG convention: theta ~5-9 Hz, "alpha" slot = sigma/spindle range. Same keys, so downstream code is shared.
+RODENT_BANDS = {"delta": (0.5, 4), "theta": (4, 9), "alpha": (9, 15), "beta": (15, 30), "gamma": (30, 40)}
+
+
+def spectral_features(x: np.ndarray, fs: float, line_hz: float | None = None, bands: dict | None = None) -> dict:
     x = np.asarray(x, dtype=float)
     if x.ndim != 1 or len(x) < round(2 * fs) or not np.isfinite(x).all():
         raise ValueError("PSD needs at least two seconds of complete one-dimensional EEG")
@@ -31,7 +35,7 @@ def spectral_features(x: np.ndarray, fs: float, line_hz: float | None = None) ->
     nperseg = round(2 * fs)
     f, p = signal.welch(x, fs=fs, window="hann", nperseg=nperseg,
                         noverlap=nperseg // 2, detrend="constant", scaling="density")
-    powers = {name: band_integral(f, p, *limits) for name, limits in BANDS.items()}
+    powers = {name: band_integral(f, p, *limits) for name, limits in (bands or BANDS).items()}
     total = band_integral(f, p, 0.5, 40)
     out = {f"{name}_power_uv2": value for name, value in powers.items()}
     out.update({f"{name}_relative_power": value / total if total > 0 else None
