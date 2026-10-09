@@ -1,0 +1,42 @@
+name: Public psychiatric EEG cohort validation
+on:
+  push:
+    branches: [research/run-public-psychiatric-cohort]
+    paths:
+      - '.github/workflows/public-cohort-validation.yml'
+      - 'scripts/validate_public_schizophrenia_cohort.py'
+      - 'src/**'
+      - 'pyproject.toml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  repod-cohort:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+      - name: Install project with EDF and ML support
+        run: python -m pip install -e '.[edf,ml]'
+      - name: Run offline unit tests
+        run: python -m unittest discover -s tests -v
+      - name: Download public cohort, verify provenance, convert and evaluate
+        run: python scripts/validate_public_schizophrenia_cohort.py
+      - name: Upload evaluation and provenance (not raw EEG)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: repod-public-cohort-validation
+          path: |
+            outputs/repod_schizophrenia/public_cohort_validation.json
+            outputs/repod_schizophrenia/group_evaluation.json
+            outputs/repod_schizophrenia/held_out_subject_predictions.csv
+            outputs/repod_schizophrenia/failures.csv
+            data/public_schizophrenia/provenance.json
+            data/public_schizophrenia/manifest.csv
+          if-no-files-found: warn
+          retention-days: 14
