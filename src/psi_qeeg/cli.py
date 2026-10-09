@@ -45,6 +45,14 @@ def main(argv=None) -> int:
     p = sub.add_parser("make-manifest", help="Scan ROOT/{ASD,PSY,HC}/ for EDF/BDF/SET/FIF files into a manifest CSV")
     p.add_argument("root", type=Path)
     p.add_argument("--out", type=Path, required=True)
+    p = sub.add_parser("monitor", help="Replay a recording (or read stdin) through the streaming deviation monitor")
+    p.add_argument("input", type=Path, nargs="?", help="Raw CSV; omit with --stdin")
+    p.add_argument("--metadata", type=Path, required=True)
+    p.add_argument("--stdin", action="store_true", help="Read comma-separated samples (one line per sample) from stdin")
+    p.add_argument("--speed", type=float, default=0, help="1 = real time replay, 0 = as fast as possible")
+    p.add_argument("--baseline-epochs", type=int, default=30)
+    p.add_argument("--alert-level", type=float, default=3.0)
+    p.add_argument("--verbose", action="store_true", help="Print every epoch, not only state changes")
     p = sub.add_parser("fetch-vitaldb", help="Download real public BIS EEG and monitor numerics")
     p.add_argument("--caseid", type=int, default=1)
     p.add_argument("--start-s", type=float, default=332)
@@ -100,6 +108,33 @@ def main(argv=None) -> int:
         elif args.command == "make-manifest":
             from .convert import build_manifest
             print(json.dumps({"files": build_manifest(args.root, args.out)}))
+        elif args.command == "monitor":
+            import time
+            import numpy as np
+            from .realtime import MonitorConfig, RealtimeMonitor, run_stream
+            meta = json.loads(args.metadata.read_text(encoding="utf-8"))
+            cfg = MonitorConfig(baseline_epochs=args.baseline_epochs, alert_level=args.alert_level)
+            monitor = RealtimeMonitor(meta["sampling_rate_hz"], meta["eeg_columns"], cfg)
+            step = max(1, round(0.25 * monitor.fs))
+
+            def chunks():
+                if args.stdin:
+                    buf = []
+                    for line in sys.stdin:
+                        buf.append([float(v) for v in line.split(",")])
+                        if len(buf) >= step:
+                            yield np.array(buf)
+                            buf = []
+                else:
+                    from .recording import read_recording
+                    rec = read_recording(args.input, args.metadata)
+                    for i in range(0, len(rec.eeg), step):
+                        yield rec.eeg[i:i + step]
+                        if args.speed > 0:
+                            time.sleep(step / rec.fs / args.speed)
+            transitions = run_stream(monitor, chunks(), verbose=args.verbose)
+            print(json.dumps({"state_changes": len(transitions), "final_state": monitor.state,
+                              "alerts": sum(t["state"] == "alert" for t in transitions)}), file=sys.stderr)
         elif args.command == "fetch-vitaldb":
             from .vitaldb import download
             metadata = download(args.caseid, args.out, args.start_s, args.duration_s, args.cache)
