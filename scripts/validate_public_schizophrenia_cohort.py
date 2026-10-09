@@ -116,7 +116,7 @@ def main():
             "psychiatric_labels": None, "source": row["source"], "license": "CC0-1.0",
             "changes": "First 120 seconds only; converted to uV; no filtering, resampling or interpolation",
         }
-        (target_dir / "metadata.json").write_text(json.dumps(metadata, indent=2) + "\\n", encoding="utf-8")
+        (target_dir / "metadata.json").write_text(json.dumps(metadata, indent=2) + "\n", encoding="utf-8")
         recording = read_recording(target_dir / "recording.csv", target_dir / "metadata.json")
         part, summary = analyze(recording, compute_bicoherence=False)
         part.insert(0, "site", row["site"])
