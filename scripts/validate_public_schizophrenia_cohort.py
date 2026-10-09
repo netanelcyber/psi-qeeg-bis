@@ -91,7 +91,7 @@ def main():
         "note": "Diagnostic-group labels from dataset documentation; not episode/state labels.",
     }, indent=2) + "\n", encoding="utf-8")
 
-    subprocess.run([sys.executable, "-m", "psi_qeeg.cli", "convert-cohort", str(MANIFEST),
+    subprocess.run(["psi-qeeg", "convert-cohort", str(MANIFEST),
                     "--out", str(OUT), "--workers", "2", "--max-failures", "0"],
                    check=True)
     feature_file = OUT / "cohort_features.csv"
