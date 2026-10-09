@@ -1,0 +1,306 @@
+{
+  "status": "completed",
+  "dataset": "EEG in schizophrenia (RepOD, CC0)",
+  "source": "https://doi.org/10.18150/repod.0107441",
+  "downloaded_files": 28,
+  "downloaded_bytes": 274341860,
+  "subjects_per_group": {
+    "healthy_control": 14,
+    "psychosis_spectrum": 14
+  },
+  "converted_subjects": 28,
+  "failed_subjects": 0,
+  "feature_rows": 840,
+  "accepted_epochs": 821,
+  "features_used": [
+    "C3__alpha_power_uv2",
+    "C3__delta_alpha_ratio",
+    "C3__sef95_hz",
+    "C3__spectral_entropy",
+    "C4__alpha_power_uv2",
+    "C4__delta_alpha_ratio",
+    "C4__sef95_hz",
+    "C4__spectral_entropy",
+    "Cz__alpha_power_uv2",
+    "Cz__delta_alpha_ratio",
+    "Cz__sef95_hz",
+    "Cz__spectral_entropy",
+    "F3__alpha_power_uv2",
+    "F3__delta_alpha_ratio",
+    "F3__sef95_hz",
+    "F3__spectral_entropy",
+    "F4__alpha_power_uv2",
+    "F4__delta_alpha_ratio",
+    "F4__sef95_hz",
+    "F4__spectral_entropy",
+    "F7__alpha_power_uv2",
+    "F7__delta_alpha_ratio",
+    "F7__sef95_hz",
+    "F7__spectral_entropy",
+    "F8__alpha_power_uv2",
+    "F8__delta_alpha_ratio",
+    "F8__sef95_hz",
+    "F8__spectral_entropy",
+    "Fp1__alpha_power_uv2",
+    "Fp1__delta_alpha_ratio",
+    "Fp1__sef95_hz",
+    "Fp1__spectral_entropy",
+    "Fp2__alpha_power_uv2",
+    "Fp2__delta_alpha_ratio",
+    "Fp2__sef95_hz",
+    "Fp2__spectral_entropy",
+    "Fz__alpha_power_uv2",
+    "Fz__delta_alpha_ratio",
+    "Fz__sef95_hz",
+    "Fz__spectral_entropy",
+    "O1__alpha_power_uv2",
+    "O1__delta_alpha_ratio",
+    "O1__sef95_hz",
+    "O1__spectral_entropy",
+    "O2__alpha_power_uv2",
+    "O2__delta_alpha_ratio",
+    "O2__sef95_hz",
+    "O2__spectral_entropy",
+    "P3__alpha_power_uv2",
+    "P3__delta_alpha_ratio",
+    "P3__sef95_hz",
+    "P3__spectral_entropy",
+    "P4__alpha_power_uv2",
+    "P4__delta_alpha_ratio",
+    "P4__sef95_hz",
+    "P4__spectral_entropy",
+    "Pz__alpha_power_uv2",
+    "Pz__delta_alpha_ratio",
+    "Pz__sef95_hz",
+    "Pz__spectral_entropy",
+    "T3__alpha_power_uv2",
+    "T3__delta_alpha_ratio",
+    "T3__sef95_hz",
+    "T3__spectral_entropy",
+    "T4__alpha_power_uv2",
+    "T4__delta_alpha_ratio",
+    "T4__sef95_hz",
+    "T4__spectral_entropy",
+    "T5__alpha_power_uv2",
+    "T5__delta_alpha_ratio",
+    "T5__sef95_hz",
+    "T5__spectral_entropy",
+    "T6__alpha_power_uv2",
+    "T6__delta_alpha_ratio",
+    "T6__sef95_hz",
+    "T6__spectral_entropy"
+  ],
+  "evaluation": "leave-one-subject-out",
+  "epoch_balanced_accuracy": 0.6407529612837373,
+  "subject_balanced_accuracy": 0.6428571428571429,
+  "subject_confusion_matrix": {
+    "labels": [
+      "healthy_control",
+      "psychosis_spectrum"
+    ],
+    "rows_true_cols_pred": [
+      [
+        9,
+        5
+      ],
+      [
+        5,
+        9
+      ]
+    ]
+  },
+  "site_checked": true,
+  "electrode_comparison": {
+    "full_scalp": {
+      "features": [
+        "C3__alpha_power_uv2",
+        "C3__delta_alpha_ratio",
+        "C3__sef95_hz",
+        "C3__spectral_entropy",
+        "C4__alpha_power_uv2",
+        "C4__delta_alpha_ratio",
+        "C4__sef95_hz",
+        "C4__spectral_entropy",
+        "Cz__alpha_power_uv2",
+        "Cz__delta_alpha_ratio",
+        "Cz__sef95_hz",
+        "Cz__spectral_entropy",
+        "F3__alpha_power_uv2",
+        "F3__delta_alpha_ratio",
+        "F3__sef95_hz",
+        "F3__spectral_entropy",
+        "F4__alpha_power_uv2",
+        "F4__delta_alpha_ratio",
+        "F4__sef95_hz",
+        "F4__spectral_entropy",
+        "F7__alpha_power_uv2",
+        "F7__delta_alpha_ratio",
+        "F7__sef95_hz",
+        "F7__spectral_entropy",
+        "F8__alpha_power_uv2",
+        "F8__delta_alpha_ratio",
+        "F8__sef95_hz",
+        "F8__spectral_entropy",
+        "Fp1__alpha_power_uv2",
+        "Fp1__delta_alpha_ratio",
+        "Fp1__sef95_hz",
+        "Fp1__spectral_entropy",
+        "Fp2__alpha_power_uv2",
+        "Fp2__delta_alpha_ratio",
+        "Fp2__sef95_hz",
+        "Fp2__spectral_entropy",
+        "Fz__alpha_power_uv2",
+        "Fz__delta_alpha_ratio",
+        "Fz__sef95_hz",
+        "Fz__spectral_entropy",
+        "O1__alpha_power_uv2",
+        "O1__delta_alpha_ratio",
+        "O1__sef95_hz",
+        "O1__spectral_entropy",
+        "O2__alpha_power_uv2",
+        "O2__delta_alpha_ratio",
+        "O2__sef95_hz",
+        "O2__spectral_entropy",
+        "P3__alpha_power_uv2",
+        "P3__delta_alpha_ratio",
+        "P3__sef95_hz",
+        "P3__spectral_entropy",
+        "P4__alpha_power_uv2",
+        "P4__delta_alpha_ratio",
+        "P4__sef95_hz",
+        "P4__spectral_entropy",
+        "Pz__alpha_power_uv2",
+        "Pz__delta_alpha_ratio",
+        "Pz__sef95_hz",
+        "Pz__spectral_entropy",
+        "T3__alpha_power_uv2",
+        "T3__delta_alpha_ratio",
+        "T3__sef95_hz",
+        "T3__spectral_entropy",
+        "T4__alpha_power_uv2",
+        "T4__delta_alpha_ratio",
+        "T4__sef95_hz",
+        "T4__spectral_entropy",
+        "T5__alpha_power_uv2",
+        "T5__delta_alpha_ratio",
+        "T5__sef95_hz",
+        "T5__spectral_entropy",
+        "T6__alpha_power_uv2",
+        "T6__delta_alpha_ratio",
+        "T6__sef95_hz",
+        "T6__spectral_entropy"
+      ],
+      "subjects_per_group": {
+        "healthy_control": 14,
+        "psychosis_spectrum": 14
+      },
+      "epochs": 821,
+      "epoch_balanced_accuracy": 0.6407529612837373,
+      "subject_balanced_accuracy": 0.6428571428571429,
+      "subject_confusion_matrix": {
+        "labels": [
+          "healthy_control",
+          "psychosis_spectrum"
+        ],
+        "rows_true_cols_pred": [
+          [
+            9,
+            5
+          ],
+          [
+            5,
+            9
+          ]
+        ]
+      }
+    },
+    "left_frontal_temporal": {
+      "features": [
+        "F7__alpha_power_uv2",
+        "F7__delta_alpha_ratio",
+        "F7__sef95_hz",
+        "F7__spectral_entropy",
+        "Fp1__alpha_power_uv2",
+        "Fp1__delta_alpha_ratio",
+        "Fp1__sef95_hz",
+        "Fp1__spectral_entropy"
+      ],
+      "subjects_per_group": {
+        "healthy_control": 14,
+        "psychosis_spectrum": 14
+      },
+      "epochs": 821,
+      "epoch_balanced_accuracy": 0.509177605811,
+      "subject_balanced_accuracy": 0.4642857142857143,
+      "subject_confusion_matrix": {
+        "labels": [
+          "healthy_control",
+          "psychosis_spectrum"
+        ],
+        "rows_true_cols_pred": [
+          [
+            6,
+            8
+          ],
+          [
+            7,
+            7
+          ]
+        ]
+      }
+    },
+    "right_frontal_temporal": {
+      "features": [
+        "F8__alpha_power_uv2",
+        "F8__delta_alpha_ratio",
+        "F8__sef95_hz",
+        "F8__spectral_entropy",
+        "Fp2__alpha_power_uv2",
+        "Fp2__delta_alpha_ratio",
+        "Fp2__sef95_hz",
+        "Fp2__spectral_entropy"
+      ],
+      "subjects_per_group": {
+        "healthy_control": 14,
+        "psychosis_spectrum": 14
+      },
+      "epochs": 821,
+      "epoch_balanced_accuracy": 0.5653945213283642,
+      "subject_balanced_accuracy": 0.6071428571428572,
+      "subject_confusion_matrix": {
+        "labels": [
+          "healthy_control",
+          "psychosis_spectrum"
+        ],
+        "rows_true_cols_pred": [
+          [
+            8,
+            6
+          ],
+          [
+            5,
+            9
+          ]
+        ]
+      }
+    }
+  },
+  "cohort_features_sha256": "a91dc441484d6e927042b44e7fc6ae2113f3fedddb9bedaa951817bb288b2b4e",
+  "software_versions": {
+    "psi-qeeg-bis": "0.1.0",
+    "numpy": "2.3.5",
+    "scipy": "1.17.0",
+    "pandas": "2.2.3",
+    "mne": "1.13.2",
+    "scikit-learn": "1.8.0"
+  },
+  "runner_sha256": "469819a3e7819e1313fde3e1e0556aac31357c5a6f4cd3760e1db9be17e09a87",
+  "clinical_validation": "not_established",
+  "interpretation": "Exploratory schizophrenia-vs-healthy-control diagnosis-group benchmark only. It does not test autistic meltdown, psychosis onset, episode-state prediction, or clinical utility.",
+  "limitations": [
+    "Single public cohort/acquisition context; external-site generalization is not tested.",
+    "Diagnosis labels are not momentary episode labels.",
+    "No clinical or prospective validation.",
+    "Epoch metrics are secondary; subject-level metrics are the more meaningful result."
+  ]
+}

@@ -9,7 +9,7 @@ from .signal import spectral_features, squared_bicoherence, phase_locking_value
 from .indices import SOI_DIRECTIONS, RDI_COMPONENTS
 
 
-def analyze(recording, epoch_s=4.0, line_hz=None, policy: QualityPolicy | None = None):
+def analyze(recording, epoch_s=4.0, line_hz=None, policy: QualityPolicy | None = None, compute_bicoherence=True):
     policy = policy or QualityPolicy()
     if recording.fs / 2 <= 40:
         raise ValueError("The full 0.5-40 Hz feature set needs a sampling rate above 80 Hz")
@@ -48,7 +48,7 @@ def analyze(recording, epoch_s=4.0, line_hz=None, policy: QualityPolicy | None =
                 history_n = round(60 * recording.fs)
                 begin = first + n - history_n
                 bic = None
-                if begin >= 0:
+                if compute_bicoherence and begin >= 0:
                     history = x[begin:first + n]
                     past_qc = assess_epoch(history, recording.frame.iloc[begin:first + n], policy, require_sqi=is_bis)
                     if past_qc["accepted"] and not past_qc["warnings"]:
