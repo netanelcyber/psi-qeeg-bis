@@ -3,8 +3,9 @@
 import unittest
 
 import pandas as pd
+import numpy as np
 
-from psi_qeeg.model_organism import EXPECTED_ISI_MS, summarize_mouse_gating
+from psi_qeeg.model_organism import EXPECTED_ISI_MS, summarize_mouse_gating, source_erp_gating
 
 
 class MouseGatingTests(unittest.TestCase):
@@ -25,6 +26,20 @@ class MouseGatingTests(unittest.TestCase):
         for frame in (self.frame.iloc[1:], pd.concat([self.frame, self.frame.iloc[:1]])):
             with self.assertRaises(ValueError):
                 summarize_mouse_gating(frame)
+
+    def test_peak_ratios_preserve_source_channel_averaging(self):
+        rng = np.random.default_rng(17)
+        erp = rng.normal(size=(7, 1343, 1)) * np.arange(1, 6)[None, None, :]
+        full = source_erp_gating(erp)
+        reduced = source_erp_gating(erp, [1, 2])
+        self.assertEqual(full.shape, (7, 5))
+        self.assertEqual(reduced.shape, (7, 1))
+        np.testing.assert_allclose(full[:, :1], reduced)
+
+    def test_zero_response_or_wrong_erp_shape_rejected(self):
+        for erp in (np.zeros((7, 1343, 5)), np.ones((7, 100, 5))):
+            with self.assertRaises(ValueError):
+                source_erp_gating(erp)
 
     def test_inconsistent_genotype_or_nonfinite_ratio_rejected(self):
         changed = self.frame.copy()

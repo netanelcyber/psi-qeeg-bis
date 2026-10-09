@@ -4,7 +4,7 @@
 
 The public [Fmr1-KO2 sensory-processing dataset](https://doi.org/10.17605/OSF.IO/CVEFK) supplies processed EEG event-related potentials and animal-level gating measurements. Its [institutional description](https://research.rug.nl/en/datasets/unaffected-sensory-processing-in-fmr1-ko-mice/) reports largely unaffected sensory responses and no robust replicated sensory-processing deficit. This is useful counter-evidence to an assumption that an autism-associated genotype must always show impaired gating.
 
-The source README says continuous raw EDFs must be requested from the authors. This work downloaded and verified the public `PairedTone_SenGat_GLM.csv`, analysis MATLAB script and description file; it did not obtain raw EDFs or independently reproduce their preprocessing. Both the OSF-reported SHA-256 and a pinned CSV SHA-256 were checked. Complete source fingerprints and results are in [model_organism_comparison.json](model_organism_comparison.json).
+The source README says continuous raw EDFs must be requested from the authors. This work downloaded and verified the public `PairedTone_SenGat_GLM.csv`, 22 processed five-channel ERP arrays, analysis MATLAB script and description file; it did not obtain raw EDFs or independently reproduce their preprocessing. Both the OSF-reported SHA-256 and a pinned CSV SHA-256 were checked. Complete source fingerprints and results are in [model_organism_comparison.json](model_organism_comparison.json).
 
 The CSV has **22 animals**, 10 `wt` and 12 `hem`, each measured at seven stimulus intervals (154 rows). The source code groups WT and hemizygous Fmr1-KO2 animals, averages ERP channels 2 and 3, and extracts a second/first stimulus peak-to-peak response ratio. Larger ratios indicate less suppression. Genotype and paired-tone conditions are preserved; no human psychiatric labels are assigned.
 
@@ -31,7 +31,22 @@ For an exploratory summary across all seven intervals, the mean of each animal's
 | Event onset | No prospective episode event labels | No meltdown / psychosis-onset labels | Event sensitivity, lead time and false alerts cannot be estimated |
 | PSI/BIS | Regional scalp coverage approximations; no validated PSI | No BIS electrode correspondence or human calibration | No transferable SOI/RDI score or clinical BIS interpretation |
 
-The implemented result is a measurement-and-evidence comparison plus real mouse-data re-analysis. It is **not** a cross-species classifier or numerical validation of autistic meltdown versus psychosis onset.
+The implemented result is a measurement-and-evidence comparison plus real mouse-data re-analysis and a within-mouse monitoring-coverage benchmark. It is **not** a cross-species classifier or numerical validation of autistic meltdown versus psychosis onset.
+
+## Expanded monitoring within the model organism
+
+The source provides five recorded ERP channels per animal. The expanded comparison preserves all five channels and uses seven S2/S1 ratios for each channel (35 features). The restricted comparison follows the original analysis by averaging channels 2 and 3 before peak extraction (seven features). Source MATLAB peak windows are reproduced with explicit conversion of one-based inclusive indices to Python slices. The restricted values must reproduce all 154 published CSV ratios within 5e-9 before evaluation can proceed.
+
+Both sets use exactly the same 22 animals and seven stimulus intervals. A fixed linear SVC predicts documented `wt`/`hem` genotype with leave-one-animal-out evaluation; scaling is fitted only to each training fold. There is no tuning, channel selection or pooling of humans and mice. Results are point estimates, not evidence that expanded monitoring improves event prediction. The comparisons vary both channel coverage and feature dimension/averaging; they do not isolate channel count as the only factor. No BIS correspondence is asserted for these animal electrodes.
+
+| Mouse monitoring coverage | Features | Animal balanced accuracy | Confusion matrix (`hem`, `wt`; rows true, columns predicted) |
+| --- | --- | --- | --- |
+| All five recorded ERP channels | 35 | 40.00% | `[[6, 6], [7, 3]]` |
+| Original mean of two channels | 7 | 45.83% | `[[5, 7], [5, 5]]` |
+
+The maximum discrepancy between reproduced and published gating ratios is **4.972e-10**, within the rounding precision of the nine-decimal CSV. Expanded coverage did not improve the point estimate in this fixed exploratory experiment; both estimates are below the binary balanced-accuracy chance reference of 50%. No reliable genotype discrimination or crisis/onset inference follows from these results. This does not establish that more channels are generally worse, and no formal comparison test was performed.
+
+The machine-readable report includes both confusion matrices, held-out animal predictions, source-file hashes and the maximum ratio-reproduction error. This comparison covers **additional EEG/ERP channels only**. Synchronized video, motion, EMG, autonomic measures, raw continuous spectral analysis and independently annotated behavioral crisis/onset events are unavailable in the files used here. No claim of a complete multimodal enhanced-monitoring comparison is made.
 
 ## Psychosis-related model evidence
 

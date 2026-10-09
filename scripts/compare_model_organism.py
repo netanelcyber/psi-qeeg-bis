@@ -7,12 +7,16 @@ behavioral episode labels, shared electrode locations or cross-species scores.
 import argparse
 import hashlib
 import json
+import re
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from urllib.request import Request, urlopen
 
 import pandas as pd
+import numpy as np
+from scipy.io import loadmat
 
-from psi_qeeg.model_organism import summarize_mouse_gating
+from psi_qeeg.model_organism import summarize_mouse_gating, source_erp_gating, compare_mouse_channel_coverage
 
 
 FILES = {
@@ -27,6 +31,57 @@ def fetch(url):
     request = Request(url, headers={"User-Agent": "psi-qeeg-bis-model-organism-comparison/1.0"})
     with urlopen(request, timeout=90) as response:
         return response.read()
+
+
+def load_mouse_erps(cache, gating):
+    """Download the 22 source-verified processed ERPs and check the published ratios."""
+    analysis = (cache / "paired_tone_analysis.m").read_text(encoding="utf-8")
+    groups = {}
+    ordered = []
+    for label in ("wt", "hem"):
+        match = re.search(rf"ERP{label}\s*=\s*cat\(4,(.*?)\);", analysis, re.S)
+        if not match:
+            raise ValueError(f"Cannot verify {label} animal assignments in the source MATLAB script")
+        members = re.findall(r"PT_FE\d+", match.group(1))
+        ordered.extend(members)
+        groups.update({member: label for member in members})
+    if len(ordered) != 22 or len(groups) != 22:
+        raise ValueError("Expected 22 unique source-assigned animals")
+    listing_url = "https://api.osf.io/v2/nodes/cvefk/files/osfstorage/611cd91387c8f10069b11318/?page[size]=100"
+    listing = json.loads(fetch(listing_url))
+    if listing.get("links", {}).get("next"):
+        raise ValueError("Source directory needs pagination; review before continuing")
+    by_name = {item["attributes"]["name"]: item for item in listing["data"]}
+
+    def load_one(sid):
+        item = by_name[sid + ".mat"]
+        path = cache / (sid + ".mat")
+        data = path.read_bytes() if path.exists() else fetch(item["links"]["download"])
+        expected = item["attributes"]["extra"]["hashes"]["sha256"]
+        actual = hashlib.sha256(data).hexdigest()
+        if actual != expected:
+            raise ValueError(f"Source ERP SHA-256 mismatch for {sid}")
+        path.write_bytes(data)
+        erp = loadmat(path)[sid]
+        return {"animal_id": sid, "genotype": groups[sid], "erp": erp}, {
+            "source_filename": sid + ".mat", "source_file_id": item["id"], "sha256": actual,
+            "bytes": len(data), "source_url": item["links"]["download"],
+        }
+
+    with ThreadPoolExecutor(max_workers=4) as pool:
+        pairs = list(pool.map(load_one, ordered))
+    animals, provenance = [x[0] for x in pairs], [x[1] for x in pairs]
+    differences = []
+    for source_id, animal in enumerate(animals, 1):
+        rows = gating[gating.ID == source_id].sort_values("ISI")
+        if len(rows) != 7 or set(rows.genotype) != {animal["genotype"]}:
+            raise ValueError("Source CSV animal ordering/genotypes do not match the MATLAB assignments")
+        reproduced = source_erp_gating(animal["erp"], [1, 2]).ravel()
+        differences.extend(abs(reproduced - rows.ratio.to_numpy()))
+    error = float(np.max(differences))
+    if error > 5e-9:
+        raise ValueError(f"Processed ERPs do not reproduce the published paired-tone ratios: max error {error}")
+    return animals, provenance, error
 
 
 def main():
@@ -55,16 +110,22 @@ def main():
         provenance.append({"local_filename": filename, "source_filename": attributes["name"],
                            "file_id": file_id, "source_api": api, "source_url": info["links"]["download"],
                            "sha256": actual, "bytes": len(data), "source_modified": attributes["date_modified"]})
-    mouse = summarize_mouse_gating(pd.read_csv(args.cache / "paired_tone_gating.csv"))
+    gating = pd.read_csv(args.cache / "paired_tone_gating.csv")
+    mouse = summarize_mouse_gating(gating)
     if mouse["animals_per_genotype"] != {"hem": 12, "wt": 10} or mouse["rows"] != 154:
         raise ValueError("Source data no longer match the documented 22-animal, seven-ISI cohort")
     human = json.loads(args.human_report.read_text(encoding="utf-8"))
+    animals, erp_provenance, reproduction_error = load_mouse_erps(args.cache, gating)
+    monitoring = compare_mouse_channel_coverage(animals)
+    monitoring["published_ratio_reproduction_max_absolute_error"] = reproduction_error
     report = {
         "status": "descriptive_model_organism_comparison_completed",
         "event_validation_status": "not_possible_with_these_labels",
         "mouse_source": "https://doi.org/10.17605/OSF.IO/CVEFK",
         "source_readme": "Raw EDFs available on author request; processed ERPs and gating CSV are public",
         "mouse_provenance": provenance, "mouse": mouse,
+        "processed_erp_provenance": erp_provenance,
+        "expanded_channel_monitoring": monitoring,
         "human": {key: human[key] for key in (
             "dataset", "source", "subjects_per_group", "accepted_epochs", "subject_balanced_accuracy")},
         "comparison": {
@@ -91,6 +152,7 @@ def main():
     args.out.write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
     print(json.dumps({"report": str(args.out), "mouse_animals": mouse["animals_per_genotype"],
                       "gating_mean_by_genotype": mouse["animal_mean_across_all_isis"],
+                      "expanded_channel_monitoring": monitoring,
                       "event_validation_status": report["event_validation_status"]}, indent=2))
 
 

@@ -179,6 +179,439 @@
     "SOI": null,
     "RDI": null
   },
+  "processed_erp_provenance": [
+    {
+      "source_filename": "PT_FE02.mat",
+      "source_file_id": "611cd9242dab24005d25c444",
+      "sha256": "90bcda20b1e8f818e542fabea6b63020ca709351185a7ae2d650de65ea510cef",
+      "bytes": 361344,
+      "source_url": "https://osf.io/download/ntrhg/"
+    },
+    {
+      "source_filename": "PT_FE04.mat",
+      "source_file_id": "611cd925d2109700606b06bb",
+      "sha256": "229ace51e48b34f4b1d0879ca6c4e72b6d708fdbf84ffb744b4f783751160cbd",
+      "bytes": 361442,
+      "source_url": "https://osf.io/download/myevt/"
+    },
+    {
+      "source_filename": "PT_FE05.mat",
+      "source_file_id": "611cd92787c8f1006ab11d43",
+      "sha256": "aebc18d05811a200cf7fe0e5f07f8d32a3a74bce6aa79dc2e80c7ad5462bef07",
+      "bytes": 361404,
+      "source_url": "https://osf.io/download/r4m7f/"
+    },
+    {
+      "source_filename": "PT_FE07.mat",
+      "source_file_id": "611cd92787c8f1006ab11d49",
+      "sha256": "deff8d6149ccb299558a19ddbce5e8f7c726838127eda104e954031cd740dd4c",
+      "bytes": 361400,
+      "source_url": "https://osf.io/download/cjad9/"
+    },
+    {
+      "source_filename": "PT_FE09.mat",
+      "source_file_id": "611cd9282dab24005d25c45c",
+      "sha256": "66da6ced06711a53032246a4bac0ca5b75cb028ae956f49f9441c554ce1f7f29",
+      "bytes": 361431,
+      "source_url": "https://osf.io/download/8brgc/"
+    },
+    {
+      "source_filename": "PT_FE12.mat",
+      "source_file_id": "611cd92c2dab24005925bb64",
+      "sha256": "5c5c3447a0d7aabb09dcc46f5297025078dbf3a8b7217ee2aceda469cb88a223",
+      "bytes": 361266,
+      "source_url": "https://osf.io/download/edqb9/"
+    },
+    {
+      "source_filename": "PT_FE13.mat",
+      "source_file_id": "611cd92cd2109700616b1867",
+      "sha256": "7617231bea172d7f42c5ce32e472d0ca2f151dd5e502cf262e7d410045372a0d",
+      "bytes": 361423,
+      "source_url": "https://osf.io/download/6vr4z/"
+    },
+    {
+      "source_filename": "PT_FE16.mat",
+      "source_file_id": "611cd92fd2109700606b06c5",
+      "sha256": "86ab9309fd121ed54e9be0c9650b8d9aac387307514b5258575097714d82953b",
+      "bytes": 361493,
+      "source_url": "https://osf.io/download/kpxsb/"
+    },
+    {
+      "source_filename": "PT_FE17.mat",
+      "source_file_id": "611cd93187c8f10069b1136a",
+      "sha256": "80dc7fa719df1b7ec2e86bc7124ce846df7c24b9c4a832c0d4bdd7f3606604a1",
+      "bytes": 361488,
+      "source_url": "https://osf.io/download/8rw9d/"
+    },
+    {
+      "source_filename": "PT_FE20.mat",
+      "source_file_id": "611cd932d2109700676b14f0",
+      "sha256": "9927878378640fd39b656b3a47e1a65d84720cfad33f9dd6e21e880ec4428f22",
+      "bytes": 361501,
+      "source_url": "https://osf.io/download/pxq5d/"
+    },
+    {
+      "source_filename": "PT_FE01.mat",
+      "source_file_id": "611cd9232dab24005925bb54",
+      "sha256": "45b6f1633e94866579af72f29d50777e83fedccd54977ff4b1eec067055cf797",
+      "bytes": 361239,
+      "source_url": "https://osf.io/download/4z3rm/"
+    },
+    {
+      "source_filename": "PT_FE03.mat",
+      "source_file_id": "611cd9242dab24005d25c440",
+      "sha256": "31a7ce1f231be3a6f0bc52248002369af7416cfad4cddf262d468f5e68107ee6",
+      "bytes": 361301,
+      "source_url": "https://osf.io/download/gw6rd/"
+    },
+    {
+      "source_filename": "PT_FE06.mat",
+      "source_file_id": "611cd92887c8f1006ab11d4f",
+      "sha256": "7d929ca780e1817f5fcd93089403da7a1bc28908e5db8aeefc578d7345742dc8",
+      "bytes": 361407,
+      "source_url": "https://osf.io/download/vyh92/"
+    },
+    {
+      "source_filename": "PT_FE08.mat",
+      "source_file_id": "611cd9282dab24005d25c458",
+      "sha256": "7648db2f832a574f19081cbf30288e12d871a82c6ebc9d90134df108f37cad0e",
+      "bytes": 361171,
+      "source_url": "https://osf.io/download/d345f/"
+    },
+    {
+      "source_filename": "PT_FE10.mat",
+      "source_file_id": "611cd92a87c8f1006ab11d5b",
+      "sha256": "299b8189444a8dfbe0f460064418d803f23c0233a09cb0baa71f07a272d50171",
+      "bytes": 361435,
+      "source_url": "https://osf.io/download/e6nvh/"
+    },
+    {
+      "source_filename": "PT_FE11.mat",
+      "source_file_id": "611cd92b2dab24005425c95a",
+      "sha256": "572d7ae3789561a85c4ff2b9ef1bbce3888349eed9e314163fea2203599dcade",
+      "bytes": 361315,
+      "source_url": "https://osf.io/download/w8mb4/"
+    },
+    {
+      "source_filename": "PT_FE14.mat",
+      "source_file_id": "611cd92c2dab24005c25bbe5",
+      "sha256": "239d1d36c3f8335fb089214bdbd2086991e8a7124164d8e07073e2b4e1236e35",
+      "bytes": 361230,
+      "source_url": "https://osf.io/download/b3qd2/"
+    },
+    {
+      "source_filename": "PT_FE15.mat",
+      "source_file_id": "611cd92e2dab24005d25c47f",
+      "sha256": "f84c80aa31dcd8a829e5589a3b8ee44957aa1bb5e8541cc81821134f43ca1a9d",
+      "bytes": 361354,
+      "source_url": "https://osf.io/download/cra79/"
+    },
+    {
+      "source_filename": "PT_FE18.mat",
+      "source_file_id": "611cd93187c8f1006ab11d84",
+      "sha256": "463166aea0a0f70baf8fb6db636f5e58f79b0fb90677ac30b2ec295775ff81d8",
+      "bytes": 361429,
+      "source_url": "https://osf.io/download/bkdx5/"
+    },
+    {
+      "source_filename": "PT_FE19.mat",
+      "source_file_id": "611cd9302dab24005d25c487",
+      "sha256": "3fcc9725fb063e81ebcf3af9ea0b1aa809fc171ed953820bac5403ee9ba780fd",
+      "bytes": 361462,
+      "source_url": "https://osf.io/download/cmsku/"
+    },
+    {
+      "source_filename": "PT_FE21.mat",
+      "source_file_id": "611cd9332dab24005d25c495",
+      "sha256": "b66a5bf0c3a663672726e41c22732c320c39c0351b438647a459ae1cb1880443",
+      "bytes": 361195,
+      "source_url": "https://osf.io/download/gfwb4/"
+    },
+    {
+      "source_filename": "PT_FE22.mat",
+      "source_file_id": "611cd9342dab24005825b463",
+      "sha256": "32f190d07df69671cc7735425382126336bb64ba96e497b424f5d218a09f09bb",
+      "bytes": 361425,
+      "source_url": "https://osf.io/download/8yt25/"
+    }
+  ],
+  "expanded_channel_monitoring": {
+    "evaluation": "leave_one_animal_out",
+    "target": "documented genotype, not episode/state",
+    "data": "processed averaged ERPs; seven ISIs per animal",
+    "comparisons": {
+      "five_recorded_channels": {
+        "animals": 22,
+        "features": 35,
+        "animal_balanced_accuracy": 0.4,
+        "confusion_matrix": {
+          "labels": [
+            "hem",
+            "wt"
+          ],
+          "rows_true_cols_pred": [
+            [
+              6,
+              6
+            ],
+            [
+              7,
+              3
+            ]
+          ]
+        },
+        "held_out_predictions": [
+          {
+            "animal_id": "PT_FE02",
+            "truth": "wt",
+            "prediction": "hem"
+          },
+          {
+            "animal_id": "PT_FE04",
+            "truth": "wt",
+            "prediction": "wt"
+          },
+          {
+            "animal_id": "PT_FE05",
+            "truth": "wt",
+            "prediction": "hem"
+          },
+          {
+            "animal_id": "PT_FE07",
+            "truth": "wt",
+            "prediction": "hem"
+          },
+          {
+            "animal_id": "PT_FE09",
+            "truth": "wt",
+            "prediction": "wt"
+          },
+          {
+            "animal_id": "PT_FE12",
+            "truth": "wt",
+            "prediction": "hem"
+          },
+          {
+            "animal_id": "PT_FE13",
+            "truth": "wt",
+            "prediction": "hem"
+          },
+          {
+            "animal_id": "PT_FE16",
+            "truth": "wt",
+            "prediction": "hem"
+          },
+          {
+            "animal_id": "PT_FE17",
+            "truth": "wt",
+            "prediction": "hem"
+          },
+          {
+            "animal_id": "PT_FE20",
+            "truth": "wt",
+            "prediction": "wt"
+          },
+          {
+            "animal_id": "PT_FE01",
+            "truth": "hem",
+            "prediction": "wt"
+          },
+          {
+            "animal_id": "PT_FE03",
+            "truth": "hem",
+            "prediction": "hem"
+          },
+          {
+            "animal_id": "PT_FE06",
+            "truth": "hem",
+            "prediction": "wt"
+          },
+          {
+            "animal_id": "PT_FE08",
+            "truth": "hem",
+            "prediction": "wt"
+          },
+          {
+            "animal_id": "PT_FE10",
+            "truth": "hem",
+            "prediction": "hem"
+          },
+          {
+            "animal_id": "PT_FE11",
+            "truth": "hem",
+            "prediction": "hem"
+          },
+          {
+            "animal_id": "PT_FE14",
+            "truth": "hem",
+            "prediction": "wt"
+          },
+          {
+            "animal_id": "PT_FE15",
+            "truth": "hem",
+            "prediction": "hem"
+          },
+          {
+            "animal_id": "PT_FE18",
+            "truth": "hem",
+            "prediction": "hem"
+          },
+          {
+            "animal_id": "PT_FE19",
+            "truth": "hem",
+            "prediction": "hem"
+          },
+          {
+            "animal_id": "PT_FE21",
+            "truth": "hem",
+            "prediction": "wt"
+          },
+          {
+            "animal_id": "PT_FE22",
+            "truth": "hem",
+            "prediction": "wt"
+          }
+        ]
+      },
+      "original_two_channel_average": {
+        "animals": 22,
+        "features": 7,
+        "animal_balanced_accuracy": 0.45833333333333337,
+        "confusion_matrix": {
+          "labels": [
+            "hem",
+            "wt"
+          ],
+          "rows_true_cols_pred": [
+            [
+              5,
+              7
+            ],
+            [
+              5,
+              5
+            ]
+          ]
+        },
+        "held_out_predictions": [
+          {
+            "animal_id": "PT_FE02",
+            "truth": "wt",
+            "prediction": "wt"
+          },
+          {
+            "animal_id": "PT_FE04",
+            "truth": "wt",
+            "prediction": "hem"
+          },
+          {
+            "animal_id": "PT_FE05",
+            "truth": "wt",
+            "prediction": "hem"
+          },
+          {
+            "animal_id": "PT_FE07",
+            "truth": "wt",
+            "prediction": "wt"
+          },
+          {
+            "animal_id": "PT_FE09",
+            "truth": "wt",
+            "prediction": "wt"
+          },
+          {
+            "animal_id": "PT_FE12",
+            "truth": "wt",
+            "prediction": "wt"
+          },
+          {
+            "animal_id": "PT_FE13",
+            "truth": "wt",
+            "prediction": "hem"
+          },
+          {
+            "animal_id": "PT_FE16",
+            "truth": "wt",
+            "prediction": "hem"
+          },
+          {
+            "animal_id": "PT_FE17",
+            "truth": "wt",
+            "prediction": "hem"
+          },
+          {
+            "animal_id": "PT_FE20",
+            "truth": "wt",
+            "prediction": "wt"
+          },
+          {
+            "animal_id": "PT_FE01",
+            "truth": "hem",
+            "prediction": "hem"
+          },
+          {
+            "animal_id": "PT_FE03",
+            "truth": "hem",
+            "prediction": "wt"
+          },
+          {
+            "animal_id": "PT_FE06",
+            "truth": "hem",
+            "prediction": "wt"
+          },
+          {
+            "animal_id": "PT_FE08",
+            "truth": "hem",
+            "prediction": "wt"
+          },
+          {
+            "animal_id": "PT_FE10",
+            "truth": "hem",
+            "prediction": "hem"
+          },
+          {
+            "animal_id": "PT_FE11",
+            "truth": "hem",
+            "prediction": "wt"
+          },
+          {
+            "animal_id": "PT_FE14",
+            "truth": "hem",
+            "prediction": "wt"
+          },
+          {
+            "animal_id": "PT_FE15",
+            "truth": "hem",
+            "prediction": "hem"
+          },
+          {
+            "animal_id": "PT_FE18",
+            "truth": "hem",
+            "prediction": "hem"
+          },
+          {
+            "animal_id": "PT_FE19",
+            "truth": "hem",
+            "prediction": "hem"
+          },
+          {
+            "animal_id": "PT_FE21",
+            "truth": "hem",
+            "prediction": "wt"
+          },
+          {
+            "animal_id": "PT_FE22",
+            "truth": "hem",
+            "prediction": "wt"
+          }
+        ]
+      }
+    },
+    "protocol": "All 22 animals and seven ISIs in both sets; training-fold-only scaling; fixed linear SVC with balanced class weights; no tuning or winning-channel selection",
+    "coverage_limit": "Five recorded ERP channels versus original two-channel mean only; not synchronized video, EMG, autonomic monitoring or BIS-equivalent electrodes",
+    "interpretation": "Exploratory monitoring-coverage comparison for genotype information; no event detection, significance claim or clinical transfer",
+    "published_ratio_reproduction_max_absolute_error": 4.971653089214101e-10
+  },
   "human": {
     "dataset": "EEG in schizophrenia (RepOD, CC0)",
     "source": "https://doi.org/10.18150/repod.0107441",
