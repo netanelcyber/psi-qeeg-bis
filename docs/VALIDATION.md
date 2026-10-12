@@ -1,5 +1,9 @@
 # Validation status and next experiment
 
+## Animal extension, 13 October 2026 in Israel
+
+The separate [autism-model mouse workflow](research/AUTISM_ANIMAL_MODEL.md) implements continuous-qEEG epochs and annotation-dependent behavioral SVM preparation, fitting and inference. The current local suite passes **123 tests without skips**, including 15 animal-workflow tests and three deposited-vector tests. Animal behavioral fitting evidence uses synthetic fixtures only. The real Fmr1 processed-qEEG benchmark fits genotype classifiers across two experiments with 43 unique animals; no independently timed behavioral outcomes or raw EEG were supplied by those source CSVs. Primary/reverse animal balanced accuracies are 57.95%/71.72%. [autism_animal_verification.json](research/autism_animal_verification.json) records the current checks, while older sections below retain their dated scope.
+
 ## Extension, 12 October 2026 UTC (13 October in Israel)
 
 Full-recording analysis and the separate annotation-dependent event workflow are documented in [EXPANDED_HUMAN_COHORT.md](research/EXPANDED_HUMAN_COHORT.md), [EVENT_PREDICTION.md](research/EVENT_PREDICTION.md) and [PRE_EVENT_SIGNAL_EVIDENCE.md](research/PRE_EVENT_SIGNAL_EVIDENCE.md). The event module has engineering checks for past-only windows, reviewed follow-up, timing boundaries, co-occurring targets, subject separation and model reload. These are synthetic fixtures; RepOD still supplies no empirical event-prediction evaluation. The 12 October audit below is retained as a dated record of its then-current code.

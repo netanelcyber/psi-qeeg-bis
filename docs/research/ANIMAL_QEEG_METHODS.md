@@ -2,7 +2,7 @@
 
 **13 October 2026.** qEEG is quantitative analysis of recorded EEG: spectral density, band powers, phase measures and other explicitly defined descriptors. It is an analysis method, not a separate sensor. Skull EEG, epidural EEG and depth LFP can be analyzed quantitatively, with their acquisition/reference/bandwidth documented separately.
 
-The present target is a **future independently annotated behavioral event** in a model animal. Genotype discrimination, a group-mean EEG difference and a change after drug administration do not themselves establish this forecasting task. No animal behavioral-onset model has been trained or evaluated in PSI.
+The present target is a **future independently annotated behavioral event** in a model animal. Genotype discrimination, a group-mean EEG difference and a change after drug administration do not themselves establish this forecasting task. No animal behavioral-onset model has been trained or evaluated on real animal events in PSI; fitting tests use synthetic fixtures only.
 
 ## Primary studies and model-specific measurements
 
@@ -58,6 +58,6 @@ python examples/animal_qeeg_calculation.py
 
 The example uses **synthetic** 70 Hz and 175 Hz sinusoids at 1 kHz, amplitudes 4 and 3 microvolts. Their analytic powers are `A^2/2`: 8 and 4.5 microvolt-squared. The computed high-gamma and HFO integrals agree within numerical precision; the Shank3 relative gamma is 1 in its 1–80 Hz denominator. The 175 Hz component lies outside that denominator. These numbers verify arithmetic, not a finding in an animal or an event forecast.
 
-The integrated `analyze` pipeline still uses the 0.5–40 Hz profile. The calculation example adds no animal importer/QC protocol, sequence model, trained animal predictor, automatic warning or clinical threshold. See [ANIMAL_IEEG_ONSET.md](ANIMAL_IEEG_ONSET.md) for the required behavioral annotations, causal windows, held-out-animal evaluation and separate human transfer validation.
+The integrated `analyze` pipeline still uses the 0.5–40 Hz profile. The separate [animal workflow](AUTISM_ANIMAL_MODEL.md) now supplies input metadata/QC, power epochs and annotation-dependent behavioral SVM commands. Its behavioral fitting evidence is synthetic only; the real Fmr1 benchmark predicts genotype. No sequence model, automatic clinical warning or clinical threshold is supplied. See [ANIMAL_IEEG_ONSET.md](ANIMAL_IEEG_ONSET.md) for the required behavioral annotations, causal windows, held-out-animal evaluation and separate human transfer validation.
 
 [animal_qeeg_calculation_verification.json](animal_qeeg_calculation_verification.json) records the executed synthetic example, analytical checks, invalid-input checks and actual dependency versions. It is engineering evidence only.

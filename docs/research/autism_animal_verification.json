@@ -1,0 +1,103 @@
+{
+  "verified_at_utc": "2026-10-12T23:20:46.377865+00:00",
+  "base_commit": "aae1a066d0f2f3ad89dcd27e41f15be6a41a4d8b",
+  "scope": "Real source-processed Fmr1 power/genotype benchmark; behavioral fitting checks use synthetic fixtures only",
+  "unit_tests": {
+    "command": "PYTHONPATH=src python3 -m unittest discover -s tests -v",
+    "passed": 123,
+    "failures": 0,
+    "errors": 0,
+    "skips": 0,
+    "log_sha256": "3ca854214520e22696bc3cec597347b4aafaee3af96708ee632806b98e1b4909"
+  },
+  "runner_sha256": "c46790a2cb15da087c7c362b7c7bfbcba6ddb4611446eba9b06f4f95ca49b1dd",
+  "source_checksums_and_sizes_verified": true,
+  "unique_animals": 43,
+  "features_per_animal": 198,
+  "genotype_comparisons": {
+    "primary_experiment1_to_experiment2": {
+      "balanced_accuracy_recomputed": 0.5795454545454546,
+      "confusion_matrix_recomputed": [
+        [
+          10,
+          1
+        ],
+        [
+          9,
+          3
+        ]
+      ],
+      "source_ids_disjoint": true,
+      "saved_model_predictions_match": true,
+      "scaler_uses_training_animals_only": true
+    },
+    "supplementary_experiment2_to_experiment1": {
+      "balanced_accuracy_recomputed": 0.7171717171717171,
+      "confusion_matrix_recomputed": [
+        [
+          6,
+          5
+        ],
+        [
+          1,
+          8
+        ]
+      ],
+      "source_ids_disjoint": true,
+      "saved_model_predictions_match": true,
+      "scaler_uses_training_animals_only": true
+    }
+  },
+  "real_genotype_table_rejected_for_behavioral_preparation": "Animal epoch table requires complete columns ['accepted', 'animal_id', 'epoch_end_s', 'genotype', 'model_family', 'qeeg_profile', 'recording_context', 'session_id', 'signal_scope', 'species', 'time_s']",
+  "real_excerpt_check": {
+    "real_data": "VitalDB case 1",
+    "sha256": "5397dc7ba773827654a730cc1b5e12b72956f09da628a50f2d5bec8663b2a5d9",
+    "samples_per_channel": 15360,
+    "sample_rate_hz": 128.0,
+    "accepted_epochs": 30,
+    "classification": "indeterminate"
+  },
+  "compile_check": "passed",
+  "synthetic_band_power_check": {
+    "high_gamma_uv2": 8.0,
+    "hfo_uv2": 4.5,
+    "scope": "analytical synthetic sinusoids only"
+  },
+  "behavioral_model_trained_on_real_data": false,
+  "lstm_transformer_implemented": false,
+  "human_transfer_validation": "not_established",
+  "dependencies": {
+    "numpy": "2.3.5",
+    "pandas": "2.2.3",
+    "scipy": "1.17.0",
+    "scikit-learn": "1.8.0",
+    "joblib": "1.5.3"
+  },
+  "python": "3.12.14",
+  "result_files": {
+    "deposited_power_animal_vectors.csv": {
+      "sha256": "8c58f7b5d93055aba72454c3785d1dfe0f7dd585c6f5275143cac3a81bb822e4",
+      "bytes": 170106
+    },
+    "fmr1_qeeg_genotype_evaluation.json": {
+      "sha256": "119b7d1c642e9339ccf7f9e8aca5c51ab7802b63a044e8b144b8c53f3acd0e3c",
+      "bytes": 14287
+    },
+    "primary_experiment1_to_experiment2.joblib": {
+      "sha256": "ed322359e817c24249a773eba41b56a71dd4b6f144dbebb970e6d8f3652d6b53",
+      "bytes": 41796
+    },
+    "primary_experiment1_to_experiment2_held_out_animals.csv": {
+      "sha256": "d29063abe889a59905647252ff951e393008fe73e4da33fde4c7a7232e7cf9b6",
+      "bytes": 731
+    },
+    "supplementary_experiment2_to_experiment1.joblib": {
+      "sha256": "7034825d1bf1c3f99406d8892c875c4d1fbcceb65d0bce16ff60c34398c4845a",
+      "bytes": 53012
+    },
+    "supplementary_experiment2_to_experiment1_held_out_animals.csv": {
+      "sha256": "e27aa40c8044b5ae46ec84d9a4b09ac84109db872c1e145a1843835832021514",
+      "bytes": 501
+    }
+  }
+}

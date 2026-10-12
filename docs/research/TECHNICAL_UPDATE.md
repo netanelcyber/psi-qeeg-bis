@@ -41,7 +41,7 @@ LSTM development requires synchronized longitudinal EEG/context, independently a
 
 ## Preclinical route clarified 13 October
 
-The intended next prediction stage uses continuous model-animal iEEG/LFP and independently annotated animal behavioral-event onsets. It is not implemented or trained. Existing mouse data are processed ERPs/genotype outcomes. The current human-target event CLI requires a separate animal adapter and outcome namespace. Candidate high gamma (60–100 Hz) and HFO (150–200 Hz) from a post-dose MK-801 study exceed the current 40 Hz feature profile. See [animal onset protocol](ANIMAL_IEEG_ONSET.md) and the [qEEG calculation methods/example](ANIMAL_QEEG_METHODS.md).
+The intended next prediction stage uses continuous model-animal iEEG/LFP and independently annotated animal behavioral-event onsets. The animal qEEG/annotation/SVM adapter is now implemented and engineering-tested; no real animal behavioral-onset model is trained. A separate real Fmr1 qEEG genotype benchmark uses 43 animals (57.95% primary and 71.72% reverse-direction balanced accuracy). Existing ERP and deposited-power data lack behavioral-onset annotations. The human profile ends at 40 Hz; the separate animal profiles cover 1–80/1–100 Hz. Custom 60–100 Hz high gamma and 150–200 Hz HFO can be integrated in the standalone example, but the animal CLI does not estimate HFO or reproduce the post-dose MK-801 study's full estimator. See [implemented animal model and results](AUTISM_ANIMAL_MODEL.md), [animal onset protocol](ANIMAL_IEEG_ONSET.md) and [qEEG calculation methods/example](ANIMAL_QEEG_METHODS.md).
 
 ## Suggested clarification for the next correspondence
 

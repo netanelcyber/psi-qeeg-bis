@@ -14,7 +14,8 @@ import pandas as pd
 EVENT_TYPES = ('meltdown', 'psychosis_onset')
 CONTEXTS = {'awake_observational_research', 'awake_longitudinal_research', 'synthetic_unit_test'}
 IDS = {'subject_id', 'session_id', 'epoch_id', 'time_s', 'epoch_end_s', 'accepted',
-       'recording_context', 'group', 'site', 'classification', 'research_label', 'label_source'}
+       'recording_context', 'group', 'site', 'classification', 'research_label', 'label_source',
+       'animal_id', 'species', 'model_family', 'genotype', 'signal_scope', 'qeeg_profile', 'source'}
 
 
 def _read(path):
@@ -29,7 +30,7 @@ def _required(frame, names, description):
             raise ValueError(f'{description}: {column} cannot be empty')
 
 
-def history_windows(frame, features, history_s=60, stride_s=None):
+def history_windows(frame, features, history_s=60, stride_s=None, *, allowed_contexts=None):
     """Mean, SD and slope from complete accepted past epochs only; no future labels."""
     required = {'subject_id', 'session_id', 'time_s', 'epoch_end_s', 'accepted', 'recording_context'}
     _required(frame, required, 'Epoch table')
@@ -37,7 +38,8 @@ def history_windows(frame, features, history_s=60, stride_s=None):
         raise ValueError('Select unique existing numeric waveform features')
     if any(f in IDS or str(f).startswith(('target_', 'event_', 'future_', 'label_')) for f in features):
         raise ValueError('Identifiers, labels and future outcomes cannot be predictors')
-    if not set(frame.recording_context) <= CONTEXTS:
+    contexts = CONTEXTS if allowed_contexts is None else set(allowed_contexts)
+    if not set(frame.recording_context) <= contexts:
         raise ValueError('Event research requires an awake observational context or explicit synthetic fixture')
     if frame.duplicated(['subject_id', 'session_id', 'time_s']).any():
         raise ValueError('Duplicate subject/session/epoch times')
