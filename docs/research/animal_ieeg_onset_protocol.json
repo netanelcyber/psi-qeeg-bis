@@ -42,7 +42,7 @@
       200
     ]
   },
-  "candidate_band_estimators_implemented": false,
+  "candidate_band_estimators_implemented": true,
   "current_scalp_profile_hz": [
     0.5,
     40
@@ -76,5 +76,8 @@
   ],
   "lstm_or_transformer_implemented": false,
   "selected_event_domain": "behavioral",
-  "selected_event_domain_source": "user_instruction_2026_10_13"
+  "selected_event_domain_source": "user_instruction_2026_10_13",
+  "candidate_band_estimator_scope": "standalone_array_calculation_example_only",
+  "integrated_animal_qeeg_pipeline_implemented": false,
+  "calculation_example": "examples/animal_qeeg_calculation.py"
 }

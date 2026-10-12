@@ -27,7 +27,7 @@ The current `events.py` provides tested human-target history and annotation infr
 
 ## Frequency requirements and transfer to humans
 
-The current scalp feature profile ends at 40 Hz. An animal LFP profile spanning 60–100 Hz high gamma and 150–200 Hz HFO would require a sampling rate and acquisition filter that preserve those bands, source-specific artifact controls and anatomical/reference metadata. Sampling must exceed 400 Hz to cover 200 Hz with margin; the cited MK-801 acquisition used 1 kHz. Extending a band constant alone would not reproduce the study or establish a warning signal. These higher-band estimators remain unimplemented in PSI.
+The current scalp feature profile ends at 40 Hz. An animal LFP profile spanning 60–100 Hz high gamma and 150–200 Hz HFO would require a sampling rate and acquisition filter that preserve those bands, source-specific artifact controls and anatomical/reference metadata. Sampling must exceed 400 Hz to cover 200 Hz with margin; the cited MK-801 acquisition used 1 kHz. Extending a band constant alone would not reproduce the study or establish a warning signal. A [standalone qEEG calculation example](ANIMAL_QEEG_METHODS.md) now integrates custom bands from supplied arrays. The integrated animal acquisition/QC/behavioral-prediction workflow remains unimplemented.
 
 The MK-801 results concern effects after administration, including changes in CA1 high gamma and mPFC HFO. They are candidate measurements for a prospective preclinical analysis, not proven pre-event signs. Human scalp gamma 30–40 Hz, animal high gamma and HFO are not interchangeable. The 24-hour human PSI baseline and SOI/RDI definitions are not transplanted to mice.
 
