@@ -11,7 +11,7 @@
 | Model-organism evidence | Verified mouse auditory gating; five-channel vs two-channel genotype benchmark; cross-species scope comparison | 22-animal processed Fmr1-KO2 dataset analyzed; crisis/onset labels and multimodal monitoring unavailable |
 | Extended acquisition | Verified scalp/auxiliary montage and event timing | Requires acquired data and protocol |
 | Full component estimators | Gating, alpha bursts, CSD and autonomic fusion | Requires operational definitions and validation |
-| Longitudinal prediction | Prespecified event-level evaluation and prospective trial | Requires longitudinal labels and clinical study |
+| Longitudinal LSTM/Transformer prediction | Labelled sequence protocol, model/training/inference implementation, prespecified event-level evaluation and prospective trial | Proposed only; no sequence model, weights or inference path; requires longitudinal labels and clinical study |
 | Device integration | Documented monitor export and approved acquisition hardware | Requires actual device/export documentation |
 
 No owner or deadline is inferred for future milestones.

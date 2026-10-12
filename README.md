@@ -6,6 +6,8 @@ The repository contains a real, attributed VitalDB BIS EEG excerpt, a reproducib
 
 **Research status:** signal processing, mathematical implementation and exploratory diagnosis-group benchmarking on a public human cohort. Psychiatric classification has not been clinically validated. The included surgical recording has no meltdown or psychosis labels; its SOI/RDI scores remain unavailable and its psychiatric state is `indeterminate`.
 
+**Current algorithm:** offline FFT-based qEEG feature extraction, experimental auto-bicoherence and an optional linear SVM research workflow. **No LSTM or Transformer is implemented, trained or used for inference in this checkout.** The article's sequence model is a proposed future research stage. `analyze` does not load an SVM or predict psychiatric states; `train` and `train-groups` are separate evaluation/training commands. See the [short technical brief](docs/TECHNICAL_BRIEF.md), [article alignment](docs/ARTICLE_ALIGNMENT.md) and [test/evidence boundaries](docs/VALIDATION.md).
+
 ## Public psychiatric cohort and model-organism comparison
 
 ```bash

@@ -1,9 +1,16 @@
 {
+  "audited_date": "2026-10-12",
+  "code_commit": "23936944186ed92bf7f123ada3b6fb50036585df",
+  "branch": "research/run-public-psychiatric-cohort",
+  "package_version": "0.1.0",
+  "scope": "Documentation-only implementation audit; local offline tests/CLIs and inspected historical CI evidence",
   "test_suite": {
-    "tests": 62,
+    "tests": 84,
     "failures": 0,
     "errors": 0,
-    "command": "python -m unittest discover -s tests -v"
+    "skipped": 0,
+    "command": "PYTHONPATH=src python3 -m unittest discover -s tests -v",
+    "fixture_scope": "Real VitalDB EEG plus explicitly synthetic analytical/schema/ML fixtures; some conversion/comparison tests use mocks"
   },
   "real_data": {
     "source": "VitalDB case 1",
@@ -13,31 +20,88 @@
     "sample_rate_hz": 128,
     "samples_per_channel": 15360,
     "accepted_epochs": 30,
-    "composites": "unavailable"
+    "complete_epochs": 30,
+    "classification": "indeterminate",
+    "SOI": null,
+    "RDI": null,
+    "recording_csv_sha256": "5397dc7ba773827654a730cc1b5e12b72956f09da628a50f2d5bec8663b2a5d9",
+    "acceptance_command": "PYTHONPATH=src python3 scripts/verify_example.py"
   },
   "paper_arithmetic": {
-    "SOI": 100,
-    "RDI": "unavailable_missing_components"
+    "SOI": 100.0,
+    "RDI": null,
+    "input_scope": "Illustrative supplied component fixture; not patient data or sequence-model predictions"
+  },
+  "cli_checks": {
+    "analyze": {
+      "command": "PYTHONPATH=src python3 -m psi_qeeg analyze examples/vitaldb_case1/recording.csv --metadata examples/vitaldb_case1/metadata.json --out outputs/audit_20261012/vitaldb_case1",
+      "status": "passed",
+      "outputs": [
+        "features.csv",
+        "summary.json",
+        "qeeg.png",
+        "report.html"
+      ]
+    },
+    "score": {
+      "command": "PYTHONPATH=src python3 -m psi_qeeg score --features examples/paper_calculation/features.json --calibration examples/paper_calculation/calibration.json --out outputs/audit_20261012/paper_calculation.json",
+      "status": "passed"
+    }
   },
   "environment": {
     "python": "3.12.14",
     "numpy": "2.3.5",
     "scipy": "1.17.0",
     "pandas": "2.2.3",
-    "matplotlib": "3.10.8"
+    "matplotlib": "3.10.8",
+    "scikit-learn": "1.8.0",
+    "mne": "not installed locally"
   },
-  "checks": [
-    "editable installation",
-    "62 offline tests",
-    "real EEG source checksum",
-    "real sample clock and spectral outputs",
-    "CLI analyze and report",
-    "article score CLI",
-    "wheel build",
-    "Python source compilation",
-    "visual inspection of scientific EEG figure"
+  "remote_ci": {
+    "checked_date": "2026-10-12",
+    "code_commit": "23936944186ed92bf7f123ada3b6fb50036585df",
+    "offline_run": "https://github.com/netanelcyber/psi-qeeg-bis/actions/runs/37900411420",
+    "offline_matrix": {
+      "os": [
+        "ubuntu-24.04",
+        "windows-latest"
+      ],
+      "python": [
+        "3.10",
+        "3.12",
+        "3.13"
+      ],
+      "six_jobs": "success"
+    },
+    "offline_log_check": "Ubuntu Python 3.10 job 113721378236 logs report 84 tests and the real-EEG acceptance check",
+    "public_cohort_job": "https://github.com/netanelcyber/psi-qeeg-bis/actions/runs/37900411420/job/113721377990",
+    "public_cohort_job_status": "success; human and processed mouse source checks, conversion/evaluation completed",
+    "public_cohort_log_check": {
+      "source_edfs": 28,
+      "converted_subjects": 28,
+      "accepted_epochs": 821,
+      "subject_balanced_accuracy": {
+        "full_scalp": 0.6428571428571429,
+        "left_frontal_temporal": 0.4642857142857143,
+        "right_frontal_temporal": 0.6071428571428572
+      },
+      "clinical_validation": "not_established"
+    },
+    "separate_cohort_run": "https://github.com/netanelcyber/psi-qeeg-bis/actions/runs/37900411457",
+    "separate_cohort_run_status": "success",
+    "scope": "Historical completed runs at the audited code commit; not new training runs in this audit"
+  },
+  "github_status": "Existing public repository and named research branch confirmed via GitHub",
+  "not_repeated_locally": [
+    "Full human/mouse cohort downloads and real-data training",
+    "MNE EDF/BDF/EEGLAB/FIF readers",
+    "Editable package install and wheel build"
   ],
-  "ci_status": "workflow configured; remote execution pending repository creation",
-  "optional_edf_status": "implemented; not exercised on a real EDF recording in this session",
-  "github_status": "repository creation pending; connector has no repository-create action"
+  "proposed_only": [
+    "LSTM/Transformer architecture, sequence training and inference",
+    "PSI microstates, raw-event gating, CSD and autonomic fusion",
+    "Learned medication effects and learned index weights",
+    "On-chip streaming and clinical alerts"
+  ],
+  "clinical_validation": "not_established"
 }

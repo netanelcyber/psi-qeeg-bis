@@ -18,7 +18,7 @@ The RepOD schizophrenia/control dataset contains 14 diagnosed participants and 1
 | Left frontal/temporal | Fp1, F7 | 8 | 46.43% | `[[6, 8], [7, 7]]` |
 | Right frontal/temporal | Fp2, F8 | 8 | 60.71% | `[[8, 6], [5, 9]]` |
 
-The full-scalp result reproduces the earlier successful [GitHub run](https://github.com/netanelcyber/psi-qeeg-bis/actions/runs/37894100018). The two regional results are new locally executed comparisons. Reproduction commands are in the README; complete numeric results and dependency versions are in [public_cohort_validation.json](public_cohort_validation.json) and [electrode_comparison.json](electrode_comparison.json). These describe the executed code and processed feature file via SHA-256 fingerprints.
+The full-scalp result reproduces the earlier successful [GitHub run](https://github.com/netanelcyber/psi-qeeg-bis/actions/runs/37894100018). All three coverage results were subsequently reproduced in the [successful public-cohort CI job](https://github.com/netanelcyber/psi-qeeg-bis/actions/runs/37900411420/job/113721377990) at commit `23936944186ed92bf7f123ada3b6fb50036585df`; its logs were checked on 12 October 2026. This later documentation audit did not re-download the EDFs or retrain the real cohort locally. Reproduction commands are in the README; complete numeric results and dependency versions are in [public_cohort_validation.json](public_cohort_validation.json) and [electrode_comparison.json](electrode_comparison.json). These describe the executed code and processed feature file via SHA-256 fingerprints.
 
 ## Interpretation limits
 

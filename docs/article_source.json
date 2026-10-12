@@ -6,5 +6,25 @@
   "sha256": "7979e90a57e3a9bf6c1e0f7c139deae1bb0b609ace56310b0cc90dfb4446d3cb",
   "pages": 15,
   "publication_status": "not_independently_established",
-  "source_type": "user_supplied_conceptual_article"
+  "source_type": "user_supplied_conceptual_article",
+  "current_article_review": {
+    "reviewed_date": "2026-10-12",
+    "url": "https://docs.google.com/document/d/1sH4rkEbuDHridgQbBHvTpPzudxVAtggyEUS-7IO91ao/edit",
+    "provider_modified_at": "2026-10-08T09:37:29.945Z",
+    "retrieved_text_sha256": "34d83dbbddc06f338ed8b5b9241982d2837c7185c1c3e9b51279886eb2f8f9bd",
+    "fingerprint_scope": "Readable Google Drive text, UTF-8; CRLF normalized to LF and final newline retained; not a PDF-byte hash or immutable Docs revision ID",
+    "sections_reviewed": [
+      "6.5",
+      "7.1",
+      "7.2",
+      "10",
+      "11",
+      "Declarations"
+    ],
+    "findings": {
+      "stage_1": "Proposed SVM/shallow network; article reports no trained or evaluated PSI classifier",
+      "stage_2": "Proposed LSTM/Transformer; observation window, horizon, labels and external validation remain to be established",
+      "worked_examples": "SOI=100 arithmetic separated from assigned 18-to-91 trajectory; RDI alert-range and rate discrepancies disclosed; no model outputs or empirical clinical benefit"
+    }
+  }
 }
