@@ -25,6 +25,8 @@ The article's nominal four-second state-detection epochs do not make every estim
 
 The full-recording extension supplies [human diagnosis-group results](research/EXPANDED_HUMAN_COHORT.md) and an [annotation-dependent future-event workflow](research/EVENT_PREDICTION.md). Its synthetic engineering tests are not real onset-prediction evidence. Literature findings about alpha burst duration/occupancy, visual gamma, source CSD or MMN are [research candidates with estimator gaps](research/PRE_EVENT_SIGNAL_EVIDENCE.md), not proof of the article's alpha-variability hypothesis or imminent-attack thresholds. A [short updated technical account](research/TECHNICAL_UPDATE.md) includes a clarification for correspondence.
 
+The intended preclinical route was clarified on 13 October: [continuous model-animal iEEG/LFP onset prediction](research/ANIMAL_IEEG_ONSET.md), requiring animal-specific events and an adapter. This is not the completed processed mouse ERP/genotype comparison or the current human-target event SVM implementation. No animal onset predictor has been fitted, and human clinical transfer remains unevaluated.
+
 ## Exact normalization
 
 For an SOI component whose increase is hypothesized to represent overload:

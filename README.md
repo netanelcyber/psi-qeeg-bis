@@ -10,6 +10,8 @@ The repository contains a real, attributed VitalDB BIS EEG excerpt, a reproducib
 
 The separate `prepare-events`, `train-events` and `predict-events` commands now support an **annotation-dependent research workflow** for two future-event targets. They require confirmed independent onsets and reviewed follow-up coverage; no real event model is trained from RepOD's diagnosis groups. See [event data and causal prediction contract](docs/research/EVENT_PREDICTION.md) and [candidate EEG evidence](docs/research/PRE_EVENT_SIGNAL_EVIDENCE.md).
 
+The intended preclinical onset-prediction stage uses continuous **model-animal iEEG/LFP** with independently timed behavioral events. It is a proposed research stage; no animal onset model or high-gamma/HFO estimator is implemented or trained. The completed mouse experiment uses processed ERPs and genotype outcomes. See [animal iEEG onset contract and source review](docs/research/ANIMAL_IEEG_ONSET.md).
+
 ## Public psychiatric cohort and model-organism comparison
 
 ```bash

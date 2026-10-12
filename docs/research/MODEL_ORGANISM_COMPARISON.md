@@ -1,5 +1,7 @@
 # Model-organism comparison, 9 October 2026
 
+The 13 October clarification defines a proposed onset-prediction stage using continuous model-animal iEEG/LFP. See [ANIMAL_IEEG_ONSET.md](ANIMAL_IEEG_ONSET.md) for the input/outcome contract, candidate datasets and current implementation gaps. The processed ERP/genotype analysis below does not implement that stage.
+
 ## What was actually analyzed
 
 The public [Fmr1-KO2 sensory-processing dataset](https://doi.org/10.17605/OSF.IO/CVEFK) supplies processed EEG event-related potentials and animal-level gating measurements. Its [institutional description](https://research.rug.nl/en/datasets/unaffected-sensory-processing-in-fmr1-ko-mice/) reports largely unaffected sensory responses and no robust replicated sensory-processing deficit. This is useful counter-evidence to an assumption that an autism-associated genotype must always show impaired gating.

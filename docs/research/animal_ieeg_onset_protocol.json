@@ -1,0 +1,80 @@
+{
+  "schema_version": 1,
+  "clarified_date": "2026-10-13",
+  "timezone": "Asia/Jerusalem",
+  "stage": "proposed_preclinical_model_animal_onset_prediction",
+  "training_status": "not_run_missing_task_matched_continuous_signal_and_confirmed_onsets",
+  "animal_predictor_implemented": false,
+  "raw_ieeg_candidates_downloaded": false,
+  "clinical_transfer_validation": "not_established",
+  "working_target": "animal_behavioral_event_onset",
+  "working_target_supported_by_current_cli": false,
+  "operational_event_definition": null,
+  "history_seconds": null,
+  "prediction_horizon_seconds": null,
+  "minimum_lead_seconds": null,
+  "required_inputs": [
+    "species_and_model",
+    "animal_id_and_session_id",
+    "continuous_ieeg_or_lfp",
+    "anatomical_site_and_reference",
+    "sample_clock_units_and_acquisition_filter",
+    "artifact_annotations",
+    "independently_confirmed_event_onset_and_offset",
+    "fully_observed_event_free_follow_up",
+    "synchronized_behavior_or_expert_reference"
+  ],
+  "forbidden_substitute_outcomes": [
+    "genotype",
+    "injection_time_as_behavioral_onset",
+    "stimulus_time_as_crisis_onset",
+    "post_dose_condition_as_future_event",
+    "band_power_outlier_as_psychiatric_episode",
+    "epilepsy_labels_as_meltdown_or_psychosis"
+  ],
+  "proposed_candidate_bands_hz": {
+    "animal_high_gamma": [
+      60,
+      100
+    ],
+    "animal_hfo": [
+      150,
+      200
+    ]
+  },
+  "candidate_band_estimators_implemented": false,
+  "current_scalp_profile_hz": [
+    0.5,
+    40
+  ],
+  "evaluation_plan": [
+    "past_only_descriptors_and_pre_event_baseline",
+    "held_out_animal_and_future_session_evaluation",
+    "event_sensitivity",
+    "false_alerts_per_observed_hour",
+    "lead_time_distribution",
+    "animal_level_uncertainty",
+    "separate_human_transfer_validation"
+  ],
+  "sources": [
+    {
+      "doi": "10.17605/OSF.IO/CVEFK",
+      "status": "processed_erp_and_gating_analyzed_not_continuous_onset_data"
+    },
+    {
+      "doi": "10.3389/fnins.2022.1001869",
+      "status": "post_dose_lfp_mechanism_paper_raw_archive_not_identified_in_data_statement"
+    },
+    {
+      "doi": "10.6084/m9.figshare.30024880",
+      "status": "task_electrophysiology_behavior_video_continuous_lfp_and_crisis_labels_not_verified"
+    },
+    {
+      "doi": "10.17632/kn3k9f5vph.2",
+      "status": "separate_epilepsy_candidate_onset_and_follow_up_files_not_inspected"
+    }
+  ],
+  "lstm_or_transformer_implemented": false,
+  "selected_event_domain": "behavioral",
+  "selected_event_domain_source": "user_instruction_2026_10_13"
+}

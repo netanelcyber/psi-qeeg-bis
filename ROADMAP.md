@@ -13,6 +13,7 @@
 | Full component estimators | Gating, alpha bursts, CSD and autonomic fusion | Requires operational definitions and validation |
 | Longitudinal LSTM/Transformer prediction | Labelled sequence protocol, model/training/inference implementation, prespecified event-level evaluation and prospective trial | Proposed only; no sequence model, weights or inference path; requires longitudinal labels and clinical study |
 | Annotated future-event SVM research | Past-only descriptors, reviewed future outcomes, two target models and inference | Implemented and engineering-tested with synthetic fixtures; real event models await genuine annotations and prospective validation |
+| Preclinical animal iEEG/LFP onset prediction | Continuous implanted recordings, synchronized independent animal events, animal outcome adapter and appropriate high-frequency profile | Proposed protocol; existing processed ERP/genotype comparison is not onset prediction; no trained animal event model |
 | Device integration | Documented monitor export and approved acquisition hardware | Requires actual device/export documentation |
 
 No owner or deadline is inferred for future milestones.

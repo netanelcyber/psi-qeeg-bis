@@ -1,5 +1,7 @@
 # Annotated event prediction: research workflow
 
+This module's current targets and provenance contract concern human research outcomes. The separately proposed [model-animal iEEG/LFP onset stage](ANIMAL_IEEG_ONSET.md) requires its own outcome namespace, adapter and independently annotated continuous data. Animals must not be assigned human meltdown/psychosis labels to make these commands run.
+
 The event module implements causal feature preparation, two binary research SVMs and past-only inference. **No event model has been trained on real data in the RepOD experiment.** More resting-state epochs do not create meltdown or psychosis-onset outcomes. The existing diagnosis-group classifier is not accepted by `predict-events`.
 
 ## Input and independent reference outcomes

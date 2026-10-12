@@ -39,6 +39,10 @@ The separate event workflow computes mean, SD and slope from complete past-only 
 
 LSTM development requires synchronized longitudinal EEG/context, independently adjudicated events, a prespecified sequence/horizon/missingness contract, implemented architecture/training/inference and versioned weights. Compare with temporal/SVM baselines on locked external/prospective data, reporting event sensitivity, false alerts/hour, lead time, calibration and uncertainty. Longer resting recordings alone do not satisfy this requirement.
 
+## Preclinical route clarified 13 October
+
+The intended next prediction stage uses continuous model-animal iEEG/LFP and independently annotated animal behavioral-event onsets. It is not implemented or trained. Existing mouse data are processed ERPs/genotype outcomes. The current human-target event CLI requires a separate animal adapter and outcome namespace. Candidate high gamma (60–100 Hz) and HFO (150–200 Hz) from a post-dose MK-801 study exceed the current 40 Hz feature profile. See [animal onset protocol](ANIMAL_IEEG_ONSET.md).
+
 ## Suggested clarification for the next correspondence
 
 “I would like to clarify the current PSI implementation: it uses FFT-based qEEG processing and optional linear SVM research models. LSTM/Transformer is a proposed future component, not an implemented or trained model. The expanded public human-data experiment evaluates schizophrenia-versus-control group discrimination; it does not validate impending meltdown or psychotic-episode prediction. We can review the existing code, exploratory results and the event-annotation protocol together.”
