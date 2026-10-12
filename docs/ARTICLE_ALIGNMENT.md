@@ -13,7 +13,7 @@ On **12 October 2026**, the code at `23936944186ed92bf7f123ada3b6fb50036585df` w
 | 6.4: clinical alert states | Documented as unvalidated proposals | No real-data diagnosis or medication/sedation recommendations are emitted |
 | 6.5: normalization | Exact directional clipped SOI mapping and symmetric inverted RDI mapping | Missing values are not filled or silently reweighted |
 | 7.1: feature extraction | Welch PSD, experimental squared auto-bicoherence and verified-site alpha PLV | Generic descriptors do not supply all ten index components; microstates, event gating, CSD and autonomic fusion remain unspecified/unimplemented |
-| 7.2: stage 1 | Two optional linear SVC workflows: supplied state labels (`train`) and diagnosis groups (`train-groups`) | No shipped episode-state model, on-chip implementation or SVM inference in `analyze`; group labels are not episode labels |
+| 7.2: stage 1 | Optional linear SVC workflows for supplied state labels (`train`) and diagnosis groups (`train-groups`); a later extension adds independently annotated future-event windows (`train-events`) | No real event-trained model, on-chip implementation or SVM inference in `analyze`; group labels are not episode labels |
 | 7.2: stage 2 | Research requirements documented only | No LSTM/Transformer architecture, sequence dataset, learned weights, training loop or inference path in this checkout |
 | 8–10: dataset and validation gap | VitalDB engineering example, public diagnosis-group benchmark and validation protocol | Surgical EEG, resting-state diagnosis labels and mouse genotype data do not validate meltdown/psychosis-onset prediction |
 
@@ -22,6 +22,8 @@ On **12 October 2026**, the code at `23936944186ed92bf7f123ada3b6fb50036585df` w
 The implemented workbench performs **offline FFT-based qEEG feature extraction with optional linear SVM research training/evaluation**. Describing it as an algorithm currently using `LSTM+FFT` would imply a sequence model that is absent. FFT estimates spectral/bispectral descriptors; it is not itself a psychiatric classifier. The SVM trainers export models separately, while raw-EEG analysis always reports `classification = indeterminate` with unavailable SOI/RDI composites.
 
 The article's nominal four-second state-detection epochs do not make every estimator instantaneous: the analysis pipeline uses 60 seconds of accepted past EEG for auto-bicoherence. No on-device execution, streaming latency, prospective alert performance or long-term trajectory prediction has been measured. A Transformer is a proposed sequence-model alternative, not an implemented recurrent network.
+
+The full-recording extension supplies [human diagnosis-group results](research/EXPANDED_HUMAN_COHORT.md) and an [annotation-dependent future-event workflow](research/EVENT_PREDICTION.md). Its synthetic engineering tests are not real onset-prediction evidence. Literature findings about alpha burst duration/occupancy, visual gamma, source CSD or MMN are [research candidates with estimator gaps](research/PRE_EVENT_SIGNAL_EVIDENCE.md), not proof of the article's alpha-variability hypothesis or imminent-attack thresholds. A [short updated technical account](research/TECHNICAL_UPDATE.md) includes a clarification for correspondence.
 
 ## Exact normalization
 

@@ -67,6 +67,24 @@ def main(argv=None) -> int:
     p.add_argument("input", type=Path)
     p.add_argument("--features", nargs="+", required=True)
     p.add_argument("--out", type=Path, required=True)
+    p = sub.add_parser('prepare-events', help='Research past windows with independently confirmed future events and reviewed follow-up')
+    p.add_argument('input', type=Path)
+    p.add_argument('--events', type=Path, required=True)
+    p.add_argument('--coverage', type=Path, required=True)
+    p.add_argument('--features', nargs='+', required=True)
+    p.add_argument('--history-s', type=float, default=60)
+    p.add_argument('--horizon-s', type=float, default=300)
+    p.add_argument('--min-lead-s', type=float, default=4)
+    p.add_argument('--stride-s', type=float)
+    p.add_argument('--out', type=Path, required=True)
+    p = sub.add_parser('train-events', help='Two research event SVMs; requires a prepared annotation-derived manifest')
+    p.add_argument('input', type=Path)
+    p.add_argument('--manifest', type=Path, required=True)
+    p.add_argument('--out', type=Path, required=True)
+    p = sub.add_parser('predict-events', help='Past-only research event-window inference; no clinical risk probability')
+    p.add_argument('input', type=Path)
+    p.add_argument('--model', type=Path, required=True)
+    p.add_argument('--out', type=Path, required=True)
     args = parser.parse_args(argv)
     try:
         if args.command == "analyze":
@@ -132,6 +150,18 @@ def main(argv=None) -> int:
             from .ml import train_group_model
             result = train_group_model(args.input, args.out, args.features)
             print(json.dumps({k: result[k] for k in ("subjects_per_group", "epochs", "subject_balanced_accuracy", "epoch_balanced_accuracy")}))
+        elif args.command == 'prepare-events':
+            from .events import prepare_event_dataset
+            result = prepare_event_dataset(args.input, args.events, args.coverage, args.out, args.features,
+                                           args.history_s, args.horizon_s, args.min_lead_s, args.stride_s)
+            print(json.dumps({k: result[k] for k in ('subjects', 'rows', 'protocol', 'excluded_windows')}))
+        elif args.command == 'train-events':
+            from .events import train_event_models
+            result = train_event_models(args.input, args.manifest, args.out)
+            print(json.dumps({k: result[k] for k in ('use', 'clinical_validation', 'data_scope', 'subjects', 'windows', 'metrics')}))
+        elif args.command == 'predict-events':
+            from .events import predict_event_windows
+            print(json.dumps(predict_event_windows(args.model, args.input, args.out)))
     except (ValueError, OSError, KeyError) as exc:
         print(f"Error: {exc}", file=sys.stderr)
         return 2

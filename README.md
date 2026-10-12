@@ -8,6 +8,8 @@ The repository contains a real, attributed VitalDB BIS EEG excerpt, a reproducib
 
 **Current algorithm:** offline FFT-based qEEG feature extraction, experimental auto-bicoherence and an optional linear SVM research workflow. **No LSTM or Transformer is implemented, trained or used for inference in this checkout.** The article's sequence model is a proposed future research stage. `analyze` does not load an SVM or predict psychiatric states; `train` and `train-groups` are separate evaluation/training commands. See the [short technical brief](docs/TECHNICAL_BRIEF.md), [article alignment](docs/ARTICLE_ALIGNMENT.md) and [test/evidence boundaries](docs/VALIDATION.md).
 
+The separate `prepare-events`, `train-events` and `predict-events` commands now support an **annotation-dependent research workflow** for two future-event targets. They require confirmed independent onsets and reviewed follow-up coverage; no real event model is trained from RepOD's diagnosis groups. See [event data and causal prediction contract](docs/research/EVENT_PREDICTION.md) and [candidate EEG evidence](docs/research/PRE_EVENT_SIGNAL_EVIDENCE.md).
+
 ## Public psychiatric cohort and model-organism comparison
 
 ```bash
@@ -16,7 +18,16 @@ python scripts/validate_public_schizophrenia_cohort.py
 python scripts/compare_model_organism.py
 ```
 
-The human runner verifies the 28 RepOD source EDFs, analyzes a fixed first 120 seconds per subject, and evaluates full-scalp (19 channels), left Fp1/F7 and right Fp2/F8 feature sets using identical accepted epochs and leave-one-subject-out folds. The regional sets retain the source reference: they approximate electrode coverage, not actual BIS sensor derivations. All three results are reported without selecting a winning side.
+To expand the number of epochs over all available recording time while retaining the original four-second non-overlapping epochs:
+
+```bash
+python scripts/validate_public_schizophrenia_cohort.py --window-s 0 \
+  --discard-waveform-csv --out outputs/repod_full_recordings
+```
+
+The legacy command still selects the first 120 seconds per subject. `--window-s` accepts a positive time limit or zero for full duration; `--epoch-s` is at least four seconds. Cached EDFs must match source checksums/size; incomplete downloads are replaced atomically. The optional `--source-metadata` accepts an explicitly retained API snapshot. Full duration increases epochs, not independent subjects. Read [expanded results](docs/research/EXPANDED_HUMAN_COHORT.md).
+
+By default the human runner verifies the 28 RepOD source EDFs, analyzes the first 120 seconds per subject, and evaluates full-scalp (19 channels), left Fp1/F7 and right Fp2/F8 feature sets using identical accepted epochs and leave-one-subject-out folds. The regional sets retain the source reference: they approximate electrode coverage, not actual BIS sensor derivations. All three results are reported without selecting a winning side.
 
 The second runner verifies public processed auditory-gating measurements and five-channel ERPs from **22 Fmr1-KO2/WT mice** against OSF source SHA-256 hashes. It summarizes seven paired-tone intervals without treating repeated measurements as independent animals, reproduces the published gating ratios, and compares five-channel coverage against the original two-channel average using animal-held-out genotype prediction. These experimental sensory-response/genotype labels are not autistic-meltdown or psychosis-onset labels. Human resting-state data have no corresponding S1/S2 events, so a numerical cross-species gating comparison remains unavailable. Animal monitoring here covers additional EEG/ERP channels; synchronized video, EMG and autonomic measures are not supplied.
 

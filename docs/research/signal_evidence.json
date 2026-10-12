@@ -1,0 +1,63 @@
+{
+  "schema_version": 1,
+  "reviewed_date_utc": "2026-10-12",
+  "scope": "selected_primary_studies_and_current_code",
+  "status": "research_candidates_only",
+  "individual_abnormality_threshold": null,
+  "imminent_event_validation": "not_established",
+  "use_as_event_labels": false,
+  "candidates": [
+    {
+      "id": "alpha_burst_asd_rest",
+      "doi": "10.64898/2026.04.03.716324",
+      "source_url": "https://www.biorxiv.org/content/10.64898/2026.04.03.716324v1",
+      "study_type": "preprint_v1_resting_group_comparison",
+      "frequency_hz": [7, 13],
+      "measure": "burst_duration_and_time_occupancy",
+      "reported_direction": "shorter_duration_lower_occupancy_not_burst_amplitude",
+      "outcome": "asd_group_association_not_future_meltdown",
+      "code_related_suffixes": ["__alpha_power_uv2", "__alpha_relative_power"],
+      "implemented_frequency_hz": [8, 13],
+      "implementation_match": "related_band_power_only_burst_estimator_absent"
+    },
+    {
+      "id": "gamma_visual_asd",
+      "doi": "10.1192/j.eurpsy.2024.653",
+      "source_url": "https://doi.org/10.1192/j.eurpsy.2024.653",
+      "study_type": "conference_abstract_visual_condition_comparison",
+      "frequency_hz": [30, 100],
+      "measure": "posterior_gamma_power_eyes_open_minus_closed",
+      "reported_direction": "increase_in_asd_with_eyes_open",
+      "outcome": "sensory_condition_association_not_future_meltdown",
+      "code_related_suffixes": ["__gamma_power_uv2", "__gamma_relative_power"],
+      "implemented_frequency_hz": [30, 40],
+      "implementation_match": "partial_band_only_no_visual_condition_contrast"
+    },
+    {
+      "id": "beta_gamma_csd_psychosis_transition",
+      "doi": "10.3109/15622975.2015.1083614",
+      "source_url": "https://pubmed.ncbi.nlm.nih.gov/26453061/",
+      "study_type": "longitudinal_high_risk_multivariate_prediction",
+      "frequency_hz": null,
+      "measure": "beta_gamma_current_source_density_pattern",
+      "reported_direction": "multivariate_pattern_no_single_band_threshold",
+      "outcome": "later_transition_to_psychosis_follow_up_at_least_three_years",
+      "code_related_suffixes": ["__beta_power_uv2", "__beta_relative_power", "__gamma_power_uv2", "__gamma_relative_power"],
+      "implemented_frequency_hz": {"beta": [13, 30], "gamma": [30, 40]},
+      "implementation_match": "scalp_band_power_only_source_csd_absent"
+    },
+    {
+      "id": "duration_mmn_psychosis_transition",
+      "doi": "10.1016/j.biopsych.2010.09.057",
+      "source_url": "https://pubmed.ncbi.nlm.nih.gov/21167475/",
+      "study_type": "longitudinal_high_risk_auditory_erp_prediction",
+      "frequency_hz": null,
+      "measure": "stimulus_locked_duration_mmn_amplitude",
+      "reported_direction": "reduced_amplitude_in_future_converters",
+      "outcome": "later_transition_to_psychosis_median_follow_up_32_months",
+      "code_related_suffixes": [],
+      "implemented_frequency_hz": null,
+      "implementation_match": "human_mmn_estimator_and_stimulus_markers_absent"
+    }
+  ]
+}

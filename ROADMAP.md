@@ -12,6 +12,7 @@
 | Extended acquisition | Verified scalp/auxiliary montage and event timing | Requires acquired data and protocol |
 | Full component estimators | Gating, alpha bursts, CSD and autonomic fusion | Requires operational definitions and validation |
 | Longitudinal LSTM/Transformer prediction | Labelled sequence protocol, model/training/inference implementation, prespecified event-level evaluation and prospective trial | Proposed only; no sequence model, weights or inference path; requires longitudinal labels and clinical study |
+| Annotated future-event SVM research | Past-only descriptors, reviewed future outcomes, two target models and inference | Implemented and engineering-tested with synthetic fixtures; real event models await genuine annotations and prospective validation |
 | Device integration | Documented monitor export and approved acquisition hardware | Requires actual device/export documentation |
 
 No owner or deadline is inferred for future milestones.

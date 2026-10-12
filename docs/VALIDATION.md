@@ -1,5 +1,9 @@
 # Validation status and next experiment
 
+## Extension, 12 October 2026 UTC (13 October in Israel)
+
+Full-recording analysis and the separate annotation-dependent event workflow are documented in [EXPANDED_HUMAN_COHORT.md](research/EXPANDED_HUMAN_COHORT.md), [EVENT_PREDICTION.md](research/EVENT_PREDICTION.md) and [PRE_EVENT_SIGNAL_EVIDENCE.md](research/PRE_EVENT_SIGNAL_EVIDENCE.md). The event module has engineering checks for past-only windows, reviewed follow-up, timing boundaries, co-occurring targets, subject separation and model reload. These are synthetic fixtures; RepOD still supplies no empirical event-prediction evaluation. The 12 October audit below is retained as a dated record of its then-current code.
+
 ## Implementation audit, 12 October 2026
 
 Code reviewed: `research/run-public-psychiatric-cohort` at `23936944186ed92bf7f123ada3b6fb50036585df`, package version 0.1.0. The local run passed **84 tests, with no failures, errors or skips**, followed by `scripts/verify_example.py`, the real-EEG `analyze` CLI and the paper `score` CLI. This audit changes documentation only. [VERIFICATION.json](VERIFICATION.json) records commands, results, environment and evidence scope; the [technical brief](TECHNICAL_BRIEF.md) provides a short shareable account.

@@ -67,7 +67,7 @@ def train_research_model(table_path, out: Path, feature_columns: list[str]) -> d
 GROUP_LABELS = {"autism_spectrum", "psychosis_spectrum", "healthy_control"}
 
 
-def train_group_model(table_path, out: Path, feature_columns: list[str]) -> dict:
+def train_group_model(table_path, out: Path, feature_columns: list[str], progress=None) -> dict:
     """Leave-one-subject-out classifier of diagnostic group (ASD / PSY / HC) from pooled epoch features.
 
     Input is ``cohort_features.csv`` from ``convert-cohort``. Only accepted epochs are used and missing
@@ -112,7 +112,9 @@ def train_group_model(table_path, out: Path, feature_columns: list[str]) -> dict
     classes = sorted(set(y))
     factory = lambda: make_pipeline(StandardScaler(), SVC(kernel="linear", class_weight="balanced"))
     predicted = np.empty(len(frame), dtype=object)
-    for train, test in LeaveOneGroupOut().split(x, y, subjects):
+    for fold, (train, test) in enumerate(LeaveOneGroupOut().split(x, y, subjects), 1):
+        if progress:
+            progress(f'Fold {fold}/{len(set(subjects))}: hold out {subjects[test][0]}, train={len(train)}, test={len(test)}')
         predicted[test] = factory().fit(x[train], y[train]).predict(x[test])
     votes = pd.DataFrame({"subject_id": subjects, "truth": y, "pred": predicted})
     per_subject = votes.groupby("subject_id").agg(truth=("truth", "first"), pred=("pred", lambda s: s.mode().iloc[0]),

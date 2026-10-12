@@ -3,14 +3,17 @@
 This is an exploratory diagnosis-group benchmark, not an episode-state or clinical validation.
 The source dataset is CC0: https://doi.org/10.18150/repod.0107441
 """
+import argparse
 import hashlib
 import json
+import math
 from pathlib import Path
 from importlib.metadata import version as package_version
 from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 
 import pandas as pd
+import numpy as np
 
 ROOT = Path("data/public_schizophrenia")
 MANIFEST = ROOT / "manifest.csv"
@@ -37,8 +40,70 @@ def download_file(file_id, target):
             output.write(chunk)
 
 
-def main():
-    payload = get_json(API)
+def parse_args(argv=None):
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--window-s', type=float, default=120,
+                        help='Seconds from recording start; 0 analyzes the entire recording (default: 120)')
+    parser.add_argument('--epoch-s', type=float, default=4, help='Non-overlapping epoch duration, at least four seconds')
+    parser.add_argument('--data-root', type=Path, default=ROOT)
+    parser.add_argument('--out', type=Path, default=OUT)
+    parser.add_argument('--source-metadata', type=Path, help='Use an explicitly retained RepOD API JSON snapshot')
+    parser.add_argument('--discard-waveform-csv', action='store_true',
+                        help='Analyze calibrated in-memory waveforms without writing large intermediate CSVs')
+    args = parser.parse_args(argv)
+    if not math.isfinite(args.window_s) or args.window_s < 0:
+        parser.error('--window-s must be finite and nonnegative; 0 means full recording')
+    if not math.isfinite(args.epoch_s) or args.epoch_s < 4:
+        parser.error('--epoch-s must be finite and at least four seconds')
+    return args
+
+
+def select_window(frame, fs, window_s):
+    if not math.isfinite(window_s) or window_s < 0:
+        raise ValueError('Window must be finite and nonnegative')
+    return frame.copy() if window_s == 0 else frame.iloc[:min(len(frame), round(fs * window_s))].copy()
+
+
+def ensure_source(info, target):
+    """Verify cached bytes or atomically replace a corrupt/incomplete source download."""
+    checksum = info.get('checksum', {})
+    expected = str(info.get('md5') or (checksum.get('value') if checksum.get('type') == 'MD5' else '')).lower()
+    if len(expected) != 32 or any(c not in '0123456789abcdef' for c in expected):
+        raise ValueError('RepOD source must supply an MD5 checksum')
+    size = info.get('filesize')
+
+    def digest(path):
+        with path.open('rb') as stream:
+            return hashlib.file_digest(stream, 'md5').hexdigest() if hasattr(hashlib, 'file_digest') else _md5_stream(stream)
+
+    def valid(path):
+        return path.is_file() and (size is None or path.stat().st_size == size) and digest(path) == expected
+
+    restored = target.exists() and not valid(target)
+    if not valid(target):
+        target.parent.mkdir(parents=True, exist_ok=True)
+        temporary = target.with_suffix(target.suffix + '.part')
+        try:
+            download_file(info['id'], temporary)
+            if not valid(temporary):
+                raise RuntimeError(f'Source checksum/size mismatch for {target.name}')
+            temporary.replace(target)
+        finally:
+            temporary.unlink(missing_ok=True)
+    return expected, restored
+
+
+def _md5_stream(stream):
+    checksum = hashlib.md5()
+    for chunk in iter(lambda: stream.read(1024 * 1024), b''):
+        checksum.update(chunk)
+    return checksum.hexdigest()
+
+
+def main(argv=None):
+    args = parse_args(argv)
+    root, out = args.data_root, args.out
+    payload = json.loads(args.source_metadata.read_text()) if args.source_metadata else get_json(API)
     if payload.get("status") != "OK":
         raise RuntimeError(f"RepOD API did not return OK: {payload.get('status')}")
     dataset_version = payload["data"]["latestVersion"]
@@ -59,15 +124,9 @@ def main():
             raise RuntimeError(f"No dataFile.id for {filename}: {item}")
         group = "HC" if filename.startswith("h") else "PSY"
         subject = f"{group}_{Path(filename).stem.upper()}"
-        target = ROOT / group / filename
+        target = root / group / filename
         target.parent.mkdir(parents=True, exist_ok=True)
-        if not target.exists() or target.stat().st_size == 0:
-            download_file(file_id, target)
-        digest = hashlib.md5(target.read_bytes()).hexdigest()
-        expected_md5 = str(info.get("md5") or "").lower()
-        if expected_md5 and digest != expected_md5:
-            target.unlink(missing_ok=True)
-            raise RuntimeError(f"MD5 mismatch for {filename}: {digest} != {expected_md5}")
+        digest, restored = ensure_source(info, target)
         rows.append({
             "file": f"{group}/{filename}", "subject_id": subject, "group": group,
             "site": "repod_eeg_schizophrenia_cohort",
@@ -75,12 +134,13 @@ def main():
             "source": f"https://doi.org/10.18150/repod.0107441; file={filename}",
         })
         downloaded.append({"file": filename, "bytes": target.stat().st_size, "md5": digest,
-                           "source_file_id": file_id, "group": group, "subject_id": subject})
+                           "source_file_id": file_id, "group": group, "subject_id": subject,
+                           "restored_corrupt_cached_file": restored})
         print(f"Verified {filename}: {target.stat().st_size:,} bytes, MD5 {digest}", flush=True)
 
-    pd.DataFrame(rows).to_csv(MANIFEST, index=False)
-    ROOT.mkdir(parents=True, exist_ok=True)
-    (ROOT / "provenance.json").write_text(json.dumps({
+    pd.DataFrame(rows).to_csv(root / 'manifest.csv', index=False)
+    root.mkdir(parents=True, exist_ok=True)
+    (root / "provenance.json").write_text(json.dumps({
         "dataset": "EEG in schizophrenia", "persistent_id": PERSISTENT_ID,
         "citation": "Olejarczyk E, Jernajczyk W (2017), RepOD v1",
         "license": "CC0 1.0", "api_url": API, "files": downloaded,
@@ -91,47 +151,57 @@ def main():
     }, indent=2) + "\n", encoding="utf-8")
 
     from psi_qeeg.convert import load_raw
-    from psi_qeeg.recording import read_recording
+    from psi_qeeg.recording import read_recording, Recording, validate
     from psi_qeeg.analysis import analyze
 
-    # Keep a fixed 120-second window per participant and skip the optional, expensive
-    # 60-second bicoherence estimator for this first reproducibility benchmark.
-    # Spectral features and epoch QC are the tested project pipeline.
+    # Default 120 seconds preserves the original experiment; full duration is an
+    # explicit option. More epochs do not increase the number of independent people.
     subject_dirs = []
+    subject_extent = []
     for row in rows:
         sid = row["subject_id"]
-        target_dir = OUT / "subjects" / sid
+        target_dir = out / "subjects" / sid
         target_dir.mkdir(parents=True, exist_ok=True)
-        frame, fs, channel_names = load_raw(ROOT / row["file"])
-        frame = frame.iloc[:min(len(frame), round(fs * 120))].copy()
-        if len(frame) < round(fs * 4):
-            raise RuntimeError(f"Recording too short for four-second epochs: {sid}")
-        frame.to_csv(target_dir / "recording.csv", index=False)
+        frame, fs, channel_names = load_raw(root / row["file"])
+        original_samples = len(frame)
+        frame = select_window(frame, fs, args.window_s)
+        if len(frame) < round(fs * args.epoch_s):
+            raise RuntimeError(f"Recording too short for the requested epoch duration: {sid}")
+        if not args.discard_waveform_csv:
+            frame.to_csv(target_dir / "recording.csv", index=False)
         metadata = {
             "sampling_rate_hz": fs, "eeg_unit": "uV", "eeg_columns": channel_names,
             "channel_locations": {}, "reference": "documented_reference_between_Fz_and_Cz",
             "reference_verified": False, "sensor": {"family": "research_eeg", "model": "not_reported"},
             "recording_context": "awake_observational_research", "subject_id": sid,
             "psychiatric_labels": None, "source": row["source"], "license": "CC0-1.0",
-            "changes": "First 120 seconds only; converted to uV; no filtering, resampling or interpolation",
+            "changes": f"Window seconds={args.window_s} (0=full); converted to uV; no filtering, resampling or interpolation",
+            "selection": {"window_s": args.window_s, "original_samples": original_samples,
+                          "analyzed_samples": len(frame), "waveform_csv_exported": not args.discard_waveform_csv},
         }
         (target_dir / "metadata.json").write_text(json.dumps(metadata, indent=2) + "\n", encoding="utf-8")
-        recording = read_recording(target_dir / "recording.csv", target_dir / "metadata.json")
-        part, summary = analyze(recording, compute_bicoherence=False)
+        recording = (validate(Recording(frame, metadata)) if args.discard_waveform_csv else
+                     read_recording(target_dir / "recording.csv", target_dir / "metadata.json"))
+        part, summary = analyze(recording, epoch_s=args.epoch_s, compute_bicoherence=False)
+        part.insert(0, 'epoch_id', np.arange(len(part)))
+        part.insert(0, 'session_id', 'repod_resting_recording')
         part.insert(0, "recording_context", row["context"])
         part.insert(0, "site", row["site"])
         part.insert(0, "group", "psychosis_spectrum" if row["group"] == "PSY" else "healthy_control")
         part.insert(0, "subject_id", sid)
         part.to_csv(target_dir / "features.csv", index=False)
         subject_dirs.append(target_dir / "features.csv")
+        subject_extent.append({"subject_id": sid, "recording_seconds": original_samples / fs,
+                               "analyzed_seconds": len(frame) / fs, "complete_epochs": summary['complete_epochs'],
+                               "accepted_epochs": summary['accepted_epochs'], "unused_tail_samples": summary['unused_tail_samples']})
         print(f"Processed {sid}: {summary['accepted_epochs']}/{summary['complete_epochs']} accepted epochs", flush=True)
 
     if len(subject_dirs) != 28:
         raise RuntimeError(f"Expected 28 converted subjects, got {len(subject_dirs)}")
     parts = [pd.read_csv(path) for path in subject_dirs]
     features = pd.concat(parts, ignore_index=True, sort=False)
-    feature_file = OUT / "cohort_features.csv"
-    OUT.mkdir(parents=True, exist_ok=True)
+    feature_file = out / "cohort_features.csv"
+    out.mkdir(parents=True, exist_ok=True)
     features.to_csv(feature_file, index=False)
 
     common = None
@@ -144,7 +214,7 @@ def main():
     if len(feature_columns) < 4:
         raise RuntimeError(f"Too few common, comparable EEG features for LOSO evaluation: {feature_columns}")
     from psi_qeeg.cohort import compare_electrode_coverage
-    comparison = compare_electrode_coverage(feature_file, OUT)
+    comparison = compare_electrode_coverage(feature_file, out, progress=lambda message: print(message, flush=True))
     result = comparison["comparisons"]["full_scalp"]
     accepted = features[features["accepted"].astype(str).str.lower() == "true"]
     report = {
@@ -158,6 +228,10 @@ def main():
         "failed_subjects": 0,
         "feature_rows": int(len(features)),
         "accepted_epochs": int(len(accepted)),
+        "selection_protocol": {"window_s": args.window_s, "full_recording": args.window_s == 0,
+                               "epoch_s": args.epoch_s, "overlap_s": 0,
+                               "waveform_csv_exported": not args.discard_waveform_csv,
+                               "subjects": subject_extent},
         "features_used": feature_columns,
         "evaluation": "leave-one-subject-out",
         "epoch_balanced_accuracy": result["epoch_balanced_accuracy"],
@@ -170,6 +244,9 @@ def main():
                               ("psi-qeeg-bis", "numpy", "scipy", "pandas", "mne", "scikit-learn")},
         "runner_sha256": hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
         "clinical_validation": "not_established",
+        "event_prediction": {"status": "not_trained_missing_event_annotations",
+                             "meltdown": None, "psychosis_onset": None,
+                             "reason": "RepOD supplies diagnosis groups, not longitudinal event onsets or reviewed event-free follow-up"},
         "interpretation": "Exploratory schizophrenia-vs-healthy-control diagnosis-group benchmark only. It does not test autistic meltdown, psychosis onset, episode-state prediction, or clinical utility.",
         "limitations": [
             "Single public cohort/acquisition context; external-site generalization is not tested.",
@@ -178,7 +255,7 @@ def main():
             "Epoch metrics are secondary; subject-level metrics are the more meaningful result.",
         ],
     }
-    (OUT / "public_cohort_validation.json").write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
+    (out / "public_cohort_validation.json").write_text(json.dumps(report, indent=2) + "\n", encoding="utf-8")
     print(json.dumps(report, indent=2), flush=True)
 
 

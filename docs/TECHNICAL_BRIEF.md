@@ -2,6 +2,8 @@
 
 **Netanel Stern | 12 October 2026 | Research software 0.1.0**
 
+This is the initial audit snapshot at the pinned code below. See the [later technical update](research/TECHNICAL_UPDATE.md) for the fresh full-recording run and annotation-dependent event extension.
+
 Scope: `netanelcyber/psi-qeeg-bis`, branch `research/run-public-psychiatric-cohort`, code commit [`23936944186ed92bf7f123ada3b6fb50036585df`](https://github.com/netanelcyber/psi-qeeg-bis/tree/23936944186ed92bf7f123ada3b6fb50036585df).
 
 **Current status.** PSI is an offline research workbench with FFT-based qEEG, experimental waveform descriptors, mathematical SOI/RDI scoring and optional linear SVM training/evaluation. There is no implemented or trained LSTM/Transformer, sequence-model inference or clinically validated PSI predictor in this checkout. The current article's section 7.2 proposes future state detection and trajectory prediction; it does not report trained PSI models.
