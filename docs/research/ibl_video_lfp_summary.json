@@ -1,0 +1,156 @@
+{
+  "dataset": "IBL Autism 2025",
+  "dataset_doi": "10.6084/m9.figshare.30024880",
+  "source_docs": "https://docs.internationalbrainlab.org/notebooks_external/2025_data_release_autism_noel.html",
+  "license": "CC-BY-4.0",
+  "session_id": "274dacc9-05b2-4154-b4f7-8f6dd46efcc8",
+  "animal_id": "SH023",
+  "subject_genotype": "unverified; do not infer KO from nickname",
+  "signal_scope": "real_raw_intracranial_LFP_excerpt",
+  "sampling_rate_hz": 2500.0,
+  "raw_channel_indices": [
+    32,
+    96,
+    128,
+    192
+  ],
+  "uv_per_adc_count": [
+    4.6875,
+    4.6875,
+    4.6875,
+    4.6875
+  ],
+  "reference_location_verified": false,
+  "reference_note": "imroTbl retained; anatomical reference location not established",
+  "probe_clock_window_s": [
+    80,
+    320
+  ],
+  "session_clock_window_s": [
+    79.99932919016378,
+    319.99710071704874
+  ],
+  "complete_4s_epochs": 60,
+  "band_calculation": "PSI band_powers: 2s Hann Welch, 50% overlap, constant detrending, exact-edge band integration",
+  "bands_hz": {
+    "delta_1_4": [
+      1,
+      4
+    ],
+    "theta_4_12": [
+      4,
+      12
+    ],
+    "beta_12_30": [
+      12,
+      30
+    ],
+    "gamma_30_80": [
+      30,
+      80
+    ],
+    "high_80_100": [
+      80,
+      100
+    ]
+  },
+  "relative_power_denominator_hz": [
+    1,
+    100
+  ],
+  "signal_artifact_review": "not_completed; powers are exploratory, not accepted diagnostic epochs",
+  "video_source": {
+    "key": "data/angelakilab/Subjects/SH023/2021-10-06/001/raw_video_data/_iblrig_bodyCamera.raw.a1abcd6d-104d-4028-ab1b-1c695a30aa6b.mp4",
+    "size": 862118355,
+    "etag": "73bc1e2be34370275aa3ac166f555b1f-103"
+  },
+  "video_source_frames": 170645,
+  "source_video_fps": 30.0,
+  "source_frame_interval": [
+    5179,
+    6984
+  ],
+  "clip_session_window_s": [
+    180.00299790018,
+    239.98493244024
+  ],
+  "clip_frames": 1805,
+  "wheel_events_in_clip": 5,
+  "frame_time_mapping": "Exact released camera timestamp array indexed by original video frame; matched full and excerpt frame counts",
+  "probe_time_mapping": "Piecewise linear interpolation of released probe/session sync pairs; no extrapolation",
+  "sources": [
+    {
+      "key": "data/angelakilab/Subjects/SH023/2021-10-06/001/alf/_ibl_bodyCamera.times.bffde94b-9241-40d8-81f4-9aa101b57dea.npy",
+      "size": 1365288,
+      "etag": "22189d4a7df9db38c333a386edbed44f",
+      "sha256": "72f42411fe47fe3c72f406acd1ec64f7130c18ba9945a83b732d3dc418491a55",
+      "whole_object_md5_verified": true
+    },
+    {
+      "key": "data/angelakilab/Subjects/SH023/2021-10-06/001/raw_ephys_data/probe00/_spikeglx_ephysData_g0_t0.imec0.sync.5d9c8815-86b4-4909-818f-4dc20a547762.npy",
+      "size": 4704,
+      "etag": "68d99647084793f5fd58bbc95b80dbe7",
+      "sha256": "9f0b211b7224044940c863998f15a72cb9494172031ec8f202bafc9c43f43e45",
+      "whole_object_md5_verified": true
+    },
+    {
+      "key": "data/angelakilab/Subjects/SH023/2021-10-06/001/raw_ephys_data/probe00/_spikeglx_ephysData_g0_t0.imec0.lf.0c456d5c-c4c3-4d5c-8b83-8a279baa7c2b.ch",
+      "size": 164355,
+      "etag": "72e852a0384a13a42d7740f1ebd4d419",
+      "sha256": "7f80a498757979022e9f79371d6f5857df576886998ceb32bc1d0a6256a94c0e",
+      "whole_object_md5_verified": true
+    },
+    {
+      "key": "data/angelakilab/Subjects/SH023/2021-10-06/001/raw_ephys_data/probe00/_spikeglx_ephysData_g0_t0.imec0.lf.2b6dc14b-5983-43d6-9eff-6980e9b7dd4b.meta",
+      "size": 13906,
+      "etag": "b9a49f42c968f8ba77896cb2d948f4fd",
+      "sha256": "2a9d57de42050ed94b35b3620d92e68c08afc490a9e646ebd43fe9fd93107e35",
+      "whole_object_md5_verified": true
+    },
+    {
+      "key": "data/angelakilab/Subjects/SH023/2021-10-06/001/alf/_ibl_wheelMoves.intervals.d8a0c780-a2b9-4b5b-9c41-d4665f0333db.npy",
+      "size": 19568,
+      "etag": "c69c968d7e6c9ac4e035f1e0d5457fcc",
+      "sha256": "49e6ddd78e692b1aeeee023be22973fcef2e19bba284eaa94717ff0bfa38c96e",
+      "whole_object_md5_verified": true
+    },
+    {
+      "key": "data/angelakilab/Subjects/SH023/2021-10-06/001/alf/_ibl_trials.table.d5992aa7-8229-437b-9580-e8bb07ba5544.pqt",
+      "size": 47886,
+      "etag": "97c27a704c5d1fe1350d798d2c754e77",
+      "sha256": "c2fad5f4b47b072bf8e5c55b74088660cfd8dbf38e60e989860d8697ba264526",
+      "whole_object_md5_verified": true
+    },
+    {
+      "key": "data/angelakilab/Subjects/SH023/2021-10-06/001/alf/probe00/electrodeSites.brainLocationIds_ccf_2017.ba2f226b-ea9d-4812-9454-46df6da7b9de.npy",
+      "size": 3200,
+      "etag": "291915dfbf1c1d8e7be6d67c96d1a822",
+      "sha256": "66b0a87ae4cc42934a11acdeb79b6247a33dbfa1f5ec82a9eb5f07a1c2a5feae",
+      "whole_object_md5_verified": true
+    },
+    {
+      "key": "data/angelakilab/Subjects/SH023/2021-10-06/001/alf/probe00/electrodeSites.mlapdv.47f3ed6f-87fb-4052-a98c-9ea6a9fab88a.npy",
+      "size": 4736,
+      "etag": "2dd6adda413f3ea0fd4ac56ef3ff1d30",
+      "sha256": "a0a85eaf5ab2114c94cff132a8d3100e3492a6f1f9ab008c9ac0420803bcd776",
+      "whole_object_md5_verified": true
+    }
+  ],
+  "lfp_range": {
+    "key": "data/angelakilab/Subjects/SH023/2021-10-06/001/raw_ephys_data/probe00/_spikeglx_ephysData_g0_t0.imec0.lf.fde85f41-45d6-4dd0-ab6b-9bff9d1eae4e.cbin",
+    "size": 2931058082,
+    "etag": "24da967e51cd078266e81f7b25a961c5-350",
+    "byte_interval_exclusive_end": [
+      38680198,
+      159038185
+    ],
+    "excerpt_sha256": "1518b314d5060fa475dac2808b86b36b7d060d275ea48862d1d81f1a98a7ca3a",
+    "whole_object_checksum_verified": false,
+    "integrity": "Exact HTTP 206 Content-Range and If-Match source ETag; local excerpt SHA256"
+  },
+  "attack_onsets_labeled": false,
+  "behavioral_onset_model_trained": false,
+  "one_minute_forecasting_validation": false,
+  "human_transfer_validation": false,
+  "runner_sha256": "d3af35beab7940fec43749312a347b201810b446aa53dd76f249271b1f5e143e"
+}

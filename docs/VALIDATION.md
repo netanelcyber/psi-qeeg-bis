@@ -1,5 +1,9 @@
 # Validation status and next experiment
 
+## Public synchronized video/LFP, 13 October 2026
+
+The [IBL run](research/OPEN_VIDEO_LFP.md) executes a real continuous intracranial signal excerpt, calibrated FFT/Welch powers in 60 four-second epochs per channel, probe/session clock mapping and frame-count-checked video annotations of five deposited wheel movements. Runtime checks verify small-object hashes, exact compressed ranges, source gain/sample counts, ordered clocks and matching full/excerpt frame counts. These are acquisition/alignment checks. Individual genotype/reference metadata and artifact adjudication are incomplete, no abnormal-event labels are established and no behavioral model or one-minute forecast is trained. Strict event-training contracts remain in force.
+
 ## Continued training, 13 October 2026
 
 The [continued Fmr1 study](research/CONTINUED_FMR1_TRAINING.md) fits nested animal-separated SVM selection, two source-experiment holdouts and selected/fixed-C=1 final all-animal refits. It reuses the same 43 mice and does not establish improved prediction. The current local suite passes **137 tests without skips**. New regressions cover annotation/outcome leakage, synthetic/real separation, fitted epoch duration, animal acquisition contracts, nested selection isolation and coefficient/model reload checks. [fmr1_continued_training_verification.json](research/fmr1_continued_training_verification.json) records the current checks; no real event-trained model or LSTM is added.
