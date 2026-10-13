@@ -1,4 +1,5 @@
 import unittest
+from unittest.mock import patch
 
 import numpy as np
 
@@ -67,6 +68,50 @@ class CouplingTests(unittest.TestCase):
             window_coupling(np.column_stack((x, x, x, x)), 500, ['a', 'b', 'c', 'd'], mode='bipolar', surrogates=19)
         with self.assertRaises(ValueError):
             window_coupling(np.ones((100, 2)), 500, ['a', 'b'], surrogates=19)
+
+    def test_circular_shifts_exclude_both_exact_one_second_boundaries(self):
+        class BoundarySampler:
+            def choice(self, candidates, size, replace):
+                self.assertions(candidates, size, replace)
+                return np.r_[candidates[0], candidates[-1], candidates[1:size - 1]]
+
+            def assertions(inner, candidates, size, replace):
+                # A 16s, 500Hz input becomes 7000 samples after edge trimming.
+                self.assertEqual((candidates[0], candidates[-1]), (501, 6499))
+                self.assertEqual(len(candidates), 5999)
+                self.assertFalse(replace)
+        x = np.random.default_rng(40).normal(size=(8000, 2))
+        with patch('psi_qeeg.coupling.np.random.default_rng', return_value=BoundarySampler()):
+            result = window_coupling(x, 500, ['a', 'b'], surrogates=19)
+        shifts = np.array(result['surrogate_shifts_samples'])
+        self.assertTrue((np.minimum(shifts, result['samples_after_edge_trim'] - shifts) > 500).all())
+        self.assertEqual(len(np.unique(shifts)), 19)
+        for row in result['pac']:
+            self.assertGreaterEqual(row['surrogate_p'], 1 / 20)
+            self.assertAlmostEqual(row['surrogate_p'] * 20, round(row['surrogate_p'] * 20))
+
+    def test_seeded_null_is_reproducible_and_distinct_shift_limit_enforced(self):
+        x = np.random.default_rng(81).normal(size=(8000, 2))
+        first = window_coupling(x, 500, ['a', 'b'], surrogates=19, seed=7)
+        second = window_coupling(x, 500, ['a', 'b'], surrogates=19, seed=7)
+        self.assertEqual(first['surrogate_shifts_samples'], second['surrogate_shifts_samples'])
+        self.assertEqual(first['pac'], second['pac'])
+        with self.assertRaisesRegex(ValueError, 'Insufficient distinct'):
+            window_coupling(x, 500, ['a', 'b'], surrogates=6000)
+
+    def test_coherence_matches_independent_scipy_reference(self):
+        from scipy.signal import coherence
+        from scipy.integrate import trapezoid
+        rng = np.random.default_rng(9)
+        common = rng.normal(size=8000)
+        x = np.column_stack((common + rng.normal(size=8000), common + rng.normal(size=8000)))
+        result = window_coupling(x, 500, ['a', 'b'], surrogates=19)
+        f, c = coherence(x[500:-500, 0], x[500:-500, 1], fs=500,
+                         window='hann', nperseg=1000, noverlap=500, detrend='constant')
+        for band, low, high in [('theta', 4, 12), ('gamma', 30, 80)]:
+            mask = (f >= low) & (f <= high)
+            expected = trapezoid(c[mask], f[mask]) / (high - low)
+            self.assertAlmostEqual(result['pairs'][0][band + '_coherence'], expected, places=12)
 
 
 if __name__ == '__main__':

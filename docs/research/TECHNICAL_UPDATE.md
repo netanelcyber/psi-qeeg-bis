@@ -1,6 +1,6 @@
 # PSI: human EEG and event-prediction status
 
-**Netanel Stern | 12 October 2026 UTC | Technical update for Felix Benninger and colleagues**
+**Netanel Stern | Updated 13 October 2026 | Technical update for Felix Benninger and colleagues**
 
 PSI runs an offline FFT-based qEEG pipeline and optional linear SVM research workflows. The full human EEG experiment below predicts diagnosis groups. A separate event workflow requires independently timed outcomes; it has engineering tests but no real event-trained model. **No LSTM/Transformer is implemented or trained, and no imminent-attack threshold is validated.** Reviewable changes: [PR #3](https://github.com/netanelcyber/psi-qeeg-bis/pull/3).
 
@@ -14,13 +14,13 @@ Experimental single-channel auto-bicoherence screens the complete past 60 second
 
 Public RepOD v1.0 (CC0) contains 14 schizophrenia and 14 control participants, 19 channels, 250 Hz. All 28 source checksums/sizes were verified. Full recordings provide 28,863 seconds, 7,205 four-second epochs and 6,870 accepted epochs, compared with 840/821 previously. There are still 28 independent people.
 
-| Coverage | Prior 120 s | Entire recording |
-| --- | ---: | ---: |
-| Full scalp | 64.29% | 78.57% |
-| Fp1/F7 | 46.43% | 67.86% |
-| Fp2/F8 | 60.71% | 39.29% |
+| Coverage | Corrected entire-recording subject balanced accuracy |
+| --- | ---: |
+| Full scalp | 78.57% |
+| Fp1/F7 | 50.00% |
+| Fp2/F8 | 25.00% |
 
-These are subject balanced accuracies from leave-one-subject-out evaluation. Each training fold fits StandardScaler then linear SVC (`C=1`, balanced class weights). Four descriptors per channel are used: alpha power, delta/alpha ratio, SEF95 and entropy. Epoch majority voting yields subject predictions. Coverage sets share accepted epochs; final model refits are not test results. The right result declined. These small, single-site estimates lack uncertainty intervals and external/prospective validation.
+These are subject balanced accuracies from corrected leave-one-subject-out evaluation. Each training fold fits a StandardScaler with total weight 1 per participant, then linear SVC (`C=1`, participant-weighted and classes balanced by participant counts). Four descriptors per channel are used: alpha power, delta/alpha ratio, SEF95 and entropy. Epoch majority voting yields subject predictions. Coverage sets share accepted epochs; final model refits are not test results. The earlier epoch-pooled regional scores of 67.86%/39.29% are historical; the normalization also changes regularization, so this is a corrected training protocol rather than a pure duration comparison. These small, single-site estimates lack uncertainty intervals and external/prospective validation. See [current results and prior-run boundaries](EXPANDED_HUMAN_COHORT.md).
 
 ## Literature candidates and implementation gaps
 

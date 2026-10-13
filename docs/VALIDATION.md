@@ -1,8 +1,12 @@
 # Validation status and next experiment
 
+## Methodology corrections, 13 October 2026
+
+The [PR #3 corrections](research/METHODOLOGY_CORRECTIONS.md) pass **159 local tests without failures, errors or skips**. The real SH023 data were reproduced byte-for-byte and all 2,288 PAC tests rerun with strict one-second surrogate exclusion, including both boundaries. An independent SciPy/entropy audit verifies saved PAC, a real null distribution, coherence and BH values. The real full RepOD run retains 7,205/6,870 complete/accepted epochs and 28 people, now with equal participant mass in training-fold scaling/SVM fitting. Corrected subject accuracies are 78.57% full scalp, 50% Fp1/F7 and 25% Fp2/F8. Training/inference acquisition and QC contracts, modality separation, positive-duration wheel annotations and configured surrogate receipts have regressions. [Current verification](research/methodology_corrections_verification.json) supersedes the earlier claims below where the protocol changed. No real abnormal-event prediction or clinical validation is established.
+
 ## Coupling analysis, 13 October 2026
 
-The [IBL coupling study](research/IBL_COUPLING.md) executes PLV, Welch magnitude-squared/imaginary coherency and Tort theta–gamma modulation index on 143 unique real LFP windows, with three wheel-quiet controls, 199 PAC surrogates per relationship, multiplicity adjustment and notch/bipolar sensitivity checks. Seven new numerical regressions bring the local suite to **144 passing tests**. Tests distinguish identity/common-reference coherence from residual bipolar interactions and known amplitude modulation from an uncoupled control. Strong original synchrony is derivation-sensitive; selected raw pre-bout PAC increases already overlap previous movements. These are exploratory measurements in one mouse, not a trained event predictor or a validated SOI/RDI component, and no LSTM or clinical inference is introduced.
+The [IBL coupling study](research/IBL_COUPLING.md) executes PLV, Welch magnitude-squared/imaginary coherency and Tort theta–gamma modulation index on 143 unique real LFP windows, with three wheel-quiet controls, 199 PAC surrogates per relationship, multiplicity adjustment and notch/bipolar sensitivity checks. Its initial seven numerical regressions brought the then-local suite to **144 passing tests**; the corrected run is documented above. Tests distinguish identity/common-reference coherence from residual bipolar interactions and known amplitude modulation from an uncoupled control. Strong original synchrony is derivation-sensitive; selected raw pre-bout PAC increases already overlap previous movements. These are exploratory measurements in one mouse, not a trained event predictor or a validated SOI/RDI component, and no LSTM or clinical inference is introduced.
 
 ## Public synchronized video/LFP, 13 October 2026
 
@@ -10,7 +14,7 @@ The [IBL run](research/OPEN_VIDEO_LFP.md) executes a real continuous intracrania
 
 ## Continued training, 13 October 2026
 
-The [continued Fmr1 study](research/CONTINUED_FMR1_TRAINING.md) fits nested animal-separated SVM selection, two source-experiment holdouts and selected/fixed-C=1 final all-animal refits. It reuses the same 43 mice and does not establish improved prediction. The current local suite passes **137 tests without skips**. New regressions cover annotation/outcome leakage, synthetic/real separation, fitted epoch duration, animal acquisition contracts, nested selection isolation and coefficient/model reload checks. [fmr1_continued_training_verification.json](research/fmr1_continued_training_verification.json) records the current checks; no real event-trained model or LSTM is added.
+The [continued Fmr1 study](research/CONTINUED_FMR1_TRAINING.md) fits nested animal-separated SVM selection, two source-experiment holdouts and selected/fixed-C=1 final all-animal refits. It reuses the same 43 mice and does not establish improved prediction. Its then-local suite passed **137 tests without skips**. Regressions cover annotation/outcome leakage, synthetic/real separation, fitted epoch duration, animal acquisition contracts, nested selection isolation and coefficient/model reload checks. [fmr1_continued_training_verification.json](research/fmr1_continued_training_verification.json) records those dated checks; no real event-trained model or LSTM is added.
 
 ## Animal extension, 13 October 2026 in Israel
 

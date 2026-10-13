@@ -67,6 +67,24 @@ def train_research_model(table_path, out: Path, feature_columns: list[str]) -> d
 GROUP_LABELS = {"autism_spectrum", "psychosis_spectrum", "healthy_control"}
 
 
+def subject_training_weights(subjects, labels):
+    """One unit of scaler mass per person; balance SVM classes by people.
+
+    Compute on the training fold only. Exact replication of one person's
+    epochs preserves their total contribution and the SVM regularization.
+    """
+    table = pd.DataFrame({'subject': subjects, 'label': labels})
+    if table.empty or table.isna().any().any() or (table.groupby('subject').label.nunique() != 1).any():
+        raise ValueError('Weights need nonempty subjects with one diagnosis per subject')
+    counts = table.groupby('subject').subject.transform('size').to_numpy(float)
+    scaler = 1 / counts
+    people = table.drop_duplicates('subject')
+    class_counts = people.groupby('label').size()
+    class_weights = len(people) / (len(class_counts) * class_counts)
+    svm = scaler * table.label.map(class_weights).to_numpy(float)
+    return scaler, svm
+
+
 def train_group_model(table_path, out: Path, feature_columns: list[str], progress=None) -> dict:
     """Leave-one-subject-out classifier of diagnostic group (ASD / PSY / HC) from pooled epoch features.
 
@@ -74,6 +92,8 @@ def train_group_model(table_path, out: Path, feature_columns: list[str], progres
     features are not imputed. Epochs of one person are not independent, so subject-level majority-vote
     metrics are reported next to epoch-level ones. Group is a dataset-documented diagnosis, never a
     state label, and a ``site`` column (if present) is checked for total confounding with group.
+    Every training participant has equal scaler mass; SVM weights also balance
+    classes by participant count, so recording length does not define influence.
     """
     try:
         from sklearn.metrics import balanced_accuracy_score, confusion_matrix, f1_score
@@ -110,12 +130,23 @@ def train_group_model(table_path, out: Path, feature_columns: list[str], progres
         raise ValueError("Missing features require a reviewed protocol; this trainer does not impute them")
     y, subjects = frame.group.to_numpy(), frame.subject_id.to_numpy()
     classes = sorted(set(y))
-    factory = lambda: make_pipeline(StandardScaler(), SVC(kernel="linear", class_weight="balanced"))
+    factory = lambda: make_pipeline(StandardScaler(), SVC(kernel="linear", C=1))
+
+    def fit(indices):
+        scaler_weights, svm_weights = subject_training_weights(subjects[indices], y[indices])
+        return factory().fit(x[indices], y[indices], standardscaler__sample_weight=scaler_weights,
+                             svc__sample_weight=svm_weights)
+
     predicted = np.empty(len(frame), dtype=object)
+    folds = []
     for fold, (train, test) in enumerate(LeaveOneGroupOut().split(x, y, subjects), 1):
         if progress:
             progress(f'Fold {fold}/{len(set(subjects))}: hold out {subjects[test][0]}, train={len(train)}, test={len(test)}')
-        predicted[test] = factory().fit(x[train], y[train]).predict(x[test])
+        predicted[test] = fit(train).predict(x[test])
+        folds.append({'held_out_subject': str(subjects[test][0]),
+                      'training_subjects': sorted(set(subjects[train])),
+                      'training_subjects_per_group': frame.iloc[train].groupby('group').subject_id.nunique().to_dict(),
+                      'train_epochs': len(train), 'test_epochs': len(test)})
     votes = pd.DataFrame({"subject_id": subjects, "truth": y, "pred": predicted})
     per_subject = votes.groupby("subject_id").agg(truth=("truth", "first"), pred=("pred", lambda s: s.mode().iloc[0]),
                                                   epochs=("pred", "size")).reset_index()
@@ -127,10 +158,19 @@ def train_group_model(table_path, out: Path, feature_columns: list[str], progres
               "subject_confusion_matrix": {"labels": classes, "rows_true_cols_pred":
                   confusion_matrix(per_subject.truth, per_subject.pred, labels=classes).tolist()},
               "site_checked": "site" in frame,
+              "training_balance": {"scaler": "1 / accepted training epochs per subject; total mass 1 per person",
+                                   "svm": "scaler weight * training_subjects / (classes * training_subjects_in_class)",
+                                   "regularization": "C=1 with one unit per person before class balancing; independent of recording duration",
+                                   "fold_scope": "Weights and StandardScaler estimated from training subjects only"},
+              "folds": folds,
               "limitations": "Group = documented diagnosis in the supplied cohort. Without a site column, group may be confounded "
                              "with device, site or age. Subject-level metrics are the meaningful ones. No diagnostic claim."}
     out.mkdir(parents=True, exist_ok=True)
     (out / "group_evaluation.json").write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
     per_subject.to_csv(out / "held_out_subject_predictions.csv", index=False)
-    joblib.dump(factory().fit(x, y), out / "group_model.joblib")
+    scaler_weights, svm_weights = subject_training_weights(subjects, y)
+    frame[['subject_id', 'group']].assign(scaler_weight=scaler_weights, svm_weight=svm_weights).groupby(
+        ['subject_id', 'group']).agg(epochs=('scaler_weight', 'size'), scaler_mass=('scaler_weight', 'sum'),
+                                   svm_mass=('svm_weight', 'sum')).reset_index().to_csv(out / 'training_subject_weights.csv', index=False)
+    joblib.dump(fit(np.arange(len(frame))), out / "group_model.joblib")
     return result

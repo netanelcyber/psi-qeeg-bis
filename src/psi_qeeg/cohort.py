@@ -82,7 +82,7 @@ def compare_electrode_coverage(table_path, out: Path, progress=None) -> dict:
         "protocol": {
             "feature_selection": "Fixed channel names and four spectral families; no outcome-based selection",
             "quality_control": "Identical accepted full-scalp epochs used in all comparisons",
-            "model": "StandardScaler fitted within training fold; linear SVC, balanced class weights",
+            "model": "Training-fold StandardScaler weighted equally by subject; linear SVC C=1 with equal-subject mass and classes balanced by training-subject count",
             "reference": "Source common reference retained; no Fpz estimation or re-referencing",
             "selection": "All three comparisons reported; no best-side/model selection",
         },

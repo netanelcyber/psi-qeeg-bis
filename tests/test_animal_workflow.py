@@ -182,6 +182,48 @@ class AnimalEventTests(unittest.TestCase):
         self.features.loc[self.features.animal_id == 'artificial-0', 'acquisition_contract'] = json.dumps(contract)
         with self.assertRaisesRegex(ValueError, 'acquisition contract'): self.prepare()
 
+    def test_reserved_behavior_names_normalized_before_preparation(self):
+        self.prepare()
+        for name in ('Meltdown', 'GENOTYPE', ' psychosis_onset ', '\tMeLtDoWn\n'):
+            with self.subTest(name=name), self.assertRaisesRegex(ValueError, 'human psychiatric or genotype'):
+                prepare_animal_events(self.root / 'features.csv', self.root / 'events.csv', self.root / 'coverage.csv',
+                    self.root / 'bad', ['C1__gamma_low_power_uv2'], name, 'Artificial observable behavior definition')
+
+    def test_mixed_eeg_and_lfp_are_rejected_even_with_same_physical_sites(self):
+        self.features['recording_context'] = 'awake_model_animal_research'
+        self.features['signal_scope'] = 'raw_continuous_eeg'
+        self.features.loc[self.features.animal_id == 'artificial-0', 'signal_scope'] = 'raw_continuous_lfp'
+        with self.assertRaisesRegex(ValueError, 'separate animal models'): self.prepare()
+
+    @unittest.skipUnless(HAS_ML, 'optional ML dependencies')
+    def test_inference_rejects_quality_policy_changes_and_legacy_contracts(self):
+        self.prepare(); train_animal_events(self.root / 'dataset/animal_windows.csv', self.root / 'dataset/animal_dataset_manifest.json', self.root / 'model')
+        for key, value in [('max_amplitude_uv', 1000), ('min_std_uv', 0)]:
+            with self.subTest(key=key):
+                contract = acquisition_contract(metadata()); contract['quality_policy'][key] = value
+                changed = self.features.copy(); changed['acquisition_contract'] = json.dumps(contract)
+                changed.to_csv(self.root / 'changed.csv', index=False)
+                with self.assertRaisesRegex(ValueError, 'quality acquisition contract'):
+                    predict_animal_events(self.root / 'model/animal_event_model.joblib', self.root / 'changed.csv', self.root / 'bad')
+        contract.pop('quality_policy')
+        changed['acquisition_contract'] = json.dumps(contract); changed.to_csv(self.root / 'legacy.csv', index=False)
+        with self.assertRaisesRegex(ValueError, 'acquisition contract'):
+            predict_animal_events(self.root / 'model/animal_event_model.joblib', self.root / 'legacy.csv', self.root / 'bad')
+
+    @unittest.skipUnless(HAS_ML, 'optional ML dependencies')
+    def test_animal_model_cannot_cross_lfp_eeg_scope(self):
+        # Artificial table with real-context declarations solely to test the guard.
+        self.features['recording_context'] = 'awake_model_animal_research'
+        self.features['signal_scope'] = 'raw_continuous_lfp'
+        contract = acquisition_contract(metadata()); contract['signal_scope'] = 'raw_continuous_lfp'
+        self.features['acquisition_contract'] = json.dumps(contract)
+        self.prepare(); train_animal_events(self.root / 'dataset/animal_windows.csv', self.root / 'dataset/animal_dataset_manifest.json', self.root / 'model')
+        self.features['signal_scope'] = 'raw_continuous_eeg'; contract['signal_scope'] = 'raw_continuous_eeg'
+        self.features['acquisition_contract'] = json.dumps(contract)
+        self.features.to_csv(self.root / 'eeg.csv', index=False)
+        with self.assertRaisesRegex(ValueError, 'signal scope'):
+            predict_animal_events(self.root / 'model/animal_event_model.joblib', self.root / 'eeg.csv', self.root / 'bad')
+
     @unittest.skipUnless(HAS_ML, 'optional ML dependencies')
     def test_inference_requires_fitted_electrodes_reference_and_epoch_duration(self):
         self.prepare(); train_animal_events(self.root / 'dataset/animal_windows.csv', self.root / 'dataset/animal_dataset_manifest.json', self.root / 'model')

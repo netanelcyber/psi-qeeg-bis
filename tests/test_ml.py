@@ -100,3 +100,44 @@ class GroupTrainingTests(unittest.TestCase):
     def test_surgical_context_rejected(self):
         self.frame["recording_context"]="perioperative_anesthesia"
         with self.assertRaises(ValueError):self.run_train()
+
+    def test_training_weights_balance_people_and_classes_not_epochs(self):
+        import numpy as np
+        from psi_qeeg.ml import subject_training_weights
+        subjects = np.array(['a'] * 2 + ['b'] * 20 + ['c'] * 4)
+        labels = np.array(['healthy_control'] * 22 + ['psychosis_spectrum'] * 4)
+        scaler, svm = subject_training_weights(subjects, labels)
+        for person in set(subjects):
+            self.assertAlmostEqual(scaler[subjects == person].sum(), 1)
+        self.assertAlmostEqual(svm[labels == 'healthy_control'].sum(), 1.5)
+        self.assertAlmostEqual(svm[labels == 'psychosis_spectrum'].sum(), 1.5)
+
+    def test_replicating_a_participant_does_not_change_scaler_or_decision(self):
+        import joblib
+        import numpy as np
+        from sklearn.pipeline import Pipeline
+        from unittest.mock import patch
+        original = self.frame.copy()
+        fitted_weights = []
+        original_fit = Pipeline.fit
+        def checked_fit(model, x, y, **kwargs):
+            fitted_weights.append((kwargs['standardscaler__sample_weight'].sum(), kwargs['svc__sample_weight'].sum()))
+            return original_fit(model, x, y, **kwargs)
+        with patch.object(Pipeline, 'fit', checked_fit):
+            result = self.run_train()
+        self.assertEqual(len(fitted_weights), 10)  # Nine LOSO folds and one final refit.
+        np.testing.assert_allclose(fitted_weights[:9], np.full((9, 2), 8))
+        np.testing.assert_allclose(fitted_weights[-1], [9, 9])
+        first = joblib.load(self.root / 'out/group_model.joblib')
+        self.frame = pd.concat([original, *([original[original.subject_id == 'healthy_control-0']] * 8)], ignore_index=True)
+        repeated = self.run_train()
+        second = joblib.load(self.root / 'out/group_model.joblib')
+        np.testing.assert_allclose(first.named_steps['standardscaler'].mean_, second.named_steps['standardscaler'].mean_, atol=1e-12)
+        np.testing.assert_allclose(first.named_steps['standardscaler'].var_, second.named_steps['standardscaler'].var_, atol=1e-12)
+        grid = original[['f1', 'f2']].to_numpy()
+        np.testing.assert_allclose(first.decision_function(grid), second.decision_function(grid), atol=2e-3)
+        self.assertEqual(result['subject_confusion_matrix'], repeated['subject_confusion_matrix'])
+        for fold in repeated['folds']:
+            self.assertNotIn(fold['held_out_subject'], fold['training_subjects'])
+        weights = pd.read_csv(self.root / 'out/training_subject_weights.csv')
+        np.testing.assert_allclose(weights.scaler_mass, 1)

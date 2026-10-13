@@ -1,20 +1,28 @@
 {
+  "verified_at_utc": "2026-10-13T16:52:26.774264+00:00",
+  "scope": "Corrected strict-boundary surrogate rerun; independent entropy/null/coherence/BH checks",
   "checks": {
-    "input_and_estimator_hashes": true,
-    "past_contained_input_for_every_window": true,
-    "all_pre_onset_samples_before_target": true,
-    "duplicates_do_not_expand_test_family": true,
-    "three_disjoint_guarded_controls": true,
-    "independent_scipy_bh_matches": true,
-    "saved_pac_matches_independent_entropy_formula": true,
-    "actual_coherence_matches_scipy_reference": true,
-    "late_pre_windows_contain_real_prior_bouts": true,
-    "no_first_onset_local_pac_q05": true,
-    "valid_connectivity_ranges": true,
-    "engineering_tests_passed": true
+    "coupling_runner_and_estimator_fingerprints": true,
+    "coupling_input_fingerprints": true,
+    "pac_count_and_unique_family": true,
+    "configured_surrogate_count_consistent": true,
+    "strict_signed_one_second_exclusion": true,
+    "all_signal_samples_precede_cutoff": true,
+    "pre_onset_samples_precede_target": true,
+    "pac_matches_independent_entropy": true,
+    "bh_matches_independent_scipy": true,
+    "empirical_p_grid": true,
+    "real_pac_and_null_recomputed_independently": true,
+    "real_theta_coherence_matches_scipy": true,
+    "real_gamma_coherence_matches_scipy": true,
+    "reported_pac_counts_match_saved_tests": true,
+    "no_clinical_event_validation_claim": true
   },
   "all_passed": true,
-  "local_unit_tests": 144,
-  "new_estimator_tests": 7,
-  "abnormal_event_prediction_validated": false
+  "local_unit_tests": 159,
+  "estimator_tests": 10,
+  "surrogates_per_test": 199,
+  "pac_test_family_size": 2288,
+  "abnormal_event_prediction_validated": false,
+  "verification_receipt": "methodology_corrections_verification.json"
 }

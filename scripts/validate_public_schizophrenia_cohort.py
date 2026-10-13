@@ -242,6 +242,7 @@ def main(argv=None):
                                "subjects": subject_extent},
         "features_used": feature_columns,
         "evaluation": "leave-one-subject-out",
+        "training_balance": comparison['protocol']['model'],
         "epoch_balanced_accuracy": result["epoch_balanced_accuracy"],
         "subject_balanced_accuracy": result["subject_balanced_accuracy"],
         "subject_confusion_matrix": result["subject_confusion_matrix"],

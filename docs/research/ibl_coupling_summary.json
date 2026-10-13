@@ -15,7 +15,7 @@
     },
     {
       "filename": "video_lfp_alignment_report.json",
-      "sha256": "085251b9d3a1f9ee9c9cb0079bfa4972a9101f291da103b2a217e17ac635a75e",
+      "sha256": "f5c290876610192b5f108816d74fd1066223a48896a376cb072ddb44448f280e",
       "bytes": 5805
     },
     {
@@ -136,13 +136,16 @@
   },
   "pac_test_family_size": 2288,
   "surrogates_per_test": 199,
+  "surrogate_exclusion_s": 1,
+  "surrogate_boundary_excluded": true,
+  "surrogate_p_resolution": 0.005,
   "pac_q05_by_mode": {
     "original": 273,
     "notch_50_60": 190,
     "bipolar": 8
   },
   "phase_amplitude_estimator": "Tort KL modulation index, 18 phase bins; normalized MVL supplementary",
-  "surrogate_control": "199 distinct circular amplitude shifts, excluding +/-1s; plus-one p, BH over all unique window/mode/PAC relationships",
+  "surrogate_control": "199 distinct circular amplitude shifts, excluding distances <=1s including both boundaries; plus-one p, BH over all unique window/mode/PAC relationships",
   "coherence_estimator": "Magnitude-squared Welch coherency; 2s Hann, 50% overlap, constant detrend; integrated band mean",
   "imaginary_control": "Mean absolute imaginary coherency over each band; not a guarantee of neural origin",
   "bipolar_derivations": [
@@ -164,6 +167,7 @@
     "High PLV/coherence may reflect shared reference or common sources",
     "PAC surrogate rejection does not rule out transient or nonsinusoidal waveform effects",
     "A fixed periodic oscillation may retain PAC after a circular shift; non-rejection is not proof of absent coupling",
+    "Overlapping tests are dependent; BH-adjusted exploratory p values do not establish event-level significance or FDR under arbitrary dependence",
     "Declared 16s windows dilute subsecond movement; no adjudicated abnormal event or forecasting evaluation"
   ],
   "method_sources": [
@@ -179,6 +183,6 @@
     "scipy": "1.17.0",
     "pandas": "2.2.3"
   },
-  "runner_sha256": "41bc42ff2e2c40135045ac0d2b7a75f5aa1e276c00ec815b18b2cdf033cfcc2c",
-  "estimator_sha256": "693b39fc3e47c2c8937ec29d781216b4c76f3a5764c51c0af3c19e1373f91869"
+  "runner_sha256": "b39149e5f5eb9dc1a389fdefdc5c0d17d3f920368554aced76c4908cc9744c6c",
+  "estimator_sha256": "250030dadcdb538ae967fa554104654bac860538bae021397048dc380c7ea619"
 }

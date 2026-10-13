@@ -39,7 +39,7 @@ python -m psi_qeeg analyze-animal-qeeg data/mouse.csv \
 
 Output is `animal_epoch_features.csv` and `animal_qeeg_analysis.json`. This command does not create event labels. It accepts continuous animal signals, not averaged ERPs. Raw-sample features stay within each epoch, so future samples do not change prior epochs. The [calculation guide](ANIMAL_QEEG_METHODS.md) explains the physical powers and denominators.
 
-Each epoch retains a canonical `acquisition_contract` for channel locations, verified reference, sample rate, units and declared acquisition filters. The behavioral manifest carries this contract, and inference requires an exact compatible derivation and the fitted epoch duration. Reusing a channel name for another brain location/reference is rejected. Regenerate older epoch tables that lack this metadata.
+Each epoch retains a canonical `acquisition_contract` for channel locations, verified reference, sample rate, units, signal scope, declared acquisition filters and the numerical quality method/thresholds (`max_amplitude_uv`, `min_std_uv`). The behavioral manifest carries this contract, and inference requires an exact compatible derivation, QC policy and fitted epoch duration. Reusing a channel name for another brain location/reference, relaxing QC or transferring between EEG and LFP is rejected. Use exactly one signal scope per model. Regenerate older epoch tables that lack this metadata, re-prepare datasets and refit: animal acquisition contracts are version 2 and behavioral manifests version 3.
 
 ## Behavioral-onset SVM implementation
 
@@ -47,7 +47,7 @@ For the selected behavioral domain, supply an observable `behavior-name` and ope
 
 At cutoff `t`, a history uses only complete accepted past qEEG epochs. Per-feature mean, sample SD and time slope are inputs. The positive outcome is a confirmed future onset in `[t+min_lead,t+horizon]`. Current/recent events, insufficient lead, signal/history gaps and unreviewed future time are censored. The defaults (60-second history, 30-second horizon, four-second minimum lead) are **illustrative settings**, not demonstrated warning times.
 
-The model is StandardScaler + linear balanced SVC with `C=1`. Evaluation holds out whole animals; scaling is fitted within each training fold. At least three animals and both outcome classes in every training fold are computational prerequisites, not evidence of an adequate clinical or biological sample size. Use one mouse model family/profile per model. Human and animal model bundles are kept distinct; a synthetic-fixture behavioral model is rejected on real animal input.
+The model is StandardScaler + linear balanced SVC with `C=1`. Evaluation holds out whole animals; scaling is fitted within each training fold. At least three animals and both outcome classes in every training fold are computational prerequisites, not evidence of an adequate clinical or biological sample size. Use one mouse model family/profile and one EEG or LFP scope per model. Human and animal model bundles are kept distinct; a synthetic-fixture behavioral model is rejected on real animal input. Forbidden human/genotype behavior names are checked after whitespace removal and case folding.
 
 Example after genuine annotations are supplied (grooming is illustrative; defining abnormal/repetitive grooming requires an independent criterion):
 

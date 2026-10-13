@@ -83,11 +83,14 @@ def validate_animal_metadata(metadata):
 
 def acquisition_contract(metadata):
     """Canonical physical derivation, retained with epochs and fitted models."""
-    validate_animal_metadata(metadata)
-    return {'sampling_rate_hz': float(metadata['sampling_rate_hz']), 'eeg_unit': 'uV',
+    policy = validate_animal_metadata(metadata)
+    return {'schema_version': 2, 'signal_scope': metadata['signal_scope'],
+            'sampling_rate_hz': float(metadata['sampling_rate_hz']), 'eeg_unit': 'uV',
             'reference': metadata['reference'], 'reference_verified': True,
             'channel_locations': {ch: metadata['channel_locations'][ch] for ch in metadata['eeg_columns']},
-            'acquisition_filters': metadata.get('acquisition_filters', 'not_specified')}
+            'acquisition_filters': metadata.get('acquisition_filters', 'not_specified'),
+            'quality_method': 'finite_max_amplitude_and_min_std_v1',
+            'quality_policy': {key: float(policy[key]) for key in ('max_amplitude_uv', 'min_std_uv')}}
 
 
 def analyze_animal_qeeg(recording, out, epoch_s=4, profile='autism_research_1_100'):

@@ -13,8 +13,30 @@ import numpy as np
 import pandas as pd
 
 from psi_qeeg.events import history_windows, prepare_event_dataset, train_event_models, predict_event_windows
+from psi_qeeg.analysis import analyze, human_acquisition_contract
+from psi_qeeg.quality import QualityPolicy
+from psi_qeeg.recording import Recording
 
 HAS_ML = importlib.util.find_spec('sklearn') is not None and importlib.util.find_spec('joblib') is not None
+
+
+class HumanAcquisitionTests(unittest.TestCase):
+    def test_known_waveform_epochs_retain_actual_preprocessing_and_qc(self):
+        t = np.arange(2000) / 250
+        recording = Recording(pd.DataFrame({'time_s': t, 'Fp1': 10 * np.sin(2 * np.pi * 10 * t)}), {
+            'sampling_rate_hz': 250, 'eeg_unit': 'uV', 'eeg_columns': ['Fp1'],
+            'channel_locations': {'Fp1': 'synthetic_Fp1'}, 'reference': 'synthetic_reference',
+            'reference_verified': True, 'recording_context': 'synthetic_unit_test'})
+        table, summary = analyze(recording, line_hz=50, policy=QualityPolicy(max_abs_uv=15), compute_bicoherence=False)
+        self.assertTrue(table.accepted.all())
+        contract = json.loads(table.acquisition_contract.iat[0])
+        self.assertEqual(contract, summary['acquisition_contract'])
+        self.assertEqual(contract['preprocessing']['notch_hz'], 50)
+        self.assertEqual(contract['quality_policy']['max_abs_uv'], 15)
+        self.assertEqual(contract['epoch_s'], 4)
+        rejected, strict = analyze(recording, policy=QualityPolicy(max_abs_uv=5), compute_bicoherence=False)
+        self.assertFalse(rejected.accepted.any())
+        self.assertNotEqual(contract, strict['acquisition_contract'])
 
 
 class EventTests(unittest.TestCase):
@@ -26,6 +48,11 @@ class EventTests(unittest.TestCase):
                                     'time_s': float(t), 'epoch_end_s': float(t + 4), 'accepted': True,
                                     'recording_context': 'synthetic_unit_test', 'alpha': float(t + s)}
                                    for s in range(4) for t in range(0, 120, 4)])
+        self.contract = human_acquisition_contract(Recording(pd.DataFrame(), {
+            'sampling_rate_hz': 250, 'eeg_unit': 'uV', 'eeg_columns': ['C1'],
+            'channel_locations': {'C1': 'synthetic_scalp_site'}, 'reference': 'synthetic_reference',
+            'reference_verified': True, 'recording_context': 'synthetic_unit_test'}), QualityPolicy(), 4, None, False)
+        self.frame['acquisition_contract'] = json.dumps(self.contract)
         self.events = pd.DataFrame([{'subject_id': f'fixture-{s}', 'session_id': 'artificial-session',
                                      'event_id': kind, 'event_type': kind, 'onset_s': 40 if kind == 'meltdown' else 80,
                                      'offset_s': 44 if kind == 'meltdown' else 84, 'label_source': 'consensus',
@@ -105,6 +132,48 @@ class EventTests(unittest.TestCase):
     def test_mixed_synthetic_and_real_preparation_rejected(self):
         self.frame.loc[self.frame.subject_id == 'fixture-0', 'recording_context'] = 'awake_observational_research'
         with self.assertRaisesRegex(ValueError, 'kept separate'): self.prepare()
+
+    def test_missing_or_incompatible_acquisition_metadata_rejected(self):
+        self.frame = self.frame.drop(columns='acquisition_contract')
+        with self.assertRaisesRegex(ValueError, 'acquisition contract'): self.prepare()
+        self.frame['acquisition_contract'] = json.dumps(self.contract)
+        changed = dict(self.contract, reference='other_reference')
+        self.frame.loc[self.frame.subject_id == 'fixture-0', 'acquisition_contract'] = json.dumps(changed)
+        with self.assertRaisesRegex(ValueError, 'one matching'): self.prepare()
+
+    @unittest.skipUnless(HAS_ML, 'optional ML dependencies')
+    def test_human_inference_requires_matching_full_acquisition_contract(self):
+        import copy
+        self.prepare()
+        train_event_models(self.root / 'dataset/windows.csv', self.root / 'dataset/dataset_manifest.json', self.root / 'model')
+        for key, value in [('reference', 'other_reference'), ('channel_locations', {'C1': 'other_scalp_site'}),
+                           ('eeg_unit', 'V'), ('sampling_rate_hz', 500), ('signal_scope', 'raw_continuous_lfp'),
+                           ('acquisition_filters', 'other_hardware_filter'), ('reference_verified', False),
+                           ('require_sqi', True), ('preprocessing.notch_hz', 50), ('quality_policy.max_abs_uv', 600)]:
+            with self.subTest(key=key):
+                contract = copy.deepcopy(self.contract)
+                parent, _, child = key.partition('.')
+                if child: contract[parent][child] = value
+                else: contract[key] = value
+                changed = self.frame.copy(); changed['acquisition_contract'] = json.dumps(contract)
+                changed.to_csv(self.root / 'changed.csv', index=False)
+                with self.assertRaisesRegex(ValueError, 'acquisition contract'):
+                    predict_event_windows(self.root / 'model/event_models.joblib', self.root / 'changed.csv', self.root / 'bad')
+                self.assertFalse((self.root / 'bad/event_window_predictions.csv').exists())
+
+    @unittest.skipUnless(HAS_ML, 'optional ML dependencies')
+    def test_human_contract_is_retained_and_legacy_model_rejected(self):
+        import joblib
+        manifest = self.prepare()
+        self.assertEqual(manifest['acquisition_contract'], self.contract)
+        windows = pd.read_csv(self.root / 'dataset/windows.csv')
+        self.assertEqual(json.loads(windows.acquisition_contract.iat[0]), self.contract)
+        train_event_models(self.root / 'dataset/windows.csv', self.root / 'dataset/dataset_manifest.json', self.root / 'model')
+        bundle = joblib.load(self.root / 'model/event_models.joblib')
+        bundle['manifest'].pop('acquisition_contract')
+        joblib.dump(bundle, self.root / 'legacy.joblib')
+        with self.assertRaisesRegex(ValueError, 'acquisition contract'):
+            predict_event_windows(self.root / 'legacy.joblib', self.root / 'features.csv', self.root / 'bad')
 
     @unittest.skipUnless(HAS_ML, 'optional ML dependencies')
     def test_subject_splits_model_reload_and_causal_inference(self):

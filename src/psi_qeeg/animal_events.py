@@ -34,23 +34,33 @@ def _validate_metadata(frame):
     expected = {'synthetic_signal_fixture'} if set(frame.recording_context) == {'synthetic_animal_unit_test'} else {'raw_continuous_eeg', 'raw_continuous_lfp'}
     if not set(frame.signal_scope) <= expected:
         raise ValueError('Need continuous pre-event animal EEG/LFP, not averaged ERPs or diagnosis/genotype tables')
+    if frame.signal_scope.nunique() != 1:
+        raise ValueError('Keep EEG and LFP in separate animal models: use one signal scope')
     if len(set(frame.qeeg_profile)) != 1 or not set(frame.qeeg_profile) <= set(PROFILES):
         raise ValueError('Use one documented qEEG profile per behavioral model')
     contracts = []
     for value in frame.acquisition_contract.unique():
         try:
             contract = json.loads(value)
-            valid = (isinstance(contract, dict) and contract.get('reference_verified') is True and
+            policy = contract.get('quality_policy', {})
+            thresholds = [policy.get('max_amplitude_uv'), policy.get('min_std_uv')]
+            valid_policy = (all(isinstance(v, (int, float)) and not isinstance(v, bool) and np.isfinite(v) for v in thresholds)
+                            and thresholds[0] > 0 and thresholds[1] >= 0)
+            valid = (isinstance(contract, dict) and contract.get('schema_version') == 2 and
+                     contract.get('signal_scope') == frame.signal_scope.iat[0] and valid_policy and
+                     contract.get('quality_method') == 'finite_max_amplitude_and_min_std_v1' and
+                     contract.get('reference_verified') is True and
                      isinstance(contract.get('reference'), str) and bool(contract['reference'].strip()) and
                      contract.get('eeg_unit') == 'uV' and np.isfinite(contract.get('sampling_rate_hz', np.nan)) and
                      contract['sampling_rate_hz'] > 2 * PROFILES[frame.qeeg_profile.iat[0]][1][1] and
                      isinstance(contract.get('channel_locations'), dict) and bool(contract['channel_locations']) and
                      all(isinstance(k, str) and isinstance(v, str) and bool(v.strip()) for k, v in contract['channel_locations'].items()))
-        except (ValueError, TypeError, KeyError):
+        except (ValueError, TypeError, KeyError, AttributeError):
             valid = False
         if not valid:
             raise ValueError('Epochs require a valid acquisition contract with channel locations and verified reference')
-        contracts.append(contract)
+        if contract not in contracts:
+            contracts.append(contract)
     if len(contracts) != 1:
         raise ValueError('Keep one matching electrode/reference acquisition contract per animal model')
     for _, part in frame.groupby('animal_id'):
@@ -89,8 +99,9 @@ def _windows(frame, features, history_s, stride_s):
 
 def prepare_animal_events(features_path, events_path, coverage_path, out, features,
                           behavior_name, behavior_definition, history_s=60, horizon_s=30, min_lead_s=4, stride_s=None):
-    if not isinstance(behavior_name, str) or not behavior_name.strip() or behavior_name in {'meltdown', 'psychosis_onset', 'genotype'}:
+    if not isinstance(behavior_name, str) or not behavior_name.strip() or behavior_name.strip().casefold() in {'meltdown', 'psychosis_onset', 'genotype'}:
         raise ValueError('Specify an animal behavioral outcome, not a human psychiatric or genotype label')
+    behavior_name = behavior_name.strip()
     if not isinstance(behavior_definition, str) or len(behavior_definition.strip()) < 10:
         raise ValueError('Specify an observable operational behavioral event definition')
     if not np.isfinite([horizon_s, min_lead_s]).all() or not 0 < min_lead_s <= horizon_s:
@@ -139,7 +150,7 @@ def prepare_animal_events(features_path, events_path, coverage_path, out, featur
     out = Path(out); out.mkdir(parents=True, exist_ok=True)
     path = out / 'animal_windows.csv'; pd.DataFrame(selected).to_csv(path, index=False)
     manifest = {'model_kind': MODEL_KIND, 'target': TARGET, 'use': 'animal_research_only',
-                'schema_version': 2, 'acquisition_contract': _validate_epochs(frame),
+                'schema_version': 3, 'acquisition_contract': _validate_epochs(frame),
                 'behavior_name': behavior_name, 'behavior_definition': behavior_definition,
                 'target_origin': 'independently_confirmed_behavior_and_complete_follow_up',
                 'species': 'Mus musculus', 'model_family': frame.model_family.iat[0], 'qeeg_profile': frame.qeeg_profile.iat[0],
@@ -171,7 +182,7 @@ def train_animal_events(windows_path, manifest_path, out):
     _required(frame, {*METADATA, 'prediction_cutoff_s', 'target_animal_behavioral_event_onset', *names}, 'Prepared animal windows')
     contract = _validate_metadata(frame)
     scope = 'synthetic_fixture' if frame.recording_context.iat[0] == 'synthetic_animal_unit_test' else 'supplied_annotated_animal_data'
-    if (manifest.get('schema_version') != 2 or contract != manifest.get('acquisition_contract') or
+    if (manifest.get('schema_version') != 3 or contract != manifest.get('acquisition_contract') or
             scope != manifest.get('data_scope') or frame.model_family.iat[0] != manifest.get('model_family') or
             frame.qeeg_profile.iat[0] != manifest.get('qeeg_profile') or
             not set(manifest['input_features']) <= _power_features(contract, manifest['qeeg_profile']) or
@@ -217,9 +228,12 @@ def predict_animal_events(model_path, features_path, out):
     if not isinstance(bundle, dict) or bundle.get('model_kind') != MODEL_KIND:
         raise ValueError('Provide an animal behavioral model, not a human/group classifier')
     manifest, epochs = bundle['manifest'], _read(features_path)
+    _required(epochs, {'recording_context'}, 'Animal inference epochs')
+    if manifest['data_scope'] == 'synthetic_fixture' and not epochs.recording_context.eq('synthetic_animal_unit_test').all():
+        raise ValueError('Synthetic fixture models cannot be used on real animal recordings')
     contract = _validate_epochs(epochs)
-    if contract != manifest.get('acquisition_contract'):
-        raise ValueError('Inference electrode/reference acquisition contract must match the fitted animal model')
+    if manifest.get('schema_version') != 3 or contract != manifest.get('acquisition_contract'):
+        raise ValueError('Inference electrode/reference, signal scope and quality acquisition contract must match the fitted animal model')
     if epochs.model_family.iat[0] != manifest['model_family'] or epochs.qeeg_profile.iat[0] != manifest['qeeg_profile']:
         raise ValueError('Inference model family/profile must match the fitted contract')
     if manifest['data_scope'] == 'synthetic_fixture' and epochs.recording_context.iat[0] != 'synthetic_animal_unit_test':

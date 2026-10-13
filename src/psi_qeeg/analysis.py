@@ -1,12 +1,34 @@
 """Epoch features, montage awareness and explicit indeterminate PSI output."""
 
 from dataclasses import asdict
+import json
 import numpy as np
 import pandas as pd
 
 from .quality import QualityPolicy, assess_epoch
-from .signal import spectral_features, squared_bicoherence, phase_locking_value
+from .signal import BANDS, spectral_features, squared_bicoherence, phase_locking_value
 from .indices import SOI_DIRECTIONS, RDI_COMPONENTS
+
+
+def human_acquisition_contract(recording, policy, epoch_s, line_hz, compute_bicoherence):
+    """Retain actual derivation and processing choices, including missing metadata.
+
+    Generic signal analysis may run with unknown sites/reference. Event training
+    validates this receipt and requires complete, verified acquisition metadata.
+    """
+    meta = recording.metadata
+    return {'schema_version': 1, 'sampling_rate_hz': recording.fs,
+            'eeg_unit': meta.get('eeg_unit'), 'epoch_s': float(epoch_s),
+            'signal_scope': meta.get('signal_scope', 'synthetic_signal_fixture' if
+                                     str(meta.get('recording_context', '')).startswith('synthetic') else 'raw_continuous_eeg'),
+            'channel_locations': {ch: meta.get('channel_locations', {}).get(ch) for ch in recording.channels},
+            'reference': meta.get('reference'), 'reference_verified': meta.get('reference_verified') is True,
+            'acquisition_filters': meta.get('acquisition_filters', 'not_specified'),
+            'preprocessing': {'method': 'psi_human_qeeg_v1', 'notch_hz': line_hz,
+                              'bands_hz': {name: list(edges) for name, edges in BANDS.items()},
+                              'compute_bicoherence': bool(compute_bicoherence)},
+            'quality_method': 'psi_assess_epoch_v1', 'quality_policy': asdict(policy),
+            'require_sqi': meta.get('sensor', {}).get('family') == 'BIS'}
 
 
 def analyze(recording, epoch_s=4.0, line_hz=None, policy: QualityPolicy | None = None, compute_bicoherence=True):
@@ -24,6 +46,8 @@ def analyze(recording, epoch_s=4.0, line_hz=None, policy: QualityPolicy | None =
     positions = recording.metadata.get("channel_locations", {})
     site_to_channel = {site: name for name, site in positions.items() if name in recording.channels}
     reference_verified = recording.metadata.get("reference_verified") is True
+    contract = human_acquisition_contract(recording, policy, epoch_s, line_hz, compute_bicoherence)
+    serialized_contract = json.dumps(contract, sort_keys=True, separators=(',', ':'), allow_nan=False)
     rows, quality = [], []
     x = recording.eeg
     for first in range(0, len(x) - n + 1, n):
@@ -34,7 +58,8 @@ def analyze(recording, epoch_s=4.0, line_hz=None, policy: QualityPolicy | None =
         row = {"time_s": float(recording.time[first]), "epoch_end_s": float(recording.time[first] + epoch_s),
                "accepted": qc["accepted"], "quality_reasons": ";".join(qc["rejection_reasons"]),
                "quality_warnings": ";".join(qc["warnings"]), "sqi_min": qc["sqi_min"],
-               "emg_max_db": qc["emg_max_db"], "soi": None, "rdi": None, "classification": "indeterminate"}
+               "emg_max_db": qc["emg_max_db"], "soi": None, "rdi": None, "classification": "indeterminate",
+               "acquisition_contract": serialized_contract}
         for name in ("BIS", "SQI", "EMG", "SEF", "SR", "TOTPOW"):
             if name in frame:
                 finite = frame[name].to_numpy(float)
@@ -75,6 +100,7 @@ def analyze(recording, epoch_s=4.0, line_hz=None, policy: QualityPolicy | None =
         "epoch_s": epoch_s, "complete_epochs": len(rows), "accepted_epochs": accepted,
         "rejected_epochs": len(rows) - accepted, "unused_tail_samples": len(x) % n,
         "quality_policy": asdict(policy), "notch_hz": line_hz,
+        "acquisition_contract": contract,
         "bicoherence": {"estimator": "mean_squared_auto_bicoherence", "history_s": 60,
                         "subsegment_s": 2, "overlap": 0.5, "f1_f2_hz": [5, 15],
                         "claim": "experimental waveform descriptor; not the proprietary BIS algorithm or the article's calibrated bifrontal component"},

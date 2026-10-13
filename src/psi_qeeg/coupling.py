@@ -113,7 +113,9 @@ def window_coupling(x_uv, fs, names, mode='original', surrogates=199, seed=20261
             row[band + '_imaginary_coherency_abs'] = band_integral(frequencies, np.abs(coherency.imag), *edges) / (edges[1] - edges[0])
         pairs.append(row)
     rng = np.random.default_rng(seed)
-    available = np.arange(margin, len(raw) - margin + 1)
+    # np.roll(N - margin) is the -1s boundary. Exclude both signed
+    # boundaries as well as every smaller circular distance from zero.
+    available = np.arange(margin + 1, len(raw) - margin)
     if surrogates > len(available):
         raise ValueError('Insufficient distinct shifts for requested surrogate count')
     shifts = rng.choice(available, size=surrogates, replace=False)
@@ -134,4 +136,6 @@ def window_coupling(x_uv, fs, names, mode='original', surrogates=199, seed=20261
                     'surrogate_count': surrogates, 'phase_amplitude_distribution': distribution.tolist()})
     return {'pairs': pairs, 'pac': pac, 'analysis_sampling_rate_hz': rate,
             'samples_after_edge_trim': len(raw), 'edge_trim_s': 1,
+            'surrogate_shifts_samples': shifts.tolist(),
+            'surrogate_exclusion_s': 1, 'surrogate_boundary_excluded': True,
             'max_abs_uv': float(np.max(abs(x))), 'median_std_uv': float(np.median(raw.std(axis=0)))}

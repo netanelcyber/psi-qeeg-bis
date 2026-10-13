@@ -16,6 +16,8 @@ An [executed public video/LFP example](docs/research/OPEN_VIDEO_LFP.md) download
 
 The [executed coupling analysis](docs/research/IBL_COUPLING.md) adds window-contained theta/gamma PLV, magnitude-squared/imaginary coherency and Tort theta–gamma PAC with surrogate, line-filter and bipolar sensitivity checks. Original theta PLV/coherence medians are 0.809/0.862 versus 0.169/0.107 in bipolar derivations. The first video movement has no local PAC rejection after multiplicity correction; some later raw PAC increases overlap preceding movements. These findings do not establish an impending abnormal event or a one-minute warning.
 
+The [13 October methodology corrections](docs/research/METHODOLOGY_CORRECTIONS.md) rerun PAC with both one-second shift boundaries excluded and bind human/animal event inference to acquisition and QC metadata, keeping EEG and LFP separate. The full RepOD benchmark now weights each participant equally: subject balanced accuracies are 78.57% full scalp, 50% Fp1/F7 and 25% Fp2/F8. Prior unweighted results are retained as historical evidence. All 159 local tests and independent real-result checks pass; clinical event prediction remains unvalidated.
+
 Continue the genotype study with `python scripts/continue_fmr1_qeeg_training.py`. [Nested animal-separated tuning](docs/research/CONTINUED_FMR1_TRAINING.md) evaluates 12 parameter/dimension combinations and saves selected and fixed-C=1 models fitted on all 43 animals. It did not improve animal-held-out accuracy (67.42% vs 69.91%). These remain exploratory genotype models; final refits are not independent tests.
 
 ## Public psychiatric cohort and model-organism comparison

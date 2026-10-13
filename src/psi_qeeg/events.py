@@ -11,6 +11,9 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
+from .quality import QualityPolicy
+from .signal import BANDS
+
 EVENT_TYPES = ('meltdown', 'psychosis_onset')
 CONTEXTS = {'awake_observational_research', 'awake_longitudinal_research', 'synthetic_unit_test'}
 IDS = {'subject_id', 'session_id', 'epoch_id', 'time_s', 'epoch_end_s', 'accepted',
@@ -42,9 +45,47 @@ def _required(frame, names, description):
 
 
 def _predictor_contract(features):
-    if not features or len(set(features)) != len(features) or any(str(f).lower() in IDS or str(f).lower().startswith(('target_', 'event_', 'future_', 'label_')) for f in features):
+    if not features or len(set(features)) != len(features) or any(str(f).strip().casefold() in IDS or str(f).strip().casefold().startswith(('target_', 'event_', 'future_', 'label_')) for f in features):
         raise ValueError('Identifiers, labels and future outcomes cannot be predictors')
     return [f'history_{kind}__{feature}' for kind in ('mean', 'sd', 'slope_per_s') for feature in features]
+
+
+def _human_acquisition(frame, epoch_s):
+    """One canonical EEG derivation, processing and QC policy per model."""
+    _required(frame, {'acquisition_contract', 'recording_context'}, 'Human acquisition contract')
+    expected_scope = 'synthetic_signal_fixture' if _unmixed_scope(frame) == 'synthetic_fixture' else 'raw_continuous_eeg'
+    contracts = []
+    for value in frame.acquisition_contract.unique():
+        try:
+            contract = json.loads(value)
+            locations, preprocessing = contract['channel_locations'], contract['preprocessing']
+            policy = contract['quality_policy']
+            valid = (contract['schema_version'] == 1 and contract['eeg_unit'] == 'uV' and
+                     contract['signal_scope'] == expected_scope and contract['reference_verified'] is True and
+                     isinstance(contract['reference'], str) and bool(contract['reference'].strip()) and
+                     np.isfinite(contract['sampling_rate_hz']) and contract['sampling_rate_hz'] > 80 and
+                     np.isclose(contract['epoch_s'], epoch_s, atol=1e-6, rtol=0) and
+                     isinstance(locations, dict) and bool(locations) and
+                     all(isinstance(k, str) and bool(k.strip()) and isinstance(v, str) and bool(v.strip()) for k, v in locations.items()) and
+                     preprocessing['method'] == 'psi_human_qeeg_v1' and
+                     preprocessing['bands_hz'] == {k: list(v) for k, v in BANDS.items()} and
+                     isinstance(preprocessing['compute_bicoherence'], bool) and
+                     (preprocessing['notch_hz'] is None or 0 < preprocessing['notch_hz'] < contract['sampling_rate_hz'] / 2) and
+                     contract['quality_method'] == 'psi_assess_epoch_v1' and isinstance(contract['require_sqi'], bool) and
+                     isinstance(policy, dict) and set(policy) == {'min_sqi', 'max_abs_uv', 'flat_std_uv', 'emg_warning_db'} and
+                     all(isinstance(v, (int, float)) and not isinstance(v, bool) for v in policy.values()) and
+                     'acquisition_filters' in contract)
+            if valid:
+                QualityPolicy(**policy)
+        except (ValueError, TypeError, KeyError, AttributeError):
+            valid = False
+        if not valid:
+            raise ValueError('Human acquisition contract requires EEG scope, verified electrodes/reference, uV, epoch duration, preprocessing and QC policy; regenerate legacy tables')
+        if contract not in contracts:
+            contracts.append(contract)
+    if len(contracts) != 1:
+        raise ValueError('Use one matching human electrode/reference, preprocessing and QC acquisition contract')
+    return contracts[0]
 
 
 def history_windows(frame, features, history_s=60, stride_s=None, *, allowed_contexts=None):
@@ -142,6 +183,8 @@ def prepare_event_dataset(features_path, events_path, coverage_path, out, featur
         if not np.isfinite(bounds).all() or (bounds[:, 1] <= bounds[:, 0]).any():
             raise ValueError('Annotations need finite increasing interval endpoints on the same session clock')
     windows, names, protocol = history_windows(frame, features, history_s, stride_s)
+    contract = _human_acquisition(frame, protocol['epoch_s'])
+    windows['acquisition_contract'] = json.dumps(contract, sort_keys=True, separators=(',', ':'))
     protocol.update(horizon_s=float(horizon_s), min_lead_s=float(min_lead_s))
     selected, excluded = [], {'unreviewed_follow_up': 0, 'current_or_recent_event': 0, 'insufficient_lead': 0}
     for row in windows.to_dict('records'):
@@ -168,7 +211,8 @@ def prepare_event_dataset(features_path, events_path, coverage_path, out, featur
     out.mkdir(parents=True, exist_ok=True)
     windows_path = out / 'windows.csv'
     pd.DataFrame(selected).to_csv(windows_path, index=False)
-    manifest = {'use': 'research_only', 'clinical_validation': 'not_established', 'schema_version': 1,
+    manifest = {'use': 'research_only', 'clinical_validation': 'not_established', 'schema_version': 2,
+                'acquisition_contract': contract,
                 'input_features': list(features), 'model_features': names, 'protocol': protocol,
                 'rows': len(selected), 'subjects': len({r['subject_id'] for r in selected}), 'excluded_windows': excluded,
                 'target_origin': 'confirmed_event_onsets_with_independently_reviewed_follow_up',
@@ -204,6 +248,9 @@ def train_event_models(windows_path, manifest_path, out):
     if not set(frame.recording_context) <= CONTEXTS or not names or any(not n.startswith(('history_mean__', 'history_sd__', 'history_slope_per_s__')) for n in names):
         raise ValueError('Only prepared past-history descriptors can be model features')
     scope = _unmixed_scope(frame)
+    contract = _human_acquisition(frame, manifest['protocol']['epoch_s'])
+    if manifest.get('schema_version') != 2 or contract != manifest.get('acquisition_contract'):
+        raise ValueError('Prepared human acquisition contract must match the event manifest; regenerate legacy datasets')
     x = frame[names].to_numpy(float)
     if not np.isfinite(x).all():
         raise ValueError('Event descriptors must be finite; no imputation is performed')
@@ -256,6 +303,9 @@ def predict_event_windows(model_path, features_path, out):
         raise ValueError('Inference epoch duration must match the fitted event model')
     if bundle['data_scope'] == 'synthetic_fixture' and _unmixed_scope(epochs) != 'synthetic_fixture':
         raise ValueError('Synthetic fixture models cannot be used on real observations')
+    contract = _human_acquisition(epochs, inferred['epoch_s'])
+    if manifest.get('schema_version') != 2 or contract != manifest.get('acquisition_contract'):
+        raise ValueError('Inference human electrode/reference, units, preprocessing and QC acquisition contract must match the fitted model')
     if names != manifest['model_features'] or frame.empty:
         raise ValueError('No complete past windows matching the trained event feature contract')
     x = frame[names].to_numpy(float)

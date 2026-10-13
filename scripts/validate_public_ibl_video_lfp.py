@@ -97,6 +97,13 @@ def align_probe_times(times, sync):
     return np.interp(times, sync[:, 0], sync[:, 1])
 
 
+def validate_movement_intervals(movement):
+    """Published bouts must have positive duration and ordered start times."""
+    if (movement.ndim != 2 or movement.shape[1] != 2 or not np.isfinite(movement).all()
+            or np.any(movement[:, 1] <= movement[:, 0]) or np.any(np.diff(movement[:, 0]) < 0)):
+        raise ValueError('Invalid independent movement intervals: require strictly positive duration and ordered starts')
+
+
 def render_annotations(out, report):
     """Render measured wheel intervals, without labeling attacks or video review."""
     import matplotlib
@@ -185,8 +192,7 @@ def prepare(cache, out, lfp_window=(80, 320), video_window=(180, 240)):
     coordinates = np.load(get('/probe00/electrodeSites.mlapdv.', '.npy'), allow_pickle=False)
     if camera.ndim != 1 or not np.isfinite(camera).all() or not np.all(np.diff(camera) > 0):
         raise ValueError('Require finite, ordered frame timestamps')
-    if movement.ndim != 2 or movement.shape[1] != 2 or not np.isfinite(movement).all() or not np.all(movement[:, 1] >= movement[:, 0]):
-        raise ValueError('Invalid independent movement intervals')
+    validate_movement_intervals(movement)
     fs = float(header['sample_rate'])
     if fs != metadata['imSampRate'] or header['n_channels'] != metadata['nSavedChans']:
         raise ValueError('Compression/acquisition metadata mismatch')

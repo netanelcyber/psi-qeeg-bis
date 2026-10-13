@@ -15,6 +15,9 @@ from psi_qeeg.coupling import GAMMA, THETA, benjamini_hochberg, window_coupling
 HASHES = {'lfp_excerpt_uv.npz': 'bdaedac3674eb2791acd61f4b842a9e5d902c1a578edde731c5b7bb50533990f',
           'movement_annotations.csv': 'fe49ebacb747b95b66e97da39220efdb56af211552904623e94b6b5342bbc3f8',
           'video_lfp_alignment_report.json': '085251b9d3a1f9ee9c9cb0079bfa4972a9101f291da103b2a217e17ac635a75e'}
+# Reproduced identical signal/annotations; receipt differs only in the hash of
+# the corrected positive-duration interval validator. Both versions are pinned.
+CORRECTED_ALIGNMENT_HASH = 'f5c290876610192b5f108816d74fd1066223a48896a376cb072ddb44448f280e'
 MOVEMENT_HASH = '49e6ddd78e692b1aeeee023be22973fcef2e19bba284eaa94717ff0bfa38c96e'
 MODES = ['original', 'notch_50_60', 'bipolar']
 METRICS = ['theta_plv_median', 'theta_coherence_median', 'theta_imaginary_coherency_abs_median',
@@ -74,9 +77,10 @@ def run(source, movements_path, out, surrogates=199):
     provenance = []
     for name, expected in HASHES.items():
         path = source / name
-        if sha256(path) != expected:
+        actual = sha256(path)
+        if actual != expected and not (name == 'video_lfp_alignment_report.json' and actual == CORRECTED_ALIGNMENT_HASH):
             raise ValueError('Retained excerpt source changed; review before reuse: ' + name)
-        provenance.append({'filename': name, 'sha256': expected, 'bytes': path.stat().st_size})
+        provenance.append({'filename': name, 'sha256': actual, 'bytes': path.stat().st_size})
     if sha256(movements_path) != MOVEMENT_HASH:
         raise ValueError('Published whole-session wheel intervals changed')
     provenance.append({'filename': movements_path.name, 'sha256': MOVEMENT_HASH,
@@ -148,6 +152,8 @@ def run(source, movements_path, out, surrogates=199):
         'source': provenance, 'animal_id': 'SH023', 'duration_s': 16, 'grid_step_s': 2,
         'theta_hz': THETA, 'gamma_hz': GAMMA, 'modes': MODES, 'surrogates': surrogates,
         'seed': 20261013, 'edge_trim_s': 1, 'analysis_sampling_rate_hz': 500,
+        'surrogate_exclusion_s': 1, 'surrogate_boundary_excluded': True,
+        'surrogate_p_resolution': 1 / (surrogates + 1),
         'control_selection': 'Greedy disjoint 16s windows with no encoder bout within 2s on either side',
         'episode_grouping': 'Merge published bouts separated by <16s, using the whole session table',
         'multiplicity_family': 'All unique window/mode/local-and-first-last-directed PAC relationships; duplicated requested windows reuse one estimate',
@@ -155,12 +161,15 @@ def run(source, movements_path, out, surrogates=199):
         'operational_choices': 'Exploratory declared analysis choices, not a preregistered clinical protocol'
     }, indent=2) + '\n')
     unique = {r['analysis_id']: r for r in requests}
-    pairs, pac, summaries = [], [], []
+    pairs, pac, summaries, shift_receipts = [], [], [], []
     for number, (analysis_id, spec) in enumerate(unique.items()):
         block = x[spec['start_sample']:spec['end_sample_exclusive']]
         for mode in MODES:
             seed = 20261013 + int(hashlib.sha256((analysis_id + mode).encode()).hexdigest()[:8], 16)
             estimates = window_coupling(block, fs, names, mode, surrogates, seed)
+            shift_receipts.append({'analysis_id': analysis_id, 'mode': mode, 'seed': seed,
+                                   'samples_after_edge_trim': estimates['samples_after_edge_trim'],
+                                   'surrogate_shifts_samples': estimates['surrogate_shifts_samples']})
             for row in estimates['pairs']:
                 pairs.append({'analysis_id': analysis_id, 'mode': mode, **row})
             for row in estimates['pac']:
@@ -211,6 +220,7 @@ def run(source, movements_path, out, surrogates=199):
     summary_frame.to_csv(out / 'unique_window_summary.csv', index=False)
     comparisons.to_csv(out / 'annotated_window_summary.csv', index=False)
     req.to_csv(out / 'window_requests.csv', index=False)
+    (out / 'surrogate_shifts.json').write_text(json.dumps(shift_receipts, indent=2) + '\n')
     report = {'animal_id': 'SH023', 'session_id': recording['session_id'], 'independent_animals': 1,
               'source_provenance': provenance, 'theta_hz': THETA, 'gamma_hz': GAMMA,
               'analysis_window_s': 16, 'edge_trim_s': 1, 'grid_step_s': 2,
@@ -218,9 +228,11 @@ def run(source, movements_path, out, surrogates=199):
               'video_source_bouts': len(annotations), 'wheel_bouts_overlapping_lfp': int(np.sum((movements[:, 0] < end) & (movements[:, 1] > start))),
               'episodes_overlapping_lfp': episodes, 'modes': overview,
               'pac_test_family_size': len(pac_frame), 'surrogates_per_test': surrogates,
+              'surrogate_exclusion_s': 1, 'surrogate_boundary_excluded': True,
+              'surrogate_p_resolution': 1 / (surrogates + 1),
               'pac_q05_by_mode': {mode: int(((pac_frame['mode'] == mode) & (pac_frame.surrogate_q_bh < .05)).sum()) for mode in MODES},
               'phase_amplitude_estimator': 'Tort KL modulation index, 18 phase bins; normalized MVL supplementary',
-              'surrogate_control': '199 distinct circular amplitude shifts, excluding +/-1s; plus-one p, BH over all unique window/mode/PAC relationships',
+              'surrogate_control': f'{surrogates} distinct circular amplitude shifts, excluding distances <=1s including both boundaries; plus-one p, BH over all unique window/mode/PAC relationships',
               'coherence_estimator': 'Magnitude-squared Welch coherency; 2s Hann, 50% overlap, constant detrend; integrated band mean',
               'imaginary_control': 'Mean absolute imaginary coherency over each band; not a guarantee of neural origin',
               'bipolar_derivations': ['raw_32-raw_96', 'raw_128-raw_192'],
@@ -235,6 +247,7 @@ def run(source, movements_path, out, surrogates=199):
                               'High PLV/coherence may reflect shared reference or common sources',
                               'PAC surrogate rejection does not rule out transient or nonsinusoidal waveform effects',
                               'A fixed periodic oscillation may retain PAC after a circular shift; non-rejection is not proof of absent coupling',
+                              'Overlapping tests are dependent; BH-adjusted exploratory p values do not establish event-level significance or FDR under arbitrary dependence',
                               'Declared 16s windows dilute subsecond movement; no adjudicated abnormal event or forecasting evaluation'],
               'method_sources': ['https://doi.org/10.1152/jn.00106.2010', 'https://doi.org/10.1016/j.jneumeth.2014.01.002',
                                  'https://doi.org/10.1016/j.clinph.2004.04.029', 'https://doi.org/10.1016/j.conb.2014.08.002',
@@ -340,8 +353,9 @@ def main():
     parser.add_argument('--source', type=Path, default=Path('outputs/ibl_video_lfp'))
     parser.add_argument('--movement-intervals', type=Path, required=True)
     parser.add_argument('--out', type=Path, default=Path('outputs/ibl_coupling'))
+    parser.add_argument('--surrogates', type=int, default=199, help='Distinct circular shifts per PAC test (at least 19)')
     args = parser.parse_args()
-    run(args.source, args.movement_intervals, args.out)
+    run(args.source, args.movement_intervals, args.out, args.surrogates)
 
 
 if __name__ == '__main__':
