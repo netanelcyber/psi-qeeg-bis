@@ -20,6 +20,8 @@ The defaults (60-second history, 300-second horizon and four-second minimum lead
 
 Preparation writes a fingerprinted window table and manifest. Training requires that matching manifest, both positive and negative outcomes for each target, at least three subjects and class coverage in every subject-held-out training fold. Each target uses training-fold StandardScaler and a fixed linear SVC with balanced class weights. The final all-data refit is saved separately from held-out evaluation. No LSTM or probability calibration is introduced.
 
+Annotation timing/outcome columns, including onset/offset and review fields, are rejected as predictors in preparation and fitting. Synthetic and real scopes cannot be mixed, synthetic models are rejected on real observations, and inference must use the fitted epoch duration. The animal workflow additionally binds channel locations/reference and acquisition metadata.
+
 Metrics currently describe **windows**, not clinical events or alert performance. Overlapping histories are correlated. The pipeline requires external/prospective validation, participant-level uncertainty, event sensitivity, false alerts per observed hour, refractory/abstention rules, lead-time evaluation and medication/device/context analyses before clinical interpretation. Inference cannot establish that no event is already active; it returns research predictions and margins with explicit unvalidated status, not a medical alert.
 
 ## Commands after genuine annotated data are supplied

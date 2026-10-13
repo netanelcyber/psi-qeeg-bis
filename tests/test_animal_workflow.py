@@ -12,7 +12,7 @@ import unittest
 import numpy as np
 import pandas as pd
 
-from psi_qeeg.animal_qeeg import analyze_animal_qeeg, band_powers
+from psi_qeeg.animal_qeeg import acquisition_contract, analyze_animal_qeeg, band_powers
 from psi_qeeg.animal_events import prepare_animal_events, train_animal_events, predict_animal_events, TARGET
 from psi_qeeg.recording import Recording, read_recording
 from psi_qeeg.events import history_windows, predict_event_windows
@@ -88,7 +88,9 @@ class AnimalEventTests(unittest.TestCase):
             'species': 'Mus musculus', 'model_family': 'Shank3', 'genotype': 'synthetic-KO',
             'recording_context': 'synthetic_animal_unit_test', 'signal_scope': 'synthetic_signal_fixture',
             'qeeg_profile': 'autism_research_1_100', 'time_s': float(t), 'epoch_end_s': float(t + 4),
-            'accepted': True, 'C1__gamma_low_power_uv2': float(t + s)} for s in range(4) for t in range(0, 120, 4)])
+            'accepted': True, 'C1__gamma_low_power_uv2': float(t + s),
+            'acquisition_contract': json.dumps(acquisition_contract(metadata()), sort_keys=True, separators=(',', ':'))}
+            for s in range(4) for t in range(0, 120, 4)])
         self.events = pd.DataFrame([{'animal_id': f'artificial-{s}', 'session_id': 'fixture-session',
             'event_id': f'fixture-event-{t}', 'event_type': TARGET, 'behavior_name': 'fixture_grooming',
             'onset_s': t, 'offset_s': t + 4, 'label_source': 'consensus_video_review',
@@ -174,3 +176,26 @@ class AnimalEventTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'positive and negative'): train_animal_events(self.root / 'dataset/animal_windows.csv', self.root / 'dataset/animal_dataset_manifest.json', self.root / 'model')
         with (self.root / 'dataset/animal_windows.csv').open('a') as stream: stream.write('\n')
         with self.assertRaisesRegex(ValueError, 'matching'): train_animal_events(self.root / 'dataset/animal_windows.csv', self.root / 'dataset/animal_dataset_manifest.json', self.root / 'model')
+
+    def test_mixed_electrode_references_rejected_before_preparation(self):
+        contract = acquisition_contract(metadata()); contract['reference'] = 'other_reference'
+        self.features.loc[self.features.animal_id == 'artificial-0', 'acquisition_contract'] = json.dumps(contract)
+        with self.assertRaisesRegex(ValueError, 'acquisition contract'): self.prepare()
+
+    @unittest.skipUnless(HAS_ML, 'optional ML dependencies')
+    def test_inference_requires_fitted_electrodes_reference_and_epoch_duration(self):
+        self.prepare(); train_animal_events(self.root / 'dataset/animal_windows.csv', self.root / 'dataset/animal_dataset_manifest.json', self.root / 'model')
+        original = self.features.copy()
+        for change in ('reference', 'location'):
+            contract = acquisition_contract(metadata())
+            if change == 'reference': contract['reference'] = 'other_reference'
+            else: contract['channel_locations']['C1'] = 'other_anatomical_site'
+            self.features = original.copy(); self.features['acquisition_contract'] = json.dumps(contract)
+            self.features.to_csv(self.root / 'changed.csv', index=False)
+            with self.assertRaisesRegex(ValueError, 'acquisition contract'):
+                predict_animal_events(self.root / 'model/animal_event_model.joblib', self.root / 'changed.csv', self.root / 'bad')
+        self.features = original.copy()
+        self.features['time_s'] /= 2; self.features['epoch_end_s'] /= 2
+        self.features.to_csv(self.root / 'two_seconds.csv', index=False)
+        with self.assertRaisesRegex(ValueError, 'epoch duration'):
+            predict_animal_events(self.root / 'model/animal_event_model.joblib', self.root / 'two_seconds.csv', self.root / 'bad')

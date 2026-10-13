@@ -1,8 +1,12 @@
 # Validation status and next experiment
 
+## Continued training, 13 October 2026
+
+The [continued Fmr1 study](research/CONTINUED_FMR1_TRAINING.md) fits nested animal-separated SVM selection, two source-experiment holdouts and selected/fixed-C=1 final all-animal refits. It reuses the same 43 mice and does not establish improved prediction. The current local suite passes **137 tests without skips**. New regressions cover annotation/outcome leakage, synthetic/real separation, fitted epoch duration, animal acquisition contracts, nested selection isolation and coefficient/model reload checks. [fmr1_continued_training_verification.json](research/fmr1_continued_training_verification.json) records the current checks; no real event-trained model or LSTM is added.
+
 ## Animal extension, 13 October 2026 in Israel
 
-The separate [autism-model mouse workflow](research/AUTISM_ANIMAL_MODEL.md) implements continuous-qEEG epochs and annotation-dependent behavioral SVM preparation, fitting and inference. The current local suite passes **123 tests without skips**, including 15 animal-workflow tests and three deposited-vector tests. Animal behavioral fitting evidence uses synthetic fixtures only. The real Fmr1 processed-qEEG benchmark fits genotype classifiers across two experiments with 43 unique animals; no independently timed behavioral outcomes or raw EEG were supplied by those source CSVs. Primary/reverse animal balanced accuracies are 57.95%/71.72%. [autism_animal_verification.json](research/autism_animal_verification.json) records the current checks, while older sections below retain their dated scope.
+The initial separate [autism-model mouse workflow](research/AUTISM_ANIMAL_MODEL.md) implements continuous-qEEG epochs and annotation-dependent behavioral SVM preparation, fitting and inference. Its initial local suite passed **123 tests without skips**, including 15 animal-workflow tests and three deposited-vector tests. Animal behavioral fitting evidence uses synthetic fixtures only. The real Fmr1 processed-qEEG benchmark fits genotype classifiers across two experiments with 43 unique animals; no independently timed behavioral outcomes or raw EEG were supplied by those source CSVs. Primary/reverse animal balanced accuracies are 57.95%/71.72%. [autism_animal_verification.json](research/autism_animal_verification.json) records that initial extension, while older sections below retain their dated scope.
 
 ## Extension, 12 October 2026 UTC (13 October in Israel)
 

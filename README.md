@@ -12,6 +12,8 @@ The separate `prepare-events`, `train-events` and `predict-events` commands now 
 
 The separate **autism-model mouse qEEG/behavioral SVM workflow** now implements continuous-signal power epochs, independent animal event/follow-up contracts and leave-one-animal-out fitting/inference. No behavioral model has been trained on real animal events. A real processed-qEEG Fmr1 benchmark evaluates WT/KO genotype across two experiments (43 animals); it does not forecast behavior. See [implemented animal workflow and results](docs/research/AUTISM_ANIMAL_MODEL.md), [qEEG calculation methods](docs/research/ANIMAL_QEEG_METHODS.md) and [preclinical source/transfer boundaries](docs/research/ANIMAL_IEEG_ONSET.md).
 
+Continue the genotype study with `python scripts/continue_fmr1_qeeg_training.py`. [Nested animal-separated tuning](docs/research/CONTINUED_FMR1_TRAINING.md) evaluates 12 parameter/dimension combinations and saves selected and fixed-C=1 models fitted on all 43 animals. It did not improve animal-held-out accuracy (67.42% vs 69.91%). These remain exploratory genotype models; final refits are not independent tests.
+
 ## Public psychiatric cohort and model-organism comparison
 
 ```bash

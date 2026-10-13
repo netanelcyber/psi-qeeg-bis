@@ -44,7 +44,8 @@ def analyze(recording, epoch_s=4.0, line_hz=None, policy: QualityPolicy | None =
             for j, name in enumerate(recording.channels):
                 for key, value in spectral_features(chunk[:, j], recording.fs, line_hz).items():
                     row[f"{name}__{key}"] = value
-                # Only a complete, accepted past 60 seconds can support this estimator.
+                # Screen the complete past 60 seconds as one window. This does
+                # not require each constituent four-second epoch to pass QC.
                 history_n = round(60 * recording.fs)
                 begin = first + n - history_n
                 bic = None

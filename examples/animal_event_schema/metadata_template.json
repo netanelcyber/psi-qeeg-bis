@@ -10,6 +10,7 @@
   "channel_locations": {},
   "reference": "REPLACE_WITH_DOCUMENTED_REFERENCE",
   "reference_verified": false,
+  "acquisition_filters": "REPLACE_WITH_DOCUMENTED_HARDWARE_FILTERS",
   "recording_context": "awake_model_animal_research",
   "signal_scope": "raw_continuous_eeg",
   "source": "REPLACE_WITH_SOURCE_AND_VERSION",

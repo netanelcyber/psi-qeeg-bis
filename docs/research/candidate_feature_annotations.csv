@@ -1,0 +1,286 @@
+feature,channel,implemented_band_hz,candidate_ids,estimator_match,used_in_diagnosis_svm,finite_accepted_epochs,individual_abnormality_threshold,imminent_event_validation,event_labels_generated
+Fp2__delta_power_uv2,Fp2,"[0.5, 4]",,no_direct_candidate_mapping_in_selected_studies,False,6870,not_supplied,not_established,False
+Fp2__theta_power_uv2,Fp2,"[4, 8]",,no_direct_candidate_mapping_in_selected_studies,False,6870,not_supplied,not_established,False
+Fp2__alpha_power_uv2,Fp2,"[8, 13]",alpha_burst_asd_rest,related_band_power_only_burst_estimator_absent,True,6870,not_supplied,not_established,False
+Fp2__beta_power_uv2,Fp2,"[13, 30]",beta_gamma_csd_psychosis_transition,scalp_band_power_only_source_csd_absent,False,6870,not_supplied,not_established,False
+Fp2__gamma_power_uv2,Fp2,"[30, 40]",gamma_visual_asd;beta_gamma_csd_psychosis_transition,partial_band_only_no_visual_condition_contrast;scalp_band_power_only_source_csd_absent,False,6870,not_supplied,not_established,False
+Fp2__delta_relative_power,Fp2,"[0.5, 4]",,no_direct_candidate_mapping_in_selected_studies,False,6870,not_supplied,not_established,False
+Fp2__theta_relative_power,Fp2,"[4, 8]",,no_direct_candidate_mapping_in_selected_studies,False,6870,not_supplied,not_established,False
+Fp2__alpha_relative_power,Fp2,"[8, 13]",alpha_burst_asd_rest,related_band_power_only_burst_estimator_absent,False,6870,not_supplied,not_established,False
+Fp2__beta_relative_power,Fp2,"[13, 30]",beta_gamma_csd_psychosis_transition,scalp_band_power_only_source_csd_absent,False,6870,not_supplied,not_established,False
+Fp2__gamma_relative_power,Fp2,"[30, 40]",gamma_visual_asd;beta_gamma_csd_psychosis_transition,partial_band_only_no_visual_condition_contrast;scalp_band_power_only_source_csd_absent,False,6870,not_supplied,not_established,False
+Fp2__total_power_uv2,Fp2,null,,no_direct_candidate_mapping_in_selected_studies,False,6870,not_supplied,not_established,False
+Fp2__delta_alpha_ratio,Fp2,"[0.5, 4]",,no_direct_candidate_mapping_in_selected_studies,True,6870,not_supplied,not_established,False
+Fp2__sef95_hz,Fp2,null,,no_direct_candidate_mapping_in_selected_studies,True,6870,not_supplied,not_established,False
+Fp2__spectral_entropy,Fp2,null,,no_direct_candidate_mapping_in_selected_studies,True,6870,not_supplied,not_established,False
+Fp2__auto_bicoherence_squared_60s,Fp2,null,,no_direct_candidate_mapping_in_selected_studies,False,0,not_supplied,not_established,False
+F8__delta_power_uv2,F8,"[0.5, 4]",,no_direct_candidate_mapping_in_selected_studies,False,6870,not_supplied,not_established,False
+F8__theta_power_uv2,F8,"[4, 8]",,no_direct_candidate_mapping_in_selected_studies,False,6870,not_supplied,not_established,False
+F8__alpha_power_uv2,F8,"[8, 13]",alpha_burst_asd_rest,related_band_power_only_burst_estimator_absent,True,6870,not_supplied,not_established,False
+F8__beta_power_uv2,F8,"[13, 30]",beta_gamma_csd_psychosis_transition,scalp_band_power_only_source_csd_absent,False,6870,not_supplied,not_established,False
+F8__gamma_power_uv2,F8,"[30, 40]",gamma_visual_asd;beta_gamma_csd_psychosis_transition,partial_band_only_no_visual_condition_contrast;scalp_band_power_only_source_csd_absent,False,6870,not_supplied,not_established,False
+F8__delta_relative_power,F8,"[0.5, 4]",,no_direct_candidate_mapping_in_selected_studies,False,6870,not_supplied,not_established,False
+F8__theta_relative_power,F8,"[4, 8]",,no_direct_candidate_mapping_in_selected_studies,False,6870,not_supplied,not_established,False
+F8__alpha_relative_power,F8,"[8, 13]",alpha_burst_asd_rest,related_band_power_only_burst_estimator_absent,False,6870,not_supplied,not_established,False
+F8__beta_relative_power,F8,"[13, 30]",beta_gamma_csd_psychosis_transition,scalp_band_power_only_source_csd_absent,False,6870,not_supplied,not_established,False
+F8__gamma_relative_power,F8,"[30, 40]",gamma_visual_asd;beta_gamma_csd_psychosis_transition,partial_band_only_no_visual_condition_contrast;scalp_band_power_only_source_csd_absent,False,6870,not_supplied,not_established,False
+F8__total_power_uv2,F8,null,,no_direct_candidate_mapping_in_selected_studies,False,6870,not_supplied,not_established,False
+F8__delta_alpha_ratio,F8,"[0.5, 4]",,no_direct_candidate_mapping_in_selected_studies,True,6870,not_supplied,not_established,False
+F8__sef95_hz,F8,null,,no_direct_candidate_mapping_in_selected_studies,True,6870,not_supplied,not_established,False
+F8__spectral_entropy,F8,null,,no_direct_candidate_mapping_in_selected_studies,True,6870,not_supplied,not_established,False
+F8__auto_bicoherence_squared_60s,F8,null,,no_direct_candidate_mapping_in_selected_studies,False,0,not_supplied,not_established,False
+T4__delta_power_uv2,T4,"[0.5, 4]",,no_direct_candidate_mapping_in_selected_studies,False,6870,not_supplied,not_established,False
+T4__theta_power_uv2,T4,"[4, 8]",,no_direct_candidate_mapping_in_selected_studies,False,6870,not_supplied,not_established,False
+T4__alpha_power_uv2,T4,"[8, 13]",alpha_burst_asd_rest,related_band_power_only_burst_estimator_absent,True,6870,not_supplied,not_established,False
+T4__beta_power_uv2,T4,"[13, 30]",beta_gamma_csd_psychosis_transition,scalp_band_power_only_source_csd_absent,False,6870,not_supplied,not_established,False
+T4__gamma_power_uv2,T4,"[30, 40]",gamma_visual_asd;beta_gamma_csd_psychosis_transition,partial_band_only_no_visual_condition_contrast;scalp_band_power_only_source_csd_absent,False,6870,not_supplied,not_established,False
+T4__delta_relative_power,T4,"[0.5, 4]",,no_direct_candidate_mapping_in_selected_studies,False,6870,not_supplied,not_established,False
+T4__theta_relative_power,T4,"[4, 8]",,no_direct_candidate_mapping_in_selected_studies,False,6870,not_supplied,not_established,False
+T4__alpha_relative_power,T4,"[8, 13]",alpha_burst_asd_rest,related_band_power_only_burst_estimator_absent,False,6870,not_supplied,not_established,False
+T4__beta_relative_power,T4,"[13, 30]",beta_gamma_csd_psychosis_transition,scalp_band_power_only_source_csd_absent,False,6870,not_supplied,not_established,False
+T4__gamma_relative_power,T4,"[30, 40]",gamma_visual_asd;beta_gamma_csd_psychosis_transition,partial_band_only_no_visual_condition_contrast;scalp_band_power_only_source_csd_absent,False,6870,not_supplied,not_established,False
+T4__total_power_uv2,T4,null,,no_direct_candidate_mapping_in_selected_studies,False,6870,not_supplied,not_established,False
+T4__delta_alpha_ratio,T4,"[0.5, 4]",,no_direct_candidate_mapping_in_selected_studies,True,6870,not_supplied,not_established,False
+T4__sef95_hz,T4,null,,no_direct_candidate_mapping_in_selected_studies,True,6870,not_supplied,not_established,False
+T4__spectral_entropy,T4,null,,no_direct_candidate_mapping_in_selected_studies,True,6870,not_supplied,not_established,False
+T4__auto_bicoherence_squared_60s,T4,null,,no_direct_candidate_mapping_in_selected_studies,False,0,not_supplied,not_established,False
+T6__delta_power_uv2,T6,"[0.5, 4]",,no_direct_candidate_mapping_in_selected_studies,False,6870,not_supplied,not_established,False
+T6__theta_power_uv2,T6,"[4, 8]",,no_direct_candidate_mapping_in_selected_studies,False,6870,not_supplied,not_established,False
+T6__alpha_power_uv2,T6,"[8, 13]",alpha_burst_asd_rest,related_band_power_only_burst_estimator_absent,True,6870,not_supplied,not_established,False
+T6__beta_power_uv2,T6,"[13, 30]",beta_gamma_csd_psychosis_transition,scalp_band_power_only_source_csd_absent,False,6870,not_supplied,not_established,False
+T6__gamma_power_uv2,T6,"[30, 40]",gamma_visual_asd;beta_gamma_csd_psychosis_transition,partial_band_only_no_visual_condition_contrast;scalp_band_power_only_source_csd_absent,False,6870,not_supplied,not_established,False
+T6__delta_relative_power,T6,"[0.5, 4]",,no_direct_candidate_mapping_in_selected_studies,False,6870,not_supplied,not_established,False
+T6__theta_relative_power,T6,"[4, 8]",,no_direct_candidate_mapping_in_selected_studies,False,6870,not_supplied,not_established,False
+T6__alpha_relative_power,T6,"[8, 13]",alpha_burst_asd_rest,related_band_power_only_burst_estimator_absent,False,6870,not_supplied,not_established,False
+T6__beta_relative_power,T6,"[13, 30]",beta_gamma_csd_psychosis_transition,scalp_band_power_only_source_csd_absent,False,6870,not_supplied,not_established,False
+T6__gamma_relative_power,T6,"[30, 40]",gamma_visual_asd;beta_gamma_csd_psychosis_transition,partial_band_only_no_visual_condition_contrast;scalp_band_power_only_source_csd_absent,False,6870,not_supplied,not_established,False
+T6__total_power_uv2,T6,null,,no_direct_candidate_mapping_in_selected_studies,False,6870,not_supplied,not_established,False
+T6__delta_alpha_ratio,T6,"[0.5, 4]",,no_direct_candidate_mapping_in_selected_studies,True,6870,not_supplied,not_established,False
+T6__sef95_hz,T6,null,,no_direct_candidate_mapping_in_selected_studies,True,6870,not_supplied,not_established,False
+T6__spectral_entropy,T6,null,,no_direct_candidate_mapping_in_selected_studies,True,6870,not_supplied,not_established,False
+T6__auto_bicoherence_squared_60s,T6,null,,no_direct_candidate_mapping_in_selected_studies,False,0,not_supplied,not_established,False
+O2__delta_power_uv2,O2,"[0.5, 4]",,no_direct_candidate_mapping_in_selected_studies,False,6870,not_supplied,not_established,False
+O2__theta_power_uv2,O2,"[4, 8]",,no_direct_candidate_mapping_in_selected_studies,False,6870,not_supplied,not_established,False
+O2__alpha_power_uv2,O2,"[8, 13]",alpha_burst_asd_rest,related_band_power_only_burst_estimator_absent,True,6870,not_supplied,not_established,False
+O2__beta_power_uv2,O2,"[13, 30]",beta_gamma_csd_psychosis_transition,scalp_band_power_only_source_csd_absent,False,6870,not_supplied,not_established,False
+O2__gamma_power_uv2,O2,"[30, 40]",gamma_visual_asd;beta_gamma_csd_psychosis_transition,partial_band_only_no_visual_condition_contrast;scalp_band_power_only_source_csd_absent,False,6870,not_supplied,not_established,False
+O2__delta_relative_power,O2,"[0.5, 4]",,no_direct_candidate_mapping_in_selected_studies,False,6870,not_supplied,not_established,False
+O2__theta_relative_power,O2,"[4, 8]",,no_direct_candidate_mapping_in_selected_studies,False,6870,not_supplied,not_established,False
+O2__alpha_relative_power,O2,"[8, 13]",alpha_burst_asd_rest,related_band_power_only_burst_estimator_absent,False,6870,not_supplied,not_established,False
+O2__beta_relative_power,O2,"[13, 30]",beta_gamma_csd_psychosis_transition,scalp_band_power_only_source_csd_absent,False,6870,not_supplied,not_established,False
+O2__gamma_relative_power,O2,"[30, 40]",gamma_visual_asd;beta_gamma_csd_psychosis_transition,partial_band_only_no_visual_condition_contrast;scalp_band_power_only_source_csd_absent,False,6870,not_supplied,not_established,False
+O2__total_power_uv2,O2,null,,no_direct_candidate_mapping_in_selected_studies,False,6870,not_supplied,not_established,False
+O2__delta_alpha_ratio,O2,"[0.5, 4]",,no_direct_candidate_mapping_in_selected_studies,True,6870,not_supplied,not_established,False
+O2__sef95_hz,O2,null,,no_direct_candidate_mapping_in_selected_studies,True,6870,not_supplied,not_established,False
+O2__spectral_entropy,O2,null,,no_direct_candidate_mapping_in_selected_studies,True,6870,not_supplied,not_established,False
+O2__auto_bicoherence_squared_60s,O2,null,,no_direct_candidate_mapping_in_selected_studies,False,0,not_supplied,not_established,False
+Fp1__delta_power_uv2,Fp1,"[0.5, 4]",,no_direct_candidate_mapping_in_selected_studies,False,6870,not_supplied,not_established,False
+Fp1__theta_power_uv2,Fp1,"[4, 8]",,no_direct_candidate_mapping_in_selected_studies,False,6870,not_supplied,not_established,False
+Fp1__alpha_power_uv2,Fp1,"[8, 13]",alpha_burst_asd_rest,related_band_power_only_burst_estimator_absent,True,6870,not_supplied,not_established,False
+Fp1__beta_power_uv2,Fp1,"[13, 30]",beta_gamma_csd_psychosis_transition,scalp_band_power_only_source_csd_absent,False,6870,not_supplied,not_established,False
+Fp1__gamma_power_uv2,Fp1,"[30, 40]",gamma_visual_asd;beta_gamma_csd_psychosis_transition,partial_band_only_no_visual_condition_contrast;scalp_band_power_only_source_csd_absent,False,6870,not_supplied,not_established,False
+Fp1__delta_relative_power,Fp1,"[0.5, 4]",,no_direct_candidate_mapping_in_selected_studies,False,6870,not_supplied,not_established,False
+Fp1__theta_relative_power,Fp1,"[4, 8]",,no_direct_candidate_mapping_in_selected_studies,False,6870,not_supplied,not_established,False
+Fp1__alpha_relative_power,Fp1,"[8, 13]",alpha_burst_asd_rest,related_band_power_only_burst_estimator_absent,False,6870,not_supplied,not_established,False
+Fp1__beta_relative_power,Fp1,"[13, 30]",beta_gamma_csd_psychosis_transition,scalp_band_power_only_source_csd_absent,False,6870,not_supplied,not_established,False
+Fp1__gamma_relative_power,Fp1,"[30, 40]",gamma_visual_asd;beta_gamma_csd_psychosis_transition,partial_band_only_no_visual_condition_contrast;scalp_band_power_only_source_csd_absent,False,6870,not_supplied,not_established,False
+Fp1__total_power_uv2,Fp1,null,,no_direct_candidate_mapping_in_selected_studies,False,6870,not_supplied,not_established,False
+Fp1__delta_alpha_ratio,Fp1,"[0.5, 4]",,no_direct_candidate_mapping_in_selected_studies,True,6870,not_supplied,not_established,False
+Fp1__sef95_hz,Fp1,null,,no_direct_candidate_mapping_in_selected_studies,True,6870,not_supplied,not_established,False
+Fp1__spectral_entropy,Fp1,null,,no_direct_candidate_mapping_in_selected_studies,True,6870,not_supplied,not_established,False
+Fp1__auto_bicoherence_squared_60s,Fp1,null,,no_direct_candidate_mapping_in_selected_studies,False,0,not_supplied,not_established,False
+F7__delta_power_uv2,F7,"[0.5, 4]",,no_direct_candidate_mapping_in_selected_studies,False,6870,not_supplied,not_established,False
+F7__theta_power_uv2,F7,"[4, 8]",,no_direct_candidate_mapping_in_selected_studies,False,6870,not_supplied,not_established,False
+F7__alpha_power_uv2,F7,"[8, 13]",alpha_burst_asd_rest,related_band_power_only_burst_estimator_absent,True,6870,not_supplied,not_established,False
+F7__beta_power_uv2,F7,"[13, 30]",beta_gamma_csd_psychosis_transition,scalp_band_power_only_source_csd_absent,False,6870,not_supplied,not_established,False
+F7__gamma_power_uv2,F7,"[30, 40]",gamma_visual_asd;beta_gamma_csd_psychosis_transition,partial_band_only_no_visual_condition_contrast;scalp_band_power_only_source_csd_absent,False,6870,not_supplied,not_established,False
+F7__delta_relative_power,F7,"[0.5, 4]",,no_direct_candidate_mapping_in_selected_studies,False,6870,not_supplied,not_established,False
+F7__theta_relative_power,F7,"[4, 8]",,no_direct_candidate_mapping_in_selected_studies,False,6870,not_supplied,not_established,False
+F7__alpha_relative_power,F7,"[8, 13]",alpha_burst_asd_rest,related_band_power_only_burst_estimator_absent,False,6870,not_supplied,not_established,False
+F7__beta_relative_power,F7,"[13, 30]",beta_gamma_csd_psychosis_transition,scalp_band_power_only_source_csd_absent,False,6870,not_supplied,not_established,False
+F7__gamma_relative_power,F7,"[30, 40]",gamma_visual_asd;beta_gamma_csd_psychosis_transition,partial_band_only_no_visual_condition_contrast;scalp_band_power_only_source_csd_absent,False,6870,not_supplied,not_established,False
+F7__total_power_uv2,F7,null,,no_direct_candidate_mapping_in_selected_studies,False,6870,not_supplied,not_established,False
+F7__delta_alpha_ratio,F7,"[0.5, 4]",,no_direct_candidate_mapping_in_selected_studies,True,6870,not_supplied,not_established,False
+F7__sef95_hz,F7,null,,no_direct_candidate_mapping_in_selected_studies,True,6870,not_supplied,not_established,False
+F7__spectral_entropy,F7,null,,no_direct_candidate_mapping_in_selected_studies,True,6870,not_supplied,not_established,False
+F7__auto_bicoherence_squared_60s,F7,null,,no_direct_candidate_mapping_in_selected_studies,False,0,not_supplied,not_established,False
+T3__delta_power_uv2,T3,"[0.5, 4]",,no_direct_candidate_mapping_in_selected_studies,False,6870,not_supplied,not_established,False
+T3__theta_power_uv2,T3,"[4, 8]",,no_direct_candidate_mapping_in_selected_studies,False,6870,not_supplied,not_established,False
+T3__alpha_power_uv2,T3,"[8, 13]",alpha_burst_asd_rest,related_band_power_only_burst_estimator_absent,True,6870,not_supplied,not_established,False
+T3__beta_power_uv2,T3,"[13, 30]",beta_gamma_csd_psychosis_transition,scalp_band_power_only_source_csd_absent,False,6870,not_supplied,not_established,False
+T3__gamma_power_uv2,T3,"[30, 40]",gamma_visual_asd;beta_gamma_csd_psychosis_transition,partial_band_only_no_visual_condition_contrast;scalp_band_power_only_source_csd_absent,False,6870,not_supplied,not_established,False
+T3__delta_relative_power,T3,"[0.5, 4]",,no_direct_candidate_mapping_in_selected_studies,False,6870,not_supplied,not_established,False
+T3__theta_relative_power,T3,"[4, 8]",,no_direct_candidate_mapping_in_selected_studies,False,6870,not_supplied,not_established,False
+T3__alpha_relative_power,T3,"[8, 13]",alpha_burst_asd_rest,related_band_power_only_burst_estimator_absent,False,6870,not_supplied,not_established,False
+T3__beta_relative_power,T3,"[13, 30]",beta_gamma_csd_psychosis_transition,scalp_band_power_only_source_csd_absent,False,6870,not_supplied,not_established,False
+T3__gamma_relative_power,T3,"[30, 40]",gamma_visual_asd;beta_gamma_csd_psychosis_transition,partial_band_only_no_visual_condition_contrast;scalp_band_power_only_source_csd_absent,False,6870,not_supplied,not_established,False
+T3__total_power_uv2,T3,null,,no_direct_candidate_mapping_in_selected_studies,False,6870,not_supplied,not_established,False
+T3__delta_alpha_ratio,T3,"[0.5, 4]",,no_direct_candidate_mapping_in_selected_studies,True,6870,not_supplied,not_established,False
+T3__sef95_hz,T3,null,,no_direct_candidate_mapping_in_selected_studies,True,6870,not_supplied,not_established,False
+T3__spectral_entropy,T3,null,,no_direct_candidate_mapping_in_selected_studies,True,6870,not_supplied,not_established,False
+T3__auto_bicoherence_squared_60s,T3,null,,no_direct_candidate_mapping_in_selected_studies,False,0,not_supplied,not_established,False
+T5__delta_power_uv2,T5,"[0.5, 4]",,no_direct_candidate_mapping_in_selected_studies,False,6870,not_supplied,not_established,False
+T5__theta_power_uv2,T5,"[4, 8]",,no_direct_candidate_mapping_in_selected_studies,False,6870,not_supplied,not_established,False
+T5__alpha_power_uv2,T5,"[8, 13]",alpha_burst_asd_rest,related_band_power_only_burst_estimator_absent,True,6870,not_supplied,not_established,False
+T5__beta_power_uv2,T5,"[13, 30]",beta_gamma_csd_psychosis_transition,scalp_band_power_only_source_csd_absent,False,6870,not_supplied,not_established,False
+T5__gamma_power_uv2,T5,"[30, 40]",gamma_visual_asd;beta_gamma_csd_psychosis_transition,partial_band_only_no_visual_condition_contrast;scalp_band_power_only_source_csd_absent,False,6870,not_supplied,not_established,False
+T5__delta_relative_power,T5,"[0.5, 4]",,no_direct_candidate_mapping_in_selected_studies,False,6870,not_supplied,not_established,False
+T5__theta_relative_power,T5,"[4, 8]",,no_direct_candidate_mapping_in_selected_studies,False,6870,not_supplied,not_established,False
+T5__alpha_relative_power,T5,"[8, 13]",alpha_burst_asd_rest,related_band_power_only_burst_estimator_absent,False,6870,not_supplied,not_established,False
+T5__beta_relative_power,T5,"[13, 30]",beta_gamma_csd_psychosis_transition,scalp_band_power_only_source_csd_absent,False,6870,not_supplied,not_established,False
+T5__gamma_relative_power,T5,"[30, 40]",gamma_visual_asd;beta_gamma_csd_psychosis_transition,partial_band_only_no_visual_condition_contrast;scalp_band_power_only_source_csd_absent,False,6870,not_supplied,not_established,False
+T5__total_power_uv2,T5,null,,no_direct_candidate_mapping_in_selected_studies,False,6870,not_supplied,not_established,False
+T5__delta_alpha_ratio,T5,"[0.5, 4]",,no_direct_candidate_mapping_in_selected_studies,True,6870,not_supplied,not_established,False
+T5__sef95_hz,T5,null,,no_direct_candidate_mapping_in_selected_studies,True,6870,not_supplied,not_established,False
+T5__spectral_entropy,T5,null,,no_direct_candidate_mapping_in_selected_studies,True,6870,not_supplied,not_established,False
+T5__auto_bicoherence_squared_60s,T5,null,,no_direct_candidate_mapping_in_selected_studies,False,0,not_supplied,not_established,False
+O1__delta_power_uv2,O1,"[0.5, 4]",,no_direct_candidate_mapping_in_selected_studies,False,6870,not_supplied,not_established,False
+O1__theta_power_uv2,O1,"[4, 8]",,no_direct_candidate_mapping_in_selected_studies,False,6870,not_supplied,not_established,False
+O1__alpha_power_uv2,O1,"[8, 13]",alpha_burst_asd_rest,related_band_power_only_burst_estimator_absent,True,6870,not_supplied,not_established,False
+O1__beta_power_uv2,O1,"[13, 30]",beta_gamma_csd_psychosis_transition,scalp_band_power_only_source_csd_absent,False,6870,not_supplied,not_established,False
+O1__gamma_power_uv2,O1,"[30, 40]",gamma_visual_asd;beta_gamma_csd_psychosis_transition,partial_band_only_no_visual_condition_contrast;scalp_band_power_only_source_csd_absent,False,6870,not_supplied,not_established,False
+O1__delta_relative_power,O1,"[0.5, 4]",,no_direct_candidate_mapping_in_selected_studies,False,6870,not_supplied,not_established,False
+O1__theta_relative_power,O1,"[4, 8]",,no_direct_candidate_mapping_in_selected_studies,False,6870,not_supplied,not_established,False
+O1__alpha_relative_power,O1,"[8, 13]",alpha_burst_asd_rest,related_band_power_only_burst_estimator_absent,False,6870,not_supplied,not_established,False
+O1__beta_relative_power,O1,"[13, 30]",beta_gamma_csd_psychosis_transition,scalp_band_power_only_source_csd_absent,False,6870,not_supplied,not_established,False
+O1__gamma_relative_power,O1,"[30, 40]",gamma_visual_asd;beta_gamma_csd_psychosis_transition,partial_band_only_no_visual_condition_contrast;scalp_band_power_only_source_csd_absent,False,6870,not_supplied,not_established,False
+O1__total_power_uv2,O1,null,,no_direct_candidate_mapping_in_selected_studies,False,6870,not_supplied,not_established,False
+O1__delta_alpha_ratio,O1,"[0.5, 4]",,no_direct_candidate_mapping_in_selected_studies,True,6870,not_supplied,not_established,False
+O1__sef95_hz,O1,null,,no_direct_candidate_mapping_in_selected_studies,True,6870,not_supplied,not_established,False
+O1__spectral_entropy,O1,null,,no_direct_candidate_mapping_in_selected_studies,True,6870,not_supplied,not_established,False
+O1__auto_bicoherence_squared_60s,O1,null,,no_direct_candidate_mapping_in_selected_studies,False,0,not_supplied,not_established,False
+F4__delta_power_uv2,F4,"[0.5, 4]",,no_direct_candidate_mapping_in_selected_studies,False,6870,not_supplied,not_established,False
+F4__theta_power_uv2,F4,"[4, 8]",,no_direct_candidate_mapping_in_selected_studies,False,6870,not_supplied,not_established,False
+F4__alpha_power_uv2,F4,"[8, 13]",alpha_burst_asd_rest,related_band_power_only_burst_estimator_absent,True,6870,not_supplied,not_established,False
+F4__beta_power_uv2,F4,"[13, 30]",beta_gamma_csd_psychosis_transition,scalp_band_power_only_source_csd_absent,False,6870,not_supplied,not_established,False
+F4__gamma_power_uv2,F4,"[30, 40]",gamma_visual_asd;beta_gamma_csd_psychosis_transition,partial_band_only_no_visual_condition_contrast;scalp_band_power_only_source_csd_absent,False,6870,not_supplied,not_established,False
+F4__delta_relative_power,F4,"[0.5, 4]",,no_direct_candidate_mapping_in_selected_studies,False,6870,not_supplied,not_established,False
+F4__theta_relative_power,F4,"[4, 8]",,no_direct_candidate_mapping_in_selected_studies,False,6870,not_supplied,not_established,False
+F4__alpha_relative_power,F4,"[8, 13]",alpha_burst_asd_rest,related_band_power_only_burst_estimator_absent,False,6870,not_supplied,not_established,False
+F4__beta_relative_power,F4,"[13, 30]",beta_gamma_csd_psychosis_transition,scalp_band_power_only_source_csd_absent,False,6870,not_supplied,not_established,False
+F4__gamma_relative_power,F4,"[30, 40]",gamma_visual_asd;beta_gamma_csd_psychosis_transition,partial_band_only_no_visual_condition_contrast;scalp_band_power_only_source_csd_absent,False,6870,not_supplied,not_established,False
+F4__total_power_uv2,F4,null,,no_direct_candidate_mapping_in_selected_studies,False,6870,not_supplied,not_established,False
+F4__delta_alpha_ratio,F4,"[0.5, 4]",,no_direct_candidate_mapping_in_selected_studies,True,6870,not_supplied,not_established,False
+F4__sef95_hz,F4,null,,no_direct_candidate_mapping_in_selected_studies,True,6870,not_supplied,not_established,False
+F4__spectral_entropy,F4,null,,no_direct_candidate_mapping_in_selected_studies,True,6870,not_supplied,not_established,False
+F4__auto_bicoherence_squared_60s,F4,null,,no_direct_candidate_mapping_in_selected_studies,False,0,not_supplied,not_established,False
+C4__delta_power_uv2,C4,"[0.5, 4]",,no_direct_candidate_mapping_in_selected_studies,False,6870,not_supplied,not_established,False
+C4__theta_power_uv2,C4,"[4, 8]",,no_direct_candidate_mapping_in_selected_studies,False,6870,not_supplied,not_established,False
+C4__alpha_power_uv2,C4,"[8, 13]",alpha_burst_asd_rest,related_band_power_only_burst_estimator_absent,True,6870,not_supplied,not_established,False
+C4__beta_power_uv2,C4,"[13, 30]",beta_gamma_csd_psychosis_transition,scalp_band_power_only_source_csd_absent,False,6870,not_supplied,not_established,False
+C4__gamma_power_uv2,C4,"[30, 40]",gamma_visual_asd;beta_gamma_csd_psychosis_transition,partial_band_only_no_visual_condition_contrast;scalp_band_power_only_source_csd_absent,False,6870,not_supplied,not_established,False
+C4__delta_relative_power,C4,"[0.5, 4]",,no_direct_candidate_mapping_in_selected_studies,False,6870,not_supplied,not_established,False
+C4__theta_relative_power,C4,"[4, 8]",,no_direct_candidate_mapping_in_selected_studies,False,6870,not_supplied,not_established,False
+C4__alpha_relative_power,C4,"[8, 13]",alpha_burst_asd_rest,related_band_power_only_burst_estimator_absent,False,6870,not_supplied,not_established,False
+C4__beta_relative_power,C4,"[13, 30]",beta_gamma_csd_psychosis_transition,scalp_band_power_only_source_csd_absent,False,6870,not_supplied,not_established,False
+C4__gamma_relative_power,C4,"[30, 40]",gamma_visual_asd;beta_gamma_csd_psychosis_transition,partial_band_only_no_visual_condition_contrast;scalp_band_power_only_source_csd_absent,False,6870,not_supplied,not_established,False
+C4__total_power_uv2,C4,null,,no_direct_candidate_mapping_in_selected_studies,False,6870,not_supplied,not_established,False
+C4__delta_alpha_ratio,C4,"[0.5, 4]",,no_direct_candidate_mapping_in_selected_studies,True,6870,not_supplied,not_established,False
+C4__sef95_hz,C4,null,,no_direct_candidate_mapping_in_selected_studies,True,6870,not_supplied,not_established,False
+C4__spectral_entropy,C4,null,,no_direct_candidate_mapping_in_selected_studies,True,6870,not_supplied,not_established,False
+C4__auto_bicoherence_squared_60s,C4,null,,no_direct_candidate_mapping_in_selected_studies,False,0,not_supplied,not_established,False
+P4__delta_power_uv2,P4,"[0.5, 4]",,no_direct_candidate_mapping_in_selected_studies,False,6870,not_supplied,not_established,False
+P4__theta_power_uv2,P4,"[4, 8]",,no_direct_candidate_mapping_in_selected_studies,False,6870,not_supplied,not_established,False
+P4__alpha_power_uv2,P4,"[8, 13]",alpha_burst_asd_rest,related_band_power_only_burst_estimator_absent,True,6870,not_supplied,not_established,False
+P4__beta_power_uv2,P4,"[13, 30]",beta_gamma_csd_psychosis_transition,scalp_band_power_only_source_csd_absent,False,6870,not_supplied,not_established,False
+P4__gamma_power_uv2,P4,"[30, 40]",gamma_visual_asd;beta_gamma_csd_psychosis_transition,partial_band_only_no_visual_condition_contrast;scalp_band_power_only_source_csd_absent,False,6870,not_supplied,not_established,False
+P4__delta_relative_power,P4,"[0.5, 4]",,no_direct_candidate_mapping_in_selected_studies,False,6870,not_supplied,not_established,False
+P4__theta_relative_power,P4,"[4, 8]",,no_direct_candidate_mapping_in_selected_studies,False,6870,not_supplied,not_established,False
+P4__alpha_relative_power,P4,"[8, 13]",alpha_burst_asd_rest,related_band_power_only_burst_estimator_absent,False,6870,not_supplied,not_established,False
+P4__beta_relative_power,P4,"[13, 30]",beta_gamma_csd_psychosis_transition,scalp_band_power_only_source_csd_absent,False,6870,not_supplied,not_established,False
+P4__gamma_relative_power,P4,"[30, 40]",gamma_visual_asd;beta_gamma_csd_psychosis_transition,partial_band_only_no_visual_condition_contrast;scalp_band_power_only_source_csd_absent,False,6870,not_supplied,not_established,False
+P4__total_power_uv2,P4,null,,no_direct_candidate_mapping_in_selected_studies,False,6870,not_supplied,not_established,False
+P4__delta_alpha_ratio,P4,"[0.5, 4]",,no_direct_candidate_mapping_in_selected_studies,True,6870,not_supplied,not_established,False
+P4__sef95_hz,P4,null,,no_direct_candidate_mapping_in_selected_studies,True,6870,not_supplied,not_established,False
+P4__spectral_entropy,P4,null,,no_direct_candidate_mapping_in_selected_studies,True,6870,not_supplied,not_established,False
+P4__auto_bicoherence_squared_60s,P4,null,,no_direct_candidate_mapping_in_selected_studies,False,0,not_supplied,not_established,False
+F3__delta_power_uv2,F3,"[0.5, 4]",,no_direct_candidate_mapping_in_selected_studies,False,6870,not_supplied,not_established,False
+F3__theta_power_uv2,F3,"[4, 8]",,no_direct_candidate_mapping_in_selected_studies,False,6870,not_supplied,not_established,False
+F3__alpha_power_uv2,F3,"[8, 13]",alpha_burst_asd_rest,related_band_power_only_burst_estimator_absent,True,6870,not_supplied,not_established,False
+F3__beta_power_uv2,F3,"[13, 30]",beta_gamma_csd_psychosis_transition,scalp_band_power_only_source_csd_absent,False,6870,not_supplied,not_established,False
+F3__gamma_power_uv2,F3,"[30, 40]",gamma_visual_asd;beta_gamma_csd_psychosis_transition,partial_band_only_no_visual_condition_contrast;scalp_band_power_only_source_csd_absent,False,6870,not_supplied,not_established,False
+F3__delta_relative_power,F3,"[0.5, 4]",,no_direct_candidate_mapping_in_selected_studies,False,6870,not_supplied,not_established,False
+F3__theta_relative_power,F3,"[4, 8]",,no_direct_candidate_mapping_in_selected_studies,False,6870,not_supplied,not_established,False
+F3__alpha_relative_power,F3,"[8, 13]",alpha_burst_asd_rest,related_band_power_only_burst_estimator_absent,False,6870,not_supplied,not_established,False
+F3__beta_relative_power,F3,"[13, 30]",beta_gamma_csd_psychosis_transition,scalp_band_power_only_source_csd_absent,False,6870,not_supplied,not_established,False
+F3__gamma_relative_power,F3,"[30, 40]",gamma_visual_asd;beta_gamma_csd_psychosis_transition,partial_band_only_no_visual_condition_contrast;scalp_band_power_only_source_csd_absent,False,6870,not_supplied,not_established,False
+F3__total_power_uv2,F3,null,,no_direct_candidate_mapping_in_selected_studies,False,6870,not_supplied,not_established,False
+F3__delta_alpha_ratio,F3,"[0.5, 4]",,no_direct_candidate_mapping_in_selected_studies,True,6870,not_supplied,not_established,False
+F3__sef95_hz,F3,null,,no_direct_candidate_mapping_in_selected_studies,True,6870,not_supplied,not_established,False
+F3__spectral_entropy,F3,null,,no_direct_candidate_mapping_in_selected_studies,True,6870,not_supplied,not_established,False
+F3__auto_bicoherence_squared_60s,F3,null,,no_direct_candidate_mapping_in_selected_studies,False,0,not_supplied,not_established,False
+C3__delta_power_uv2,C3,"[0.5, 4]",,no_direct_candidate_mapping_in_selected_studies,False,6870,not_supplied,not_established,False
+C3__theta_power_uv2,C3,"[4, 8]",,no_direct_candidate_mapping_in_selected_studies,False,6870,not_supplied,not_established,False
+C3__alpha_power_uv2,C3,"[8, 13]",alpha_burst_asd_rest,related_band_power_only_burst_estimator_absent,True,6870,not_supplied,not_established,False
+C3__beta_power_uv2,C3,"[13, 30]",beta_gamma_csd_psychosis_transition,scalp_band_power_only_source_csd_absent,False,6870,not_supplied,not_established,False
+C3__gamma_power_uv2,C3,"[30, 40]",gamma_visual_asd;beta_gamma_csd_psychosis_transition,partial_band_only_no_visual_condition_contrast;scalp_band_power_only_source_csd_absent,False,6870,not_supplied,not_established,False
+C3__delta_relative_power,C3,"[0.5, 4]",,no_direct_candidate_mapping_in_selected_studies,False,6870,not_supplied,not_established,False
+C3__theta_relative_power,C3,"[4, 8]",,no_direct_candidate_mapping_in_selected_studies,False,6870,not_supplied,not_established,False
+C3__alpha_relative_power,C3,"[8, 13]",alpha_burst_asd_rest,related_band_power_only_burst_estimator_absent,False,6870,not_supplied,not_established,False
+C3__beta_relative_power,C3,"[13, 30]",beta_gamma_csd_psychosis_transition,scalp_band_power_only_source_csd_absent,False,6870,not_supplied,not_established,False
+C3__gamma_relative_power,C3,"[30, 40]",gamma_visual_asd;beta_gamma_csd_psychosis_transition,partial_band_only_no_visual_condition_contrast;scalp_band_power_only_source_csd_absent,False,6870,not_supplied,not_established,False
+C3__total_power_uv2,C3,null,,no_direct_candidate_mapping_in_selected_studies,False,6870,not_supplied,not_established,False
+C3__delta_alpha_ratio,C3,"[0.5, 4]",,no_direct_candidate_mapping_in_selected_studies,True,6870,not_supplied,not_established,False
+C3__sef95_hz,C3,null,,no_direct_candidate_mapping_in_selected_studies,True,6870,not_supplied,not_established,False
+C3__spectral_entropy,C3,null,,no_direct_candidate_mapping_in_selected_studies,True,6870,not_supplied,not_established,False
+C3__auto_bicoherence_squared_60s,C3,null,,no_direct_candidate_mapping_in_selected_studies,False,0,not_supplied,not_established,False
+P3__delta_power_uv2,P3,"[0.5, 4]",,no_direct_candidate_mapping_in_selected_studies,False,6870,not_supplied,not_established,False
+P3__theta_power_uv2,P3,"[4, 8]",,no_direct_candidate_mapping_in_selected_studies,False,6870,not_supplied,not_established,False
+P3__alpha_power_uv2,P3,"[8, 13]",alpha_burst_asd_rest,related_band_power_only_burst_estimator_absent,True,6870,not_supplied,not_established,False
+P3__beta_power_uv2,P3,"[13, 30]",beta_gamma_csd_psychosis_transition,scalp_band_power_only_source_csd_absent,False,6870,not_supplied,not_established,False
+P3__gamma_power_uv2,P3,"[30, 40]",gamma_visual_asd;beta_gamma_csd_psychosis_transition,partial_band_only_no_visual_condition_contrast;scalp_band_power_only_source_csd_absent,False,6870,not_supplied,not_established,False
+P3__delta_relative_power,P3,"[0.5, 4]",,no_direct_candidate_mapping_in_selected_studies,False,6870,not_supplied,not_established,False
+P3__theta_relative_power,P3,"[4, 8]",,no_direct_candidate_mapping_in_selected_studies,False,6870,not_supplied,not_established,False
+P3__alpha_relative_power,P3,"[8, 13]",alpha_burst_asd_rest,related_band_power_only_burst_estimator_absent,False,6870,not_supplied,not_established,False
+P3__beta_relative_power,P3,"[13, 30]",beta_gamma_csd_psychosis_transition,scalp_band_power_only_source_csd_absent,False,6870,not_supplied,not_established,False
+P3__gamma_relative_power,P3,"[30, 40]",gamma_visual_asd;beta_gamma_csd_psychosis_transition,partial_band_only_no_visual_condition_contrast;scalp_band_power_only_source_csd_absent,False,6870,not_supplied,not_established,False
+P3__total_power_uv2,P3,null,,no_direct_candidate_mapping_in_selected_studies,False,6870,not_supplied,not_established,False
+P3__delta_alpha_ratio,P3,"[0.5, 4]",,no_direct_candidate_mapping_in_selected_studies,True,6870,not_supplied,not_established,False
+P3__sef95_hz,P3,null,,no_direct_candidate_mapping_in_selected_studies,True,6870,not_supplied,not_established,False
+P3__spectral_entropy,P3,null,,no_direct_candidate_mapping_in_selected_studies,True,6870,not_supplied,not_established,False
+P3__auto_bicoherence_squared_60s,P3,null,,no_direct_candidate_mapping_in_selected_studies,False,0,not_supplied,not_established,False
+Fz__delta_power_uv2,Fz,"[0.5, 4]",,no_direct_candidate_mapping_in_selected_studies,False,6870,not_supplied,not_established,False
+Fz__theta_power_uv2,Fz,"[4, 8]",,no_direct_candidate_mapping_in_selected_studies,False,6870,not_supplied,not_established,False
+Fz__alpha_power_uv2,Fz,"[8, 13]",alpha_burst_asd_rest,related_band_power_only_burst_estimator_absent,True,6870,not_supplied,not_established,False
+Fz__beta_power_uv2,Fz,"[13, 30]",beta_gamma_csd_psychosis_transition,scalp_band_power_only_source_csd_absent,False,6870,not_supplied,not_established,False
+Fz__gamma_power_uv2,Fz,"[30, 40]",gamma_visual_asd;beta_gamma_csd_psychosis_transition,partial_band_only_no_visual_condition_contrast;scalp_band_power_only_source_csd_absent,False,6870,not_supplied,not_established,False
+Fz__delta_relative_power,Fz,"[0.5, 4]",,no_direct_candidate_mapping_in_selected_studies,False,6870,not_supplied,not_established,False
+Fz__theta_relative_power,Fz,"[4, 8]",,no_direct_candidate_mapping_in_selected_studies,False,6870,not_supplied,not_established,False
+Fz__alpha_relative_power,Fz,"[8, 13]",alpha_burst_asd_rest,related_band_power_only_burst_estimator_absent,False,6870,not_supplied,not_established,False
+Fz__beta_relative_power,Fz,"[13, 30]",beta_gamma_csd_psychosis_transition,scalp_band_power_only_source_csd_absent,False,6870,not_supplied,not_established,False
+Fz__gamma_relative_power,Fz,"[30, 40]",gamma_visual_asd;beta_gamma_csd_psychosis_transition,partial_band_only_no_visual_condition_contrast;scalp_band_power_only_source_csd_absent,False,6870,not_supplied,not_established,False
+Fz__total_power_uv2,Fz,null,,no_direct_candidate_mapping_in_selected_studies,False,6870,not_supplied,not_established,False
+Fz__delta_alpha_ratio,Fz,"[0.5, 4]",,no_direct_candidate_mapping_in_selected_studies,True,6870,not_supplied,not_established,False
+Fz__sef95_hz,Fz,null,,no_direct_candidate_mapping_in_selected_studies,True,6870,not_supplied,not_established,False
+Fz__spectral_entropy,Fz,null,,no_direct_candidate_mapping_in_selected_studies,True,6870,not_supplied,not_established,False
+Fz__auto_bicoherence_squared_60s,Fz,null,,no_direct_candidate_mapping_in_selected_studies,False,0,not_supplied,not_established,False
+Cz__delta_power_uv2,Cz,"[0.5, 4]",,no_direct_candidate_mapping_in_selected_studies,False,6870,not_supplied,not_established,False
+Cz__theta_power_uv2,Cz,"[4, 8]",,no_direct_candidate_mapping_in_selected_studies,False,6870,not_supplied,not_established,False
+Cz__alpha_power_uv2,Cz,"[8, 13]",alpha_burst_asd_rest,related_band_power_only_burst_estimator_absent,True,6870,not_supplied,not_established,False
+Cz__beta_power_uv2,Cz,"[13, 30]",beta_gamma_csd_psychosis_transition,scalp_band_power_only_source_csd_absent,False,6870,not_supplied,not_established,False
+Cz__gamma_power_uv2,Cz,"[30, 40]",gamma_visual_asd;beta_gamma_csd_psychosis_transition,partial_band_only_no_visual_condition_contrast;scalp_band_power_only_source_csd_absent,False,6870,not_supplied,not_established,False
+Cz__delta_relative_power,Cz,"[0.5, 4]",,no_direct_candidate_mapping_in_selected_studies,False,6870,not_supplied,not_established,False
+Cz__theta_relative_power,Cz,"[4, 8]",,no_direct_candidate_mapping_in_selected_studies,False,6870,not_supplied,not_established,False
+Cz__alpha_relative_power,Cz,"[8, 13]",alpha_burst_asd_rest,related_band_power_only_burst_estimator_absent,False,6870,not_supplied,not_established,False
+Cz__beta_relative_power,Cz,"[13, 30]",beta_gamma_csd_psychosis_transition,scalp_band_power_only_source_csd_absent,False,6870,not_supplied,not_established,False
+Cz__gamma_relative_power,Cz,"[30, 40]",gamma_visual_asd;beta_gamma_csd_psychosis_transition,partial_band_only_no_visual_condition_contrast;scalp_band_power_only_source_csd_absent,False,6870,not_supplied,not_established,False
+Cz__total_power_uv2,Cz,null,,no_direct_candidate_mapping_in_selected_studies,False,6870,not_supplied,not_established,False
+Cz__delta_alpha_ratio,Cz,"[0.5, 4]",,no_direct_candidate_mapping_in_selected_studies,True,6870,not_supplied,not_established,False
+Cz__sef95_hz,Cz,null,,no_direct_candidate_mapping_in_selected_studies,True,6870,not_supplied,not_established,False
+Cz__spectral_entropy,Cz,null,,no_direct_candidate_mapping_in_selected_studies,True,6870,not_supplied,not_established,False
+Cz__auto_bicoherence_squared_60s,Cz,null,,no_direct_candidate_mapping_in_selected_studies,False,0,not_supplied,not_established,False
+Pz__delta_power_uv2,Pz,"[0.5, 4]",,no_direct_candidate_mapping_in_selected_studies,False,6870,not_supplied,not_established,False
+Pz__theta_power_uv2,Pz,"[4, 8]",,no_direct_candidate_mapping_in_selected_studies,False,6870,not_supplied,not_established,False
+Pz__alpha_power_uv2,Pz,"[8, 13]",alpha_burst_asd_rest,related_band_power_only_burst_estimator_absent,True,6870,not_supplied,not_established,False
+Pz__beta_power_uv2,Pz,"[13, 30]",beta_gamma_csd_psychosis_transition,scalp_band_power_only_source_csd_absent,False,6870,not_supplied,not_established,False
+Pz__gamma_power_uv2,Pz,"[30, 40]",gamma_visual_asd;beta_gamma_csd_psychosis_transition,partial_band_only_no_visual_condition_contrast;scalp_band_power_only_source_csd_absent,False,6870,not_supplied,not_established,False
+Pz__delta_relative_power,Pz,"[0.5, 4]",,no_direct_candidate_mapping_in_selected_studies,False,6870,not_supplied,not_established,False
+Pz__theta_relative_power,Pz,"[4, 8]",,no_direct_candidate_mapping_in_selected_studies,False,6870,not_supplied,not_established,False
+Pz__alpha_relative_power,Pz,"[8, 13]",alpha_burst_asd_rest,related_band_power_only_burst_estimator_absent,False,6870,not_supplied,not_established,False
+Pz__beta_relative_power,Pz,"[13, 30]",beta_gamma_csd_psychosis_transition,scalp_band_power_only_source_csd_absent,False,6870,not_supplied,not_established,False
+Pz__gamma_relative_power,Pz,"[30, 40]",gamma_visual_asd;beta_gamma_csd_psychosis_transition,partial_band_only_no_visual_condition_contrast;scalp_band_power_only_source_csd_absent,False,6870,not_supplied,not_established,False
+Pz__total_power_uv2,Pz,null,,no_direct_candidate_mapping_in_selected_studies,False,6870,not_supplied,not_established,False
+Pz__delta_alpha_ratio,Pz,"[0.5, 4]",,no_direct_candidate_mapping_in_selected_studies,True,6870,not_supplied,not_established,False
+Pz__sef95_hz,Pz,null,,no_direct_candidate_mapping_in_selected_studies,True,6870,not_supplied,not_established,False
+Pz__spectral_entropy,Pz,null,,no_direct_candidate_mapping_in_selected_studies,True,6870,not_supplied,not_established,False
+Pz__auto_bicoherence_squared_60s,Pz,null,,no_direct_candidate_mapping_in_selected_studies,False,0,not_supplied,not_established,False

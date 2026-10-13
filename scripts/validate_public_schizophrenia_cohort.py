@@ -79,8 +79,9 @@ def ensure_source(info, target):
     def valid(path):
         return path.is_file() and (size is None or path.stat().st_size == size) and digest(path) == expected
 
-    restored = target.exists() and not valid(target)
-    if not valid(target):
+    cached_valid = valid(target)
+    restored = target.exists() and not cached_valid
+    if not cached_valid:
         target.parent.mkdir(parents=True, exist_ok=True)
         temporary = target.with_suffix(target.suffix + '.part')
         try:
@@ -98,6 +99,14 @@ def _md5_stream(stream):
     for chunk in iter(lambda: stream.read(1024 * 1024), b''):
         checksum.update(chunk)
     return checksum.hexdigest()
+
+
+def export_waveform(frame, target_dir, discard):
+    path = Path(target_dir) / 'recording.csv'
+    if discard:
+        path.unlink(missing_ok=True)
+    else:
+        frame.to_csv(path, index=False)
 
 
 def main(argv=None):
@@ -167,8 +176,7 @@ def main(argv=None):
         frame = select_window(frame, fs, args.window_s)
         if len(frame) < round(fs * args.epoch_s):
             raise RuntimeError(f"Recording too short for the requested epoch duration: {sid}")
-        if not args.discard_waveform_csv:
-            frame.to_csv(target_dir / "recording.csv", index=False)
+        export_waveform(frame, target_dir, args.discard_waveform_csv)
         metadata = {
             "sampling_rate_hz": fs, "eeg_unit": "uV", "eeg_columns": channel_names,
             "channel_locations": {}, "reference": "documented_reference_between_Fz_and_Cz",

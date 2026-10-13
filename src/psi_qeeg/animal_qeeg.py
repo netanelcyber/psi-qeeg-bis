@@ -81,6 +81,15 @@ def validate_animal_metadata(metadata):
     return policy
 
 
+def acquisition_contract(metadata):
+    """Canonical physical derivation, retained with epochs and fitted models."""
+    validate_animal_metadata(metadata)
+    return {'sampling_rate_hz': float(metadata['sampling_rate_hz']), 'eeg_unit': 'uV',
+            'reference': metadata['reference'], 'reference_verified': True,
+            'channel_locations': {ch: metadata['channel_locations'][ch] for ch in metadata['eeg_columns']},
+            'acquisition_filters': metadata.get('acquisition_filters', 'not_specified')}
+
+
 def analyze_animal_qeeg(recording, out, epoch_s=4, profile='autism_research_1_100'):
     """Complete past-contained epoch powers; numerical QC is not artifact cleanup."""
     validate(recording)
@@ -96,6 +105,7 @@ def analyze_animal_qeeg(recording, out, epoch_s=4, profile='autism_research_1_10
     if len(recording.frame) < count:
         raise ValueError('No complete animal epoch')
     meta, rows = recording.metadata, []
+    contract = acquisition_contract(meta)
     values, times = recording.eeg, recording.time
     for first in range(0, len(recording.frame) - count + 1, count):
         x = values[first:first + count]
@@ -108,7 +118,8 @@ def analyze_animal_qeeg(recording, out, epoch_s=4, profile='autism_research_1_10
         row = {k: meta[k] for k in ('animal_id', 'session_id', 'species', 'model_family', 'genotype', 'recording_context', 'signal_scope', 'source')}
         row.update(epoch_id=first // count, time_s=float(times[first]),
                    epoch_end_s=float(times[first] + count / recording.fs),
-                   accepted=not reasons, quality_reasons=';'.join(reasons), qeeg_profile=profile)
+                   accepted=not reasons, quality_reasons=';'.join(reasons), qeeg_profile=profile,
+                   acquisition_contract=json.dumps(contract, sort_keys=True, separators=(',', ':')))
         if not reasons:
             for column, channel in enumerate(recording.channels):
                 result = band_powers(x[:, column], recording.fs, bands, denominator)
@@ -127,7 +138,7 @@ def analyze_animal_qeeg(recording, out, epoch_s=4, profile='autism_research_1_10
                'profile': profile, 'bands_hz': bands, 'relative_denominator_hz': denominator,
                'complete_epochs': len(frame), 'accepted_epochs': int(frame.accepted.sum()),
                'rejected_epochs': int((~frame.accepted).sum()), 'unused_tail_samples': len(recording.frame) % count,
-               'quality_policy': policy, 'animal_metadata': meta,
+               'quality_policy': policy, 'animal_metadata': meta, 'acquisition_contract': contract,
                'quality_limit': 'Numerical missing/flat/amplitude checks only; movement, muscle and line-noise artifacts require independent review',
                'event_prediction': None, 'SOI': None, 'RDI': None, 'human_transfer_validation': 'not_established'}
     out = Path(out); out.mkdir(parents=True, exist_ok=True)

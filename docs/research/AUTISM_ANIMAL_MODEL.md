@@ -2,6 +2,8 @@
 
 **13 October 2026.** PSI now has an animal-specific continuous-qEEG extractor and a separate annotation-dependent behavioral SVM. A real public-data **Fmr1-KO2/WT genotype benchmark** was also run. The behavioral-onset implementation was tested with explicitly synthetic fixtures; **no behavioral model was trained on real animal events**.
 
+A later [continued-training study](CONTINUED_FMR1_TRAINING.md) adds nested parameter selection and two final all-43-animal refits. Its animal-held-out accuracy is 67.42%, compared with 69.91% for the fixed-C=1 reference; no improvement is claimed.
+
 ## Real qEEG model actually fitted
 
 Source: [Neuronal Oscillation Dynamics Fmr1 KO2 mice](https://osf.io/as7cz/), associated with [Kat et al., 2024](https://doi.org/10.1093/cercor/bhae201). The published experiment uses wireless skull EEG and inactive-wakefulness segments. It is not an intracranial recording cohort. The public source root supplied two processed CSVs containing `Pow, DFA, fEI, AnID, GT, Loc, Freq`, with treatment conditions additionally present in experiment 2.
@@ -36,6 +38,8 @@ python -m psi_qeeg analyze-animal-qeeg data/mouse.csv \
 ```
 
 Output is `animal_epoch_features.csv` and `animal_qeeg_analysis.json`. This command does not create event labels. It accepts continuous animal signals, not averaged ERPs. Raw-sample features stay within each epoch, so future samples do not change prior epochs. The [calculation guide](ANIMAL_QEEG_METHODS.md) explains the physical powers and denominators.
+
+Each epoch retains a canonical `acquisition_contract` for channel locations, verified reference, sample rate, units and declared acquisition filters. The behavioral manifest carries this contract, and inference requires an exact compatible derivation and the fitted epoch duration. Reusing a channel name for another brain location/reference is rejected. Regenerate older epoch tables that lack this metadata.
 
 ## Behavioral-onset SVM implementation
 

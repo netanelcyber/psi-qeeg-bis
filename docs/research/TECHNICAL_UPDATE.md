@@ -8,7 +8,7 @@ PSI runs an offline FFT-based qEEG pipeline and optional linear SVM research wor
 
 EEG is represented in microvolts with an explicit sample clock. Default epochs are four seconds without overlap. Welch PSD uses two-second Hann windows, 50% overlap, constant detrending and a 0.5 Hz frequency grid. Exact-edge integration gives delta 0.5–4, theta 4–8, alpha 8–13, beta 13–30 and gamma 30–40 Hz powers and relative powers. Delta/alpha ratio, entropy and SEF95 are computed. Missing/flat/extreme-amplitude epochs are rejected; EMG contamination is flagged rather than removed.
 
-Experimental single-channel auto-bicoherence uses 60 seconds of accepted past EEG; verified-montage alpha PLV is also implemented. Both are absent from this cohort's SVM features. Raw analysis keeps classification indeterminate and SOI/RDI unavailable without all components and a valid personal baseline. FFT describes the waveform; its output is not a psychiatric diagnosis.
+Experimental single-channel auto-bicoherence screens the complete past 60 seconds as one window; constituent epochs are not individually required to pass QC; verified-montage alpha PLV is also implemented. Both are absent from this cohort's SVM features. Raw analysis keeps classification indeterminate and SOI/RDI unavailable without all components and a valid personal baseline. FFT describes the waveform; its output is not a psychiatric diagnosis.
 
 ## Expanded human-data experiment
 

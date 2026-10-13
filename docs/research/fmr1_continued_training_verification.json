@@ -1,0 +1,110 @@
+{
+  "verified_at_utc": "2026-10-13T06:36:19.772594+00:00",
+  "code_base_commit": "c916f24e101aa21558380d1be4ef06612d93e123",
+  "code_sha256": {
+    "scripts/continue_fmr1_qeeg_training.py": "5c12734f7a5717e243ca042e95f5442a22a9bc5cd990b4ded3f60631203d82be",
+    "src/psi_qeeg/animal_genotype.py": "c14e1fbaea514bf24ab97ae5e448a51745873e4f2c07f646f2841a7b5a452479"
+  },
+  "source_metadata_mode": "retained_verified_snapshot",
+  "source_metadata_snapshot_sha256": "1bf872d5162075243614a50503e03096e7afb817e303555bc9b914cb40d3c51d",
+  "unit_tests": {
+    "passed": 137,
+    "failures": 0,
+    "errors": 0,
+    "skips": 0,
+    "log_sha256": "57ab76bea45f63a10e328f958b1b928a3c3ee45abb2a4ea16f86db228821ce67"
+  },
+  "same_43_source_animal_vectors_verified": true,
+  "source_hashes_and_sizes_verified": true,
+  "all_nested_animal_and_inner_splits_disjoint": true,
+  "metrics_recomputed": {
+    "nested_animal_metrics": 0.6742424242424242,
+    "fixed_C1_animal_metrics": 0.699134199134199
+  },
+  "saved_models": {
+    "test_experiment1": {
+      "prediction_reload_match": true,
+      "training_only_scaler_verified": true,
+      "animal_balanced_accuracy": 0.7727272727272727
+    },
+    "test_experiment2_saline": {
+      "prediction_reload_match": true,
+      "training_only_scaler_verified": true,
+      "animal_balanced_accuracy": 0.5378787878787878
+    },
+    "final_fit": {
+      "all_43_training_animals_verified": true,
+      "linear_rule_matches_reloaded_model": true
+    },
+    "fixed_C1_final_fit": {
+      "all_43_training_animals_verified": true,
+      "linear_rule_matches_reloaded_model": true
+    }
+  },
+  "real_excerpt_check": "passed",
+  "compile_check": "passed",
+  "training_scope": "real source-processed mouse genotype only; behavioral fitting fixtures are synthetic",
+  "behavioral_model_trained_on_real_data": false,
+  "dependencies": {
+    "numpy": "2.3.5",
+    "scipy": "1.17.0",
+    "pandas": "2.2.3",
+    "scikit-learn": "1.8.0",
+    "joblib": "1.5.3"
+  },
+  "python": "3.12.14",
+  "result_files": {
+    "continued_training_evaluation.json": {
+      "bytes": 297477,
+      "sha256": "c50fd91f224e38233a3c2d5a1387956dca61938c7afa4369987601f93de2100f"
+    },
+    "final_43_animal_genotype_model.joblib": {
+      "bytes": 104170,
+      "sha256": "4e6bb318e892423641430f82c20643a59f392d8c2862981e08757e782fe14f07"
+    },
+    "final_linear_decision_rule.json": {
+      "bytes": 322,
+      "sha256": "8835457fd25b839c3b2f7063a8d6dfddb3fc754da4834cc82529105f168274b3"
+    },
+    "final_linear_svm_coefficients.csv": {
+      "bytes": 17107,
+      "sha256": "14a990e469755bec64c0ae25141aee4de36155edba38bd46086b65985073550a"
+    },
+    "fixed_C1_final_43_animal_genotype_model.joblib": {
+      "bytes": 152826,
+      "sha256": "91be17c625cf7b6e0b10b947f53ea5020aed9727486a7a9b1a65ad5dab9d8149"
+    },
+    "fixed_C1_final_linear_decision_rule.json": {
+      "bytes": 321,
+      "sha256": "6e5be7b057a9f6330deef9235a60e92cc29b909661707d31a2cf365913c14327"
+    },
+    "fixed_C1_final_linear_svm_coefficients.csv": {
+      "bytes": 16912,
+      "sha256": "441d888daa66579c5c2519603c0aa40c54a49a803e09ed818375ede7731c37d1"
+    },
+    "nested_held_out_animals.csv": {
+      "bytes": 1347,
+      "sha256": "94084a524be9fd50fd30f465cafe1ccddf639c2be58d7fb76007108500b1b057"
+    },
+    "test_experiment1_model.joblib": {
+      "bytes": 51694,
+      "sha256": "428e54f5102f57bd3bd3109a0f579c10f61a17aeb4d6c41aade8cc5c6406d174"
+    },
+    "test_experiment1_predictions.csv": {
+      "bytes": 501,
+      "sha256": "ecb19117977046a97848539965506d440a82a6004610926d3de603f85822fa10"
+    },
+    "test_experiment2_saline_model.joblib": {
+      "bytes": 35705,
+      "sha256": "0a7f130fba188ac6c3fde138524bfee856c0e124e3fce8b30fe7a6de87379a3e"
+    },
+    "test_experiment2_saline_predictions.csv": {
+      "bytes": 731,
+      "sha256": "a890cdf8c0465dda88da31f5bd4f0f951d0a71aa8b9226b1ab574924f0cd108f"
+    },
+    "training_animal_vectors.csv": {
+      "bytes": 170106,
+      "sha256": "8c58f7b5d93055aba72454c3785d1dfe0f7dd585c6f5275143cac3a81bb822e4"
+    }
+  }
+}

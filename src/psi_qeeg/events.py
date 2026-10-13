@@ -15,7 +15,18 @@ EVENT_TYPES = ('meltdown', 'psychosis_onset')
 CONTEXTS = {'awake_observational_research', 'awake_longitudinal_research', 'synthetic_unit_test'}
 IDS = {'subject_id', 'session_id', 'epoch_id', 'time_s', 'epoch_end_s', 'accepted',
        'recording_context', 'group', 'site', 'classification', 'research_label', 'label_source',
-       'animal_id', 'species', 'model_family', 'genotype', 'signal_scope', 'qeeg_profile', 'source'}
+       'animal_id', 'species', 'model_family', 'genotype', 'signal_scope', 'qeeg_profile', 'source',
+       'onset_s', 'offset_s', 'start_s', 'end_s', 'event_type', 'event_id', 'event_ids',
+       'behavior_name', 'behavior_definition', 'review_status', 'event_types_reviewed',
+       'target_origin', 'time_to_event_s', 'time_to_onset_s', 'prediction_cutoff_s',
+       'history_start_s', 'acquisition_contract'}
+
+
+def _unmixed_scope(frame):
+    synthetic = frame.recording_context.astype(str).str.startswith('synthetic')
+    if synthetic.any() and not synthetic.all():
+        raise ValueError('Synthetic fixtures and real observations must be kept separate')
+    return 'synthetic_fixture' if synthetic.all() else 'supplied_annotated_research_data'
 
 
 def _read(path):
@@ -30,17 +41,23 @@ def _required(frame, names, description):
             raise ValueError(f'{description}: {column} cannot be empty')
 
 
+def _predictor_contract(features):
+    if not features or len(set(features)) != len(features) or any(str(f).lower() in IDS or str(f).lower().startswith(('target_', 'event_', 'future_', 'label_')) for f in features):
+        raise ValueError('Identifiers, labels and future outcomes cannot be predictors')
+    return [f'history_{kind}__{feature}' for kind in ('mean', 'sd', 'slope_per_s') for feature in features]
+
+
 def history_windows(frame, features, history_s=60, stride_s=None, *, allowed_contexts=None):
     """Mean, SD and slope from complete accepted past epochs only; no future labels."""
     required = {'subject_id', 'session_id', 'time_s', 'epoch_end_s', 'accepted', 'recording_context'}
     _required(frame, required, 'Epoch table')
     if not features or len(set(features)) != len(features) or any(f not in frame for f in features):
         raise ValueError('Select unique existing numeric waveform features')
-    if any(f in IDS or str(f).startswith(('target_', 'event_', 'future_', 'label_')) for f in features):
-        raise ValueError('Identifiers, labels and future outcomes cannot be predictors')
+    names = _predictor_contract(features)
     contexts = CONTEXTS if allowed_contexts is None else set(allowed_contexts)
     if not set(frame.recording_context) <= contexts:
         raise ValueError('Event research requires an awake observational context or explicit synthetic fixture')
+    _unmixed_scope(frame)
     if frame.duplicated(['subject_id', 'session_id', 'time_s']).any():
         raise ValueError('Duplicate subject/session/epoch times')
     durations = frame.epoch_end_s.to_numpy(float) - frame.time_s.to_numpy(float)
@@ -58,7 +75,6 @@ def history_windows(frame, features, history_s=60, stride_s=None, *, allowed_con
     if not set(quality) <= {'true', 'false'}:
         raise ValueError('accepted must explicitly be true or false')
     count, advance = round(history_s / step), round(stride_s / step)
-    names = [f'history_{kind}__{feature}' for kind in ('mean', 'sd', 'slope_per_s') for feature in features]
     rows, skipped = [], 0
     for (subject, session), part in frame.groupby(['subject_id', 'session_id'], sort=True):
         part = part.sort_values('time_s').reset_index(drop=True)
@@ -179,12 +195,15 @@ def train_event_models(windows_path, manifest_path, out):
         raise ValueError('Training requires the matching prepared event dataset manifest')
     frame = _read(windows_path)
     names = manifest['model_features']
+    if names != _predictor_contract(manifest.get('input_features', [])):
+        raise ValueError('Prepared descriptors must match the permitted waveform-feature contract')
     _required(frame, {'subject_id', 'session_id', 'prediction_cutoff_s', 'recording_context', *names,
                        *(f'target_{kind}' for kind in EVENT_TYPES)}, 'Prepared event windows')
     if frame.subject_id.nunique() < 3 or frame.duplicated(['subject_id', 'session_id', 'prediction_cutoff_s']).any():
         raise ValueError('Need at least three subjects and unique subject/session/cutoff windows')
     if not set(frame.recording_context) <= CONTEXTS or not names or any(not n.startswith(('history_mean__', 'history_sd__', 'history_slope_per_s__')) for n in names):
         raise ValueError('Only prepared past-history descriptors can be model features')
+    scope = _unmixed_scope(frame)
     x = frame[names].to_numpy(float)
     if not np.isfinite(x).all():
         raise ValueError('Event descriptors must be finite; no imputation is performed')
@@ -211,7 +230,6 @@ def train_event_models(windows_path, manifest_path, out):
         models[kind] = factory().fit(x, y)
     out = Path(out)
     out.mkdir(parents=True, exist_ok=True)
-    scope = 'synthetic_fixture' if frame.recording_context.str.contains('synthetic').any() else 'supplied_annotated_research_data'
     report = {'use': 'research_only', 'clinical_validation': 'not_established', 'data_scope': scope,
               'evaluation': 'leave_one_subject_out', 'metrics': results, 'folds': folds,
               'subjects': frame.subject_id.nunique(), 'windows': len(frame), 'protocol': manifest['protocol'],
@@ -232,7 +250,12 @@ def predict_event_windows(model_path, features_path, out):
         raise ValueError('Provide an explicitly trained event-model bundle, not a diagnosis-group classifier')
     manifest = bundle['manifest']
     protocol = manifest['protocol']
-    frame, names, _ = history_windows(_read(features_path), manifest['input_features'], protocol['history_s'], protocol['stride_s'])
+    epochs = _read(features_path)
+    frame, names, inferred = history_windows(epochs, manifest['input_features'], protocol['history_s'], protocol['stride_s'])
+    if not np.isclose(inferred['epoch_s'], protocol['epoch_s'], atol=1e-6, rtol=0):
+        raise ValueError('Inference epoch duration must match the fitted event model')
+    if bundle['data_scope'] == 'synthetic_fixture' and _unmixed_scope(epochs) != 'synthetic_fixture':
+        raise ValueError('Synthetic fixture models cannot be used on real observations')
     if names != manifest['model_features'] or frame.empty:
         raise ValueError('No complete past windows matching the trained event feature contract')
     x = frame[names].to_numpy(float)

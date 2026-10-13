@@ -13,7 +13,7 @@ These selected studies concern different populations and outcomes. None supplies
 
 ## What is marked in the human-data output
 
-`signal_evidence.json` is an evidence register. The delivered `candidate_feature_annotations.csv` maps actual output columns to candidate IDs, the implemented frequency range, estimator match, inclusion in the diagnosis SVM and finite accepted-epoch count. An empty candidate set means no direct mapping to these selected studies. `individual_abnormality_threshold` is unavailable and `imminent_event_validation` is not established for every row. No participant or epoch is labelled pre-meltdown/pre-psychotic from these papers.
+[signal_evidence.json](signal_evidence.json) is an evidence register. The committed [candidate_feature_annotations.csv](candidate_feature_annotations.csv), a frozen aggregate from the full 28-person RepOD run, maps actual output columns to candidate IDs, the implemented frequency range, estimator match, inclusion in the diagnosis SVM and finite accepted-epoch count. An empty candidate set means no direct mapping to these selected studies. `individual_abnormality_threshold` is unavailable and `imminent_event_validation` is not established for every row. No participant or epoch is labelled pre-meltdown/pre-psychotic from these papers.
 
 For a future event study, measure the specified burst/ERP/CSD features, obtain personal baselines and independent onset/follow-up annotations, then lock the horizon and evaluate participant-held-out and prospective predictions. Delta/alpha ratio, SEF95, entropy, bicoherence and PLV remain research descriptors; their availability alone establishes no acute warning threshold. See [EVENT_PREDICTION.md](EVENT_PREDICTION.md).
 

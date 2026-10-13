@@ -17,6 +17,15 @@ spec.loader.exec_module(runner)
 
 
 class WindowTests(unittest.TestCase):
+    def test_discard_export_removes_previous_waveform(self):
+        with tempfile.TemporaryDirectory() as name:
+            folder = Path(name); (folder / 'recording.csv').write_text('stale export')
+            frame = pd.DataFrame({'time_s': [0, 1], 'C1': [2, 3]})
+            runner.export_waveform(frame, folder, True)
+            self.assertFalse((folder / 'recording.csv').exists())
+            runner.export_waveform(frame, folder, False)
+            pd.testing.assert_frame_equal(pd.read_csv(folder / 'recording.csv'), frame)
+
     def test_legacy_default_and_explicit_full_window(self):
         args = runner.parse_args([])
         self.assertEqual((args.window_s, args.epoch_s), (120, 4))
@@ -42,8 +51,10 @@ class SourceCacheTests(unittest.TestCase):
 
     def test_valid_cache_is_not_downloaded(self):
         self.path.write_bytes(self.data)
-        with patch.object(runner, 'download_file', side_effect=AssertionError('unnecessary download')):
+        owner, method = (runner.hashlib, 'file_digest') if hasattr(runner.hashlib, 'file_digest') else (runner, '_md5_stream')
+        with patch.object(runner, 'download_file', side_effect=AssertionError('unnecessary download')), patch.object(owner, method, wraps=getattr(owner, method)) as hashed:
             digest, restored = runner.ensure_source(self.info, self.path)
+        self.assertEqual(hashed.call_count, 1)
         self.assertEqual(digest, self.info['md5'])
         self.assertFalse(restored)
 

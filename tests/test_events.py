@@ -1,6 +1,7 @@
 """Artificial event timing tests, never empirical episode-prediction evidence."""
 
 import contextlib
+import hashlib
 import importlib.util
 import io
 import json
@@ -96,8 +97,14 @@ class EventTests(unittest.TestCase):
 
     def test_outcomes_and_identifiers_never_predictors(self):
         self.frame['target_meltdown'] = 1
-        for feature in ('subject_id', 'target_meltdown'):
+        for feature in ('subject_id', 'target_meltdown', 'onset_s', 'offset_s', 'start_s', 'end_s',
+                        'time_to_event_s', 'review_status', 'event_types_reviewed', 'ONSET_S'):
+            self.frame[feature] = 1
             with self.assertRaises(ValueError): history_windows(self.frame, [feature], history_s=8)
+
+    def test_mixed_synthetic_and_real_preparation_rejected(self):
+        self.frame.loc[self.frame.subject_id == 'fixture-0', 'recording_context'] = 'awake_observational_research'
+        with self.assertRaisesRegex(ValueError, 'kept separate'): self.prepare()
 
     @unittest.skipUnless(HAS_ML, 'optional ML dependencies')
     def test_subject_splits_model_reload_and_causal_inference(self):
@@ -153,3 +160,37 @@ class EventTests(unittest.TestCase):
         joblib.dump({'models': {'diagnosis': object()}}, self.root / 'wrong.joblib')
         with self.assertRaisesRegex(ValueError, 'diagnosis-group'):
             predict_event_windows(self.root / 'wrong.joblib', self.root / 'features.csv', self.root / 'prediction')
+
+    @unittest.skipUnless(HAS_ML, 'optional ML dependencies')
+    def test_mixed_training_scope_rejected_even_with_matching_table_hash(self):
+        self.prepare(); path = self.root / 'dataset/windows.csv'
+        table = pd.read_csv(path); table.loc[0, 'recording_context'] = 'awake_observational_research'; table.to_csv(path, index=False)
+        manifest_path = self.root / 'dataset/dataset_manifest.json'
+        manifest = json.loads(manifest_path.read_text()); manifest['windows_sha256'] = hashlib.sha256(path.read_bytes()).hexdigest()
+        manifest_path.write_text(json.dumps(manifest))
+        with self.assertRaisesRegex(ValueError, 'kept separate'):
+            train_event_models(path, manifest_path, self.root / 'bad')
+
+    @unittest.skipUnless(HAS_ML, 'optional ML dependencies')
+    def test_legacy_outcome_descriptors_cannot_be_trained_with_a_matching_manifest(self):
+        self.prepare(); path = self.root / 'dataset/windows.csv'
+        table = pd.read_csv(path); table.columns = [name.replace('__alpha', '__onset_s') for name in table.columns]
+        table.to_csv(path, index=False)
+        manifest_path = self.root / 'dataset/dataset_manifest.json'
+        manifest = json.loads(manifest_path.read_text()); manifest['input_features'] = ['onset_s']
+        manifest['model_features'] = [name.replace('__alpha', '__onset_s') for name in manifest['model_features']]
+        manifest['windows_sha256'] = hashlib.sha256(path.read_bytes()).hexdigest(); manifest_path.write_text(json.dumps(manifest))
+        with self.assertRaisesRegex(ValueError, 'future outcomes'):
+            train_event_models(path, manifest_path, self.root / 'bad')
+
+    @unittest.skipUnless(HAS_ML, 'optional ML dependencies')
+    def test_inference_rejects_changed_epoch_duration_and_real_use_of_fixture(self):
+        self.prepare(); train_event_models(self.root / 'dataset/windows.csv', self.root / 'dataset/dataset_manifest.json', self.root / 'model')
+        changed = self.frame.copy(); changed['time_s'] /= 2; changed['epoch_end_s'] /= 2
+        changed.to_csv(self.root / 'changed.csv', index=False)
+        with self.assertRaisesRegex(ValueError, 'epoch duration'):
+            predict_event_windows(self.root / 'model/event_models.joblib', self.root / 'changed.csv', self.root / 'bad')
+        changed = self.frame.copy(); changed['recording_context'] = 'awake_observational_research'
+        changed.to_csv(self.root / 'changed.csv', index=False)
+        with self.assertRaisesRegex(ValueError, 'Synthetic fixture'):
+            predict_event_windows(self.root / 'model/event_models.joblib', self.root / 'changed.csv', self.root / 'bad')
