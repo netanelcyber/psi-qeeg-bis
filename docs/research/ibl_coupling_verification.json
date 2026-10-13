@@ -1,0 +1,20 @@
+{
+  "checks": {
+    "input_and_estimator_hashes": true,
+    "past_contained_input_for_every_window": true,
+    "all_pre_onset_samples_before_target": true,
+    "duplicates_do_not_expand_test_family": true,
+    "three_disjoint_guarded_controls": true,
+    "independent_scipy_bh_matches": true,
+    "saved_pac_matches_independent_entropy_formula": true,
+    "actual_coherence_matches_scipy_reference": true,
+    "late_pre_windows_contain_real_prior_bouts": true,
+    "no_first_onset_local_pac_q05": true,
+    "valid_connectivity_ranges": true,
+    "engineering_tests_passed": true
+  },
+  "all_passed": true,
+  "local_unit_tests": 144,
+  "new_estimator_tests": 7,
+  "abnormal_event_prediction_validated": false
+}

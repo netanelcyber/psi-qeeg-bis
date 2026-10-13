@@ -1,0 +1,184 @@
+{
+  "animal_id": "SH023",
+  "session_id": "274dacc9-05b2-4154-b4f7-8f6dd46efcc8",
+  "independent_animals": 1,
+  "source_provenance": [
+    {
+      "filename": "lfp_excerpt_uv.npz",
+      "sha256": "bdaedac3674eb2791acd61f4b842a9e5d902c1a578edde731c5b7bb50533990f",
+      "bytes": 7059836
+    },
+    {
+      "filename": "movement_annotations.csv",
+      "sha256": "fe49ebacb747b95b66e97da39220efdb56af211552904623e94b6b5342bbc3f8",
+      "bytes": 1012
+    },
+    {
+      "filename": "video_lfp_alignment_report.json",
+      "sha256": "085251b9d3a1f9ee9c9cb0079bfa4972a9101f291da103b2a217e17ac635a75e",
+      "bytes": 5805
+    },
+    {
+      "filename": "_ibl_wheelMoves.intervals.d8a0c780-a2b9-4b5b-9c41-d4665f0333db.npy",
+      "sha256": "49e6ddd78e692b1aeeee023be22973fcef2e19bba284eaa94717ff0bfa38c96e",
+      "bytes": 19568
+    }
+  ],
+  "theta_hz": [
+    4.0,
+    12.0
+  ],
+  "gamma_hz": [
+    30.0,
+    80.0
+  ],
+  "analysis_window_s": 16,
+  "edge_trim_s": 1,
+  "grid_step_s": 2,
+  "unique_windows": 143,
+  "requested_windows": 151,
+  "quiet_control_windows": 3,
+  "video_source_bouts": 5,
+  "wheel_bouts_overlapping_lfp": 29,
+  "episodes_overlapping_lfp": [
+    {
+      "episode_id": "episode_2",
+      "start_s": 65.35031640000022,
+      "end_s": 128.88731640000026,
+      "source_bouts": 9
+    },
+    {
+      "episode_id": "episode_3",
+      "start_s": 151.99931640000028,
+      "end_s": 169.50031640000032,
+      "source_bouts": 2
+    },
+    {
+      "episode_id": "episode_4",
+      "start_s": 200.38231640000032,
+      "end_s": 200.92831640000034,
+      "source_bouts": 1
+    },
+    {
+      "episode_id": "episode_5",
+      "start_s": 217.48931640000035,
+      "end_s": 226.12431640000037,
+      "source_bouts": 4
+    },
+    {
+      "episode_id": "episode_6",
+      "start_s": 260.24731640000044,
+      "end_s": 649.2043164000007,
+      "source_bouts": 102
+    }
+  ],
+  "modes": {
+    "original": {
+      "grid_windows": 113,
+      "quiet_control_windows": 3,
+      "grid_medians": {
+        "theta_plv_median": 0.8085535604704152,
+        "theta_coherence_median": 0.8620049162628145,
+        "theta_imaginary_coherency_abs_median": 0.06179120704001481,
+        "gamma_plv_median": 0.9252734360633621,
+        "gamma_coherence_median": 0.6659180712082643,
+        "within_pac_mi_median": 0.00026184937029943844
+      },
+      "quiet_medians": {
+        "theta_plv_median": 0.7539496619751686,
+        "theta_coherence_median": 0.7960004250881931,
+        "theta_imaginary_coherency_abs_median": 0.08095672749363106,
+        "gamma_plv_median": 0.9637650487609067,
+        "gamma_coherence_median": 0.5589124750479506,
+        "within_pac_mi_median": 0.00015950429951644418
+      }
+    },
+    "notch_50_60": {
+      "grid_windows": 113,
+      "quiet_control_windows": 3,
+      "grid_medians": {
+        "theta_plv_median": 0.8085589911877598,
+        "theta_coherence_median": 0.8620049113214492,
+        "theta_imaginary_coherency_abs_median": 0.061791359419834144,
+        "gamma_plv_median": 0.7031386732817213,
+        "gamma_coherence_median": 0.6568832969721418,
+        "within_pac_mi_median": 0.0006376785541974406
+      },
+      "quiet_medians": {
+        "theta_plv_median": 0.7539814848696487,
+        "theta_coherence_median": 0.7960004282845188,
+        "theta_imaginary_coherency_abs_median": 0.08095682352601553,
+        "gamma_plv_median": 0.650472450347287,
+        "gamma_coherence_median": 0.5542599739822252,
+        "within_pac_mi_median": 0.0004977824301887757
+      }
+    },
+    "bipolar": {
+      "grid_windows": 113,
+      "quiet_control_windows": 3,
+      "grid_medians": {
+        "theta_plv_median": 0.16865364705805885,
+        "theta_coherence_median": 0.1072992420239495,
+        "theta_imaginary_coherency_abs_median": 0.17055957371457287,
+        "gamma_plv_median": 0.08842333687248842,
+        "gamma_coherence_median": 0.0975228837028583,
+        "within_pac_mi_median": 0.000398667152523402
+      },
+      "quiet_medians": {
+        "theta_plv_median": 0.17351361217918268,
+        "theta_coherence_median": 0.10527753043543175,
+        "theta_imaginary_coherency_abs_median": 0.16087856122199837,
+        "gamma_plv_median": 0.07359334476125995,
+        "gamma_coherence_median": 0.08070780766191035,
+        "within_pac_mi_median": 0.0004452033015141521
+      }
+    }
+  },
+  "pac_test_family_size": 2288,
+  "surrogates_per_test": 199,
+  "pac_q05_by_mode": {
+    "original": 273,
+    "notch_50_60": 190,
+    "bipolar": 8
+  },
+  "phase_amplitude_estimator": "Tort KL modulation index, 18 phase bins; normalized MVL supplementary",
+  "surrogate_control": "199 distinct circular amplitude shifts, excluding +/-1s; plus-one p, BH over all unique window/mode/PAC relationships",
+  "coherence_estimator": "Magnitude-squared Welch coherency; 2s Hann, 50% overlap, constant detrend; integrated band mean",
+  "imaginary_control": "Mean absolute imaginary coherency over each band; not a guarantee of neural origin",
+  "bipolar_derivations": [
+    "raw_32-raw_96",
+    "raw_128-raw_192"
+  ],
+  "filtering": "Each supplied window alone: antialias 2500->500Hz; optional notch50/60 Q30; fourth-order bandpass/Hilbert; discard 1s each edge",
+  "past_only_boundary": "No input sample at or after each requested window end; all preprocessing is window-contained",
+  "subject_genotype": "unverified; do not infer KO from nickname",
+  "reference_location_verified": false,
+  "artifact_expert_review_complete": false,
+  "behavioral_model_trained": false,
+  "abnormal_event_onsets_verified": false,
+  "one_minute_prediction_validated": false,
+  "human_transfer_validated": false,
+  "limitations": [
+    "One mouse; channels, bouts and overlapping windows are not independent subjects",
+    "Quiet controls mean no measured wheel bout, not no motion/muscle/reference artifact",
+    "High PLV/coherence may reflect shared reference or common sources",
+    "PAC surrogate rejection does not rule out transient or nonsinusoidal waveform effects",
+    "A fixed periodic oscillation may retain PAC after a circular shift; non-rejection is not proof of absent coupling",
+    "Declared 16s windows dilute subsecond movement; no adjudicated abnormal event or forecasting evaluation"
+  ],
+  "method_sources": [
+    "https://doi.org/10.1152/jn.00106.2010",
+    "https://doi.org/10.1016/j.jneumeth.2014.01.002",
+    "https://doi.org/10.1016/j.clinph.2004.04.029",
+    "https://doi.org/10.1016/j.conb.2014.08.002",
+    "https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.coherence.html"
+  ],
+  "software": {
+    "python": "3.12.14",
+    "numpy": "2.3.5",
+    "scipy": "1.17.0",
+    "pandas": "2.2.3"
+  },
+  "runner_sha256": "41bc42ff2e2c40135045ac0d2b7a75f5aa1e276c00ec815b18b2cdf033cfcc2c",
+  "estimator_sha256": "693b39fc3e47c2c8937ec29d781216b4c76f3a5764c51c0af3c19e1373f91869"
+}

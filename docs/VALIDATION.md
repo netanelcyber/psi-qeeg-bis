@@ -1,5 +1,9 @@
 # Validation status and next experiment
 
+## Coupling analysis, 13 October 2026
+
+The [IBL coupling study](research/IBL_COUPLING.md) executes PLV, Welch magnitude-squared/imaginary coherency and Tort theta–gamma modulation index on 143 unique real LFP windows, with three wheel-quiet controls, 199 PAC surrogates per relationship, multiplicity adjustment and notch/bipolar sensitivity checks. Seven new numerical regressions bring the local suite to **144 passing tests**. Tests distinguish identity/common-reference coherence from residual bipolar interactions and known amplitude modulation from an uncoupled control. Strong original synchrony is derivation-sensitive; selected raw pre-bout PAC increases already overlap previous movements. These are exploratory measurements in one mouse, not a trained event predictor or a validated SOI/RDI component, and no LSTM or clinical inference is introduced.
+
 ## Public synchronized video/LFP, 13 October 2026
 
 The [IBL run](research/OPEN_VIDEO_LFP.md) executes a real continuous intracranial signal excerpt, calibrated FFT/Welch powers in 60 four-second epochs per channel, probe/session clock mapping and frame-count-checked video annotations of five deposited wheel movements. Runtime checks verify small-object hashes, exact compressed ranges, source gain/sample counts, ordered clocks and matching full/excerpt frame counts. These are acquisition/alignment checks. Individual genotype/reference metadata and artifact adjudication are incomplete, no abnormal-event labels are established and no behavioral model or one-minute forecast is trained. Strict event-training contracts remain in force.
