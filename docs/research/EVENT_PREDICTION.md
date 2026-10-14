@@ -1,5 +1,7 @@
 # Annotated event prediction: research workflow
 
+**Clinical interpretation update 14 October 2026:** the [clinical requirements](CLINICAL_REQUIREMENTS.md) specify psychiatrist-approved definitions, mixed/uncertain outcomes and a clinical-only comparator before a prospective study. Scalp gamma/PAC is excluded from the proposed primary human protocol; current engineering feature options are not a clinically approved feature set. No trigger/duration rule or numerical index establishes reality testing. The proposed clinical review is pending.
+
 This module's current targets and provenance contract concern human research outcomes. The separately implemented [animal qEEG/behavioral workflow](AUTISM_ANIMAL_MODEL.md) has its own outcome namespace and adapter, and still requires independently annotated real continuous data for empirical behavioral fitting. Animals must not be assigned human meltdown/psychosis labels to make these commands run.
 
 The event module implements causal feature preparation, two binary research SVMs and past-only inference. **No event model has been trained on real data in the RepOD experiment.** More resting-state epochs do not create meltdown or psychosis-onset outcomes. The existing diagnosis-group classifier is not accepted by `predict-events`.

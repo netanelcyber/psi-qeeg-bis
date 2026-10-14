@@ -1,7 +1,7 @@
 {
-  "schema_version": 1,
-  "reviewed_date_utc": "2026-10-12",
-  "scope": "selected_primary_studies_and_current_code",
+  "schema_version": 2,
+  "reviewed_date_utc": "2026-10-14",
+  "scope": "selected_sources_with_publication_status_and_current_code",
   "status": "research_candidates_only",
   "individual_abnormality_threshold": null,
   "imminent_event_validation": "not_established",
@@ -12,26 +12,52 @@
       "doi": "10.64898/2026.04.03.716324",
       "source_url": "https://www.biorxiv.org/content/10.64898/2026.04.03.716324v1",
       "study_type": "preprint_v1_resting_group_comparison",
-      "frequency_hz": [7, 13],
+      "frequency_hz": [
+        7,
+        13
+      ],
       "measure": "burst_duration_and_time_occupancy",
       "reported_direction": "shorter_duration_lower_occupancy_not_burst_amplitude",
       "outcome": "asd_group_association_not_future_meltdown",
-      "code_related_suffixes": ["__alpha_power_uv2", "__alpha_relative_power"],
-      "implemented_frequency_hz": [8, 13],
-      "implementation_match": "related_band_power_only_burst_estimator_absent"
+      "code_related_suffixes": [
+        "__alpha_power_uv2",
+        "__alpha_relative_power"
+      ],
+      "implemented_frequency_hz": [
+        8,
+        13
+      ],
+      "implementation_match": "related_band_power_only_burst_estimator_absent",
+      "publication_type": "preprint",
+      "peer_review_status": "not_established_for_inspected_preprint_v1",
+      "evidence_role": "preliminary_hypothesis_generation",
+      "primary_support_for_imminent_event_prediction": false
     },
     {
       "id": "gamma_visual_asd",
       "doi": "10.1192/j.eurpsy.2024.653",
       "source_url": "https://doi.org/10.1192/j.eurpsy.2024.653",
       "study_type": "conference_abstract_visual_condition_comparison",
-      "frequency_hz": [30, 100],
+      "frequency_hz": [
+        30,
+        100
+      ],
       "measure": "posterior_gamma_power_eyes_open_minus_closed",
       "reported_direction": "increase_in_asd_with_eyes_open",
       "outcome": "sensory_condition_association_not_future_meltdown",
-      "code_related_suffixes": ["__gamma_power_uv2", "__gamma_relative_power"],
-      "implemented_frequency_hz": [30, 40],
-      "implementation_match": "partial_band_only_no_visual_condition_contrast"
+      "code_related_suffixes": [
+        "__gamma_power_uv2",
+        "__gamma_relative_power"
+      ],
+      "implemented_frequency_hz": [
+        30,
+        40
+      ],
+      "implementation_match": "partial_band_only_no_visual_condition_contrast",
+      "publication_type": "conference_abstract",
+      "peer_review_status": "full_journal_article_peer_review_not_established",
+      "evidence_role": "preliminary_hypothesis_generation",
+      "primary_support_for_imminent_event_prediction": false
     },
     {
       "id": "beta_gamma_csd_psychosis_transition",
@@ -42,9 +68,27 @@
       "measure": "beta_gamma_current_source_density_pattern",
       "reported_direction": "multivariate_pattern_no_single_band_threshold",
       "outcome": "later_transition_to_psychosis_follow_up_at_least_three_years",
-      "code_related_suffixes": ["__beta_power_uv2", "__beta_relative_power", "__gamma_power_uv2", "__gamma_relative_power"],
-      "implemented_frequency_hz": {"beta": [13, 30], "gamma": [30, 40]},
-      "implementation_match": "scalp_band_power_only_source_csd_absent"
+      "code_related_suffixes": [
+        "__beta_power_uv2",
+        "__beta_relative_power",
+        "__gamma_power_uv2",
+        "__gamma_relative_power"
+      ],
+      "implemented_frequency_hz": {
+        "beta": [
+          13,
+          30
+        ],
+        "gamma": [
+          30,
+          40
+        ]
+      },
+      "implementation_match": "scalp_band_power_only_source_csd_absent",
+      "publication_type": "full_journal_article",
+      "peer_review_status": "peer_reviewed_journal_article",
+      "evidence_role": "long_term_transition_not_acute_event",
+      "primary_support_for_imminent_event_prediction": false
     },
     {
       "id": "duration_mmn_psychosis_transition",
@@ -57,7 +101,14 @@
       "outcome": "later_transition_to_psychosis_median_follow_up_32_months",
       "code_related_suffixes": [],
       "implemented_frequency_hz": null,
-      "implementation_match": "human_mmn_estimator_and_stimulus_markers_absent"
+      "implementation_match": "human_mmn_estimator_and_stimulus_markers_absent",
+      "publication_type": "full_journal_article",
+      "peer_review_status": "peer_reviewed_journal_article",
+      "evidence_role": "long_term_transition_not_acute_event",
+      "primary_support_for_imminent_event_prediction": false
     }
-  ]
+  ],
+  "clinical_review_status": "prospective_protocol_requires_psychiatric_review",
+  "scalp_gamma_primary_human_protocol": "excluded_in_proposed_protocol_not_retroactively_filtered",
+  "artifact_boundary": "accepted_numerical_QC_does_not_establish_neural_origin; entropy_and_SEF95_also_include_high_frequency_data"
 }

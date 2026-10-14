@@ -1,6 +1,6 @@
 # PSI: human EEG and event-prediction status
 
-**Netanel Stern | Updated 13 October 2026 | Technical update for Felix Benninger and colleagues**
+**Netanel Stern | Updated 14 October 2026 | Technical research update**
 
 PSI runs an offline FFT-based qEEG pipeline and optional linear SVM research workflows. The full human EEG experiment below predicts diagnosis groups. A separate event workflow requires independently timed outcomes; it has engineering tests but no real event-trained model. **No LSTM/Transformer is implemented or trained, and no imminent-attack threshold is validated.** Reviewable changes: [PR #3](https://github.com/netanelcyber/psi-qeeg-bis/pull/3).
 
@@ -9,6 +9,12 @@ PSI runs an offline FFT-based qEEG pipeline and optional linear SVM research wor
 EEG is represented in microvolts with an explicit sample clock. Default epochs are four seconds without overlap. Welch PSD uses two-second Hann windows, 50% overlap, constant detrending and a 0.5 Hz frequency grid. Exact-edge integration gives delta 0.5–4, theta 4–8, alpha 8–13, beta 13–30 and gamma 30–40 Hz powers and relative powers. Delta/alpha ratio, entropy and SEF95 are computed. Missing/flat/extreme-amplitude epochs are rejected; EMG contamination is flagged rather than removed.
 
 Experimental single-channel auto-bicoherence screens the complete past 60 seconds as one window; constituent epochs are not individually required to pass QC; verified-montage alpha PLV is also implemented. Both are absent from this cohort's SVM features. Raw analysis keeps classification indeterminate and SOI/RDI unavailable without all components and a valid personal baseline. FFT describes the waveform; its output is not a psychiatric diagnosis.
+
+## Clinical and scalp measurement correction
+
+The [clinical requirements](CLINICAL_REQUIREMENTS.md) and [new perspective/proposed protocol](PSI_CLINICAL_PERSPECTIVE.md) now make clinical assessment the reference standard and require evaluation of added EEG value against a clinical-only comparator. Context and duration support assessment but do not supply a sole diagnostic cutoff; uncertain and mixed presentations must remain possible. No numerical SOI/RDI output establishes reality testing.
+
+Scalp gamma and scalp theta–gamma PAC are excluded from the proposed primary human feature protocol, pending independent EMG/EOG/movement measurements and expert review for any secondary analysis. Existing gamma output is a waveform descriptor, not a verified neural marker. The diagnosis SVM does not explicitly select gamma power, but its entropy/SEF95 inputs include the high-frequency passband and are not automatically artifact resistant. Intracranial LFP results remain separate from scalp EEG claims. This is an interpretation/protocol correction; previous benchmark data have not been silently refiltered.
 
 ## Expanded human-data experiment
 
@@ -22,7 +28,7 @@ Public RepOD v1.0 (CC0) contains 14 schizophrenia and 14 control participants, 1
 
 These are subject balanced accuracies from corrected leave-one-subject-out evaluation. Each training fold fits a StandardScaler with total weight 1 per participant, then linear SVC (`C=1`, participant-weighted and classes balanced by participant counts). Four descriptors per channel are used: alpha power, delta/alpha ratio, SEF95 and entropy. Epoch majority voting yields subject predictions. Coverage sets share accepted epochs; final model refits are not test results. The earlier epoch-pooled regional scores of 67.86%/39.29% are historical; the normalization also changes regularization, so this is a corrected training protocol rather than a pure duration comparison. These small, single-site estimates lack uncertainty intervals and external/prospective validation. See [current results and prior-run boundaries](EXPANDED_HUMAN_COHORT.md).
 
-## Literature candidates and implementation gaps
+## Literature candidates with explicit publication status
 
 | Candidate | Evidence boundary | Current code |
 | --- | --- | --- |
@@ -31,7 +37,7 @@ These are subject balanced accuracies from corrected leave-one-subject-out evalu
 | Beta/gamma source patterns [3] | Later psychosis transition over at least three years | Scalp power available; source CSD absent |
 | Reduced duration MMN [4] | Future conversion, median follow-up 32 months | Human stimulus-locked MMN absent; not an FFT band |
 
-These findings identify candidates to investigate, not an abnormal-wave cutoff indicating an attack in the next few minutes. Feature annotations mark estimator mismatch and unavailable individual thresholds. No EEG deviation is used to manufacture an event label.
+The first two rows are preliminary sources, kept separate from full journal clinical evidence. These findings identify candidates to investigate, not an abnormal-wave cutoff indicating an attack in the next few minutes. Feature annotations mark estimator mismatch and unavailable individual thresholds. No EEG deviation is used to manufacture an event label.
 
 ## Event SVM and future LSTM requirements
 

@@ -17,6 +17,10 @@ On **12 October 2026**, the code at `23936944186ed92bf7f123ada3b6fb50036585df` w
 | 7.2: stage 2 | Research requirements documented only | No LSTM/Transformer architecture, sequence dataset, learned weights, training loop or inference path in this checkout |
 | 8–10: dataset and validation gap | VitalDB engineering example, public diagnosis-group benchmark and validation protocol | Surgical EEG, resting-state diagnosis labels and mouse genotype data do not validate meltdown/psychosis-onset prediction |
 
+## New clinical perspective dated 14 October 2026
+
+The [new perspective and proposed validation protocol](research/PSI_CLINICAL_PERSPECTIVE.md) is a separate manuscript. It reframes PSI around psychiatric adjudication, testing added value over clinical-only assessment and conservative scalp artifact requirements. It excludes scalp gamma/PAC from the proposed primary human protocol and explicitly identifies preliminary references. It does not claim that the historical article, EEG index or prospective protocol has received psychiatric endorsement. Historical article fingerprints and arithmetic remain distinct from the new manuscript.
+
 ## Accurate implementation description
 
 The implemented workbench performs **offline FFT-based qEEG feature extraction with optional linear SVM research training/evaluation**. Describing it as an algorithm currently using `LSTM+FFT` would imply a sequence model that is absent. FFT estimates spectral/bispectral descriptors; it is not itself a psychiatric classifier. The SVM trainers export models separately, while raw-EEG analysis always reports `classification = indeterminate` with unavailable SOI/RDI composites.

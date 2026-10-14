@@ -1,6 +1,6 @@
 # EEG candidates: association is not an imminent-event threshold
 
-Reviewed 12 October 2026 UTC (13 October in Israel). **No validated single-wave threshold for an imminent meltdown or psychotic attack was established by the sources inspected here.** The table marks research candidates and estimator gaps, not abnormal participants, individual risk probabilities or event labels. A resting-state diagnosis comparison cannot demonstrate that an episode will begin minutes later.
+Updated 14 October 2026 after checking publication formats and measurement limitations. **No validated single-wave threshold for an imminent meltdown or psychotic attack was established by the sources inspected here.** The table marks research candidates and estimator gaps, not abnormal participants, individual risk probabilities or event labels. A resting-state diagnosis comparison cannot demonstrate that an episode will begin minutes later.
 
 | Candidate | Primary study and finding | Time/outcome studied | Match to current PSI code |
 | --- | --- | --- | --- |
@@ -17,9 +17,18 @@ These selected studies concern different populations and outcomes. None supplies
 
 For a future event study, measure the specified burst/ERP/CSD features, obtain personal baselines and independent onset/follow-up annotations, then lock the horizon and evaluate participant-held-out and prospective predictions. Delta/alpha ratio, SEF95, entropy, bicoherence and PLV remain research descriptors; their availability alone establishes no acute warning threshold. See [EVENT_PREDICTION.md](EVENT_PREDICTION.md).
 
-## Primary references
+## Full journal longitudinal articles
 
-1. Vanneau et al., 2026, alpha oscillatory-states study. [bioRxiv v1, DOI 10.64898/2026.04.03.716324](https://www.biorxiv.org/content/10.64898/2026.04.03.716324v1). The inspected version is a preprint, not a peer-reviewed event-prediction result.
-2. Kakuszi B et al. *Gamma activity in Autism Spectrum Disorder: Enhanced response to visual input*. [European Psychiatry conference abstract, DOI 10.1192/j.eurpsy.2024.653](https://doi.org/10.1192/j.eurpsy.2024.653).
-3. Ramyead A et al. *Prediction of psychosis using neural oscillations and machine learning in neuroleptic-naïve at-risk patients*. [World Journal of Biological Psychiatry, DOI 10.3109/15622975.2015.1083614](https://doi.org/10.3109/15622975.2015.1083614); [author abstract](https://pubmed.ncbi.nlm.nih.gov/26453061/).
-4. Bodatsch M et al. *Prediction of Psychosis by Mismatch Negativity*. [Biological Psychiatry, DOI 10.1016/j.biopsych.2010.09.057](https://doi.org/10.1016/j.biopsych.2010.09.057); [author abstract](https://pubmed.ncbi.nlm.nih.gov/21167475/).
+1. Ramyead A et al. *Prediction of psychosis using neural oscillations and machine learning in neuroleptic-naïve at-risk patients*. [World Journal of Biological Psychiatry, DOI 10.3109/15622975.2015.1083614](https://doi.org/10.3109/15622975.2015.1083614). Long-term transition, not minute-scale onset warning.
+2. Bodatsch M et al. *Prediction of Psychosis by Mismatch Negativity*. [Biological Psychiatry, DOI 10.1016/j.biopsych.2010.09.057](https://doi.org/10.1016/j.biopsych.2010.09.057). Long-term transition, not minute-scale onset warning.
+
+## Preliminary sources kept separate
+
+- Vanneau et al., 2026, alpha oscillatory-states study. [bioRxiv v1, DOI 10.64898/2026.04.03.716324](https://www.biorxiv.org/content/10.64898/2026.04.03.716324v1). The inspected version is a preprint; full journal peer review is not established.
+- Kakuszi B et al. *Gamma activity in Autism Spectrum Disorder: Enhanced response to visual input*. [European Psychiatry conference abstract, DOI 10.1192/j.eurpsy.2024.653](https://doi.org/10.1192/j.eurpsy.2024.653). The publisher identifies an abstract in a conference supplement. Abstract selection/review is not a substitute for a full journal methods report.
+
+Neither preliminary source is primary clinical support. A DOI or PubMed index entry alone does not establish full journal peer review.
+
+## Clinical and artifact requirements
+
+The [clinical requirements](CLINICAL_REQUIREMENTS.md) and [new perspective/proposed protocol](PSI_CLINICAL_PERSPECTIVE.md) place psychiatric assessment before EEG interpretation. Scalp gamma/PAC is excluded from the proposed primary human protocol; numerical QC does not establish a cerebral origin. Entropy and SEF95 also include potentially contaminated high-frequency samples. Existing band-power outputs and historical benchmarks are retained as recorded-waveform descriptors, without retroactive claims of artifact clearance. Trigger and duration are contextual observations, not a standalone diagnostic rule for meltdown versus psychosis.
