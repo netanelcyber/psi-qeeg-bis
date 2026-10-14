@@ -1,0 +1,552 @@
+{
+  "status": "completed",
+  "dataset": "EEG in schizophrenia (RepOD, CC0)",
+  "source": "https://doi.org/10.18150/repod.0107441",
+  "downloaded_files": 28,
+  "downloaded_bytes": 274341860,
+  "subjects_per_group": {
+    "healthy_control": 14,
+    "psychosis_spectrum": 14
+  },
+  "converted_subjects": 28,
+  "failed_subjects": 0,
+  "feature_rows": 7205,
+  "accepted_epochs": 6870,
+  "selection_protocol": {
+    "window_s": 0.0,
+    "full_recording": true,
+    "epoch_s": 4.0,
+    "overlap_s": 0,
+    "waveform_csv_exported": false,
+    "subjects": [
+      {
+        "subject_id": "HC_H01",
+        "recording_seconds": 925.0,
+        "analyzed_seconds": 925.0,
+        "complete_epochs": 231,
+        "accepted_epochs": 231,
+        "unused_tail_samples": 250
+      },
+      {
+        "subject_id": "HC_H02",
+        "recording_seconds": 910.0,
+        "analyzed_seconds": 910.0,
+        "complete_epochs": 227,
+        "accepted_epochs": 226,
+        "unused_tail_samples": 500
+      },
+      {
+        "subject_id": "HC_H03",
+        "recording_seconds": 910.0,
+        "analyzed_seconds": 910.0,
+        "complete_epochs": 227,
+        "accepted_epochs": 227,
+        "unused_tail_samples": 500
+      },
+      {
+        "subject_id": "HC_H04",
+        "recording_seconds": 925.0,
+        "analyzed_seconds": 925.0,
+        "complete_epochs": 231,
+        "accepted_epochs": 228,
+        "unused_tail_samples": 250
+      },
+      {
+        "subject_id": "HC_H05",
+        "recording_seconds": 945.0,
+        "analyzed_seconds": 945.0,
+        "complete_epochs": 236,
+        "accepted_epochs": 232,
+        "unused_tail_samples": 250
+      },
+      {
+        "subject_id": "HC_H06",
+        "recording_seconds": 930.0,
+        "analyzed_seconds": 930.0,
+        "complete_epochs": 232,
+        "accepted_epochs": 231,
+        "unused_tail_samples": 500
+      },
+      {
+        "subject_id": "HC_H07",
+        "recording_seconds": 910.0,
+        "analyzed_seconds": 910.0,
+        "complete_epochs": 227,
+        "accepted_epochs": 222,
+        "unused_tail_samples": 500
+      },
+      {
+        "subject_id": "HC_H08",
+        "recording_seconds": 910.0,
+        "analyzed_seconds": 910.0,
+        "complete_epochs": 227,
+        "accepted_epochs": 227,
+        "unused_tail_samples": 500
+      },
+      {
+        "subject_id": "HC_H09",
+        "recording_seconds": 905.0,
+        "analyzed_seconds": 905.0,
+        "complete_epochs": 226,
+        "accepted_epochs": 226,
+        "unused_tail_samples": 250
+      },
+      {
+        "subject_id": "HC_H10",
+        "recording_seconds": 1115.0,
+        "analyzed_seconds": 1115.0,
+        "complete_epochs": 278,
+        "accepted_epochs": 268,
+        "unused_tail_samples": 750
+      },
+      {
+        "subject_id": "HC_H11",
+        "recording_seconds": 915.0,
+        "analyzed_seconds": 915.0,
+        "complete_epochs": 228,
+        "accepted_epochs": 216,
+        "unused_tail_samples": 750
+      },
+      {
+        "subject_id": "HC_H12",
+        "recording_seconds": 900.0,
+        "analyzed_seconds": 900.0,
+        "complete_epochs": 225,
+        "accepted_epochs": 224,
+        "unused_tail_samples": 0
+      },
+      {
+        "subject_id": "HC_H13",
+        "recording_seconds": 965.0,
+        "analyzed_seconds": 965.0,
+        "complete_epochs": 241,
+        "accepted_epochs": 241,
+        "unused_tail_samples": 250
+      },
+      {
+        "subject_id": "HC_H14",
+        "recording_seconds": 865.0,
+        "analyzed_seconds": 865.0,
+        "complete_epochs": 216,
+        "accepted_epochs": 215,
+        "unused_tail_samples": 250
+      },
+      {
+        "subject_id": "PSY_S01",
+        "recording_seconds": 845.0,
+        "analyzed_seconds": 845.0,
+        "complete_epochs": 211,
+        "accepted_epochs": 210,
+        "unused_tail_samples": 250
+      },
+      {
+        "subject_id": "PSY_S02",
+        "recording_seconds": 1145.0,
+        "analyzed_seconds": 1145.0,
+        "complete_epochs": 286,
+        "accepted_epochs": 281,
+        "unused_tail_samples": 250
+      },
+      {
+        "subject_id": "PSY_S03",
+        "recording_seconds": 964.0,
+        "analyzed_seconds": 964.0,
+        "complete_epochs": 241,
+        "accepted_epochs": 241,
+        "unused_tail_samples": 0
+      },
+      {
+        "subject_id": "PSY_S04",
+        "recording_seconds": 1205.0,
+        "analyzed_seconds": 1205.0,
+        "complete_epochs": 301,
+        "accepted_epochs": 301,
+        "unused_tail_samples": 250
+      },
+      {
+        "subject_id": "PSY_S05",
+        "recording_seconds": 890.0,
+        "analyzed_seconds": 890.0,
+        "complete_epochs": 222,
+        "accepted_epochs": 221,
+        "unused_tail_samples": 500
+      },
+      {
+        "subject_id": "PSY_S06",
+        "recording_seconds": 740.0,
+        "analyzed_seconds": 740.0,
+        "complete_epochs": 185,
+        "accepted_epochs": 179,
+        "unused_tail_samples": 0
+      },
+      {
+        "subject_id": "PSY_S07",
+        "recording_seconds": 1346.0,
+        "analyzed_seconds": 1346.0,
+        "complete_epochs": 336,
+        "accepted_epochs": 329,
+        "unused_tail_samples": 500
+      },
+      {
+        "subject_id": "PSY_S08",
+        "recording_seconds": 911.0,
+        "analyzed_seconds": 911.0,
+        "complete_epochs": 227,
+        "accepted_epochs": 227,
+        "unused_tail_samples": 750
+      },
+      {
+        "subject_id": "PSY_S09",
+        "recording_seconds": 1185.0,
+        "analyzed_seconds": 1185.0,
+        "complete_epochs": 296,
+        "accepted_epochs": 293,
+        "unused_tail_samples": 250
+      },
+      {
+        "subject_id": "PSY_S10",
+        "recording_seconds": 850.0,
+        "analyzed_seconds": 850.0,
+        "complete_epochs": 212,
+        "accepted_epochs": 212,
+        "unused_tail_samples": 500
+      },
+      {
+        "subject_id": "PSY_S11",
+        "recording_seconds": 1360.0,
+        "analyzed_seconds": 1360.0,
+        "complete_epochs": 340,
+        "accepted_epochs": 333,
+        "unused_tail_samples": 0
+      },
+      {
+        "subject_id": "PSY_S12",
+        "recording_seconds": 1087.0,
+        "analyzed_seconds": 1087.0,
+        "complete_epochs": 271,
+        "accepted_epochs": 235,
+        "unused_tail_samples": 750
+      },
+      {
+        "subject_id": "PSY_S13",
+        "recording_seconds": 1135.0,
+        "analyzed_seconds": 1135.0,
+        "complete_epochs": 283,
+        "accepted_epochs": 279,
+        "unused_tail_samples": 750
+      },
+      {
+        "subject_id": "PSY_S14",
+        "recording_seconds": 2170.0,
+        "analyzed_seconds": 2170.0,
+        "complete_epochs": 542,
+        "accepted_epochs": 315,
+        "unused_tail_samples": 500
+      }
+    ]
+  },
+  "features_used": [
+    "C3__alpha_power_uv2",
+    "C3__delta_alpha_ratio",
+    "C3__sef95_hz",
+    "C3__spectral_entropy",
+    "C4__alpha_power_uv2",
+    "C4__delta_alpha_ratio",
+    "C4__sef95_hz",
+    "C4__spectral_entropy",
+    "Cz__alpha_power_uv2",
+    "Cz__delta_alpha_ratio",
+    "Cz__sef95_hz",
+    "Cz__spectral_entropy",
+    "F3__alpha_power_uv2",
+    "F3__delta_alpha_ratio",
+    "F3__sef95_hz",
+    "F3__spectral_entropy",
+    "F4__alpha_power_uv2",
+    "F4__delta_alpha_ratio",
+    "F4__sef95_hz",
+    "F4__spectral_entropy",
+    "F7__alpha_power_uv2",
+    "F7__delta_alpha_ratio",
+    "F7__sef95_hz",
+    "F7__spectral_entropy",
+    "F8__alpha_power_uv2",
+    "F8__delta_alpha_ratio",
+    "F8__sef95_hz",
+    "F8__spectral_entropy",
+    "Fp1__alpha_power_uv2",
+    "Fp1__delta_alpha_ratio",
+    "Fp1__sef95_hz",
+    "Fp1__spectral_entropy",
+    "Fp2__alpha_power_uv2",
+    "Fp2__delta_alpha_ratio",
+    "Fp2__sef95_hz",
+    "Fp2__spectral_entropy",
+    "Fz__alpha_power_uv2",
+    "Fz__delta_alpha_ratio",
+    "Fz__sef95_hz",
+    "Fz__spectral_entropy",
+    "O1__alpha_power_uv2",
+    "O1__delta_alpha_ratio",
+    "O1__sef95_hz",
+    "O1__spectral_entropy",
+    "O2__alpha_power_uv2",
+    "O2__delta_alpha_ratio",
+    "O2__sef95_hz",
+    "O2__spectral_entropy",
+    "P3__alpha_power_uv2",
+    "P3__delta_alpha_ratio",
+    "P3__sef95_hz",
+    "P3__spectral_entropy",
+    "P4__alpha_power_uv2",
+    "P4__delta_alpha_ratio",
+    "P4__sef95_hz",
+    "P4__spectral_entropy",
+    "Pz__alpha_power_uv2",
+    "Pz__delta_alpha_ratio",
+    "Pz__sef95_hz",
+    "Pz__spectral_entropy",
+    "T3__alpha_power_uv2",
+    "T3__delta_alpha_ratio",
+    "T3__sef95_hz",
+    "T3__spectral_entropy",
+    "T4__alpha_power_uv2",
+    "T4__delta_alpha_ratio",
+    "T4__sef95_hz",
+    "T4__spectral_entropy",
+    "T5__alpha_power_uv2",
+    "T5__delta_alpha_ratio",
+    "T5__sef95_hz",
+    "T5__spectral_entropy",
+    "T6__alpha_power_uv2",
+    "T6__delta_alpha_ratio",
+    "T6__sef95_hz",
+    "T6__spectral_entropy"
+  ],
+  "evaluation": "leave-one-subject-out",
+  "training_balance": "Training-fold StandardScaler weighted equally by subject; linear SVC C=1 with equal-subject mass and classes balanced by training-subject count",
+  "epoch_balanced_accuracy": 0.6899263887886558,
+  "subject_balanced_accuracy": 0.7857142857142858,
+  "subject_confusion_matrix": {
+    "labels": [
+      "healthy_control",
+      "psychosis_spectrum"
+    ],
+    "rows_true_cols_pred": [
+      [
+        13,
+        1
+      ],
+      [
+        5,
+        9
+      ]
+    ]
+  },
+  "site_checked": true,
+  "electrode_comparison": {
+    "full_scalp": {
+      "features": [
+        "C3__alpha_power_uv2",
+        "C3__delta_alpha_ratio",
+        "C3__sef95_hz",
+        "C3__spectral_entropy",
+        "C4__alpha_power_uv2",
+        "C4__delta_alpha_ratio",
+        "C4__sef95_hz",
+        "C4__spectral_entropy",
+        "Cz__alpha_power_uv2",
+        "Cz__delta_alpha_ratio",
+        "Cz__sef95_hz",
+        "Cz__spectral_entropy",
+        "F3__alpha_power_uv2",
+        "F3__delta_alpha_ratio",
+        "F3__sef95_hz",
+        "F3__spectral_entropy",
+        "F4__alpha_power_uv2",
+        "F4__delta_alpha_ratio",
+        "F4__sef95_hz",
+        "F4__spectral_entropy",
+        "F7__alpha_power_uv2",
+        "F7__delta_alpha_ratio",
+        "F7__sef95_hz",
+        "F7__spectral_entropy",
+        "F8__alpha_power_uv2",
+        "F8__delta_alpha_ratio",
+        "F8__sef95_hz",
+        "F8__spectral_entropy",
+        "Fp1__alpha_power_uv2",
+        "Fp1__delta_alpha_ratio",
+        "Fp1__sef95_hz",
+        "Fp1__spectral_entropy",
+        "Fp2__alpha_power_uv2",
+        "Fp2__delta_alpha_ratio",
+        "Fp2__sef95_hz",
+        "Fp2__spectral_entropy",
+        "Fz__alpha_power_uv2",
+        "Fz__delta_alpha_ratio",
+        "Fz__sef95_hz",
+        "Fz__spectral_entropy",
+        "O1__alpha_power_uv2",
+        "O1__delta_alpha_ratio",
+        "O1__sef95_hz",
+        "O1__spectral_entropy",
+        "O2__alpha_power_uv2",
+        "O2__delta_alpha_ratio",
+        "O2__sef95_hz",
+        "O2__spectral_entropy",
+        "P3__alpha_power_uv2",
+        "P3__delta_alpha_ratio",
+        "P3__sef95_hz",
+        "P3__spectral_entropy",
+        "P4__alpha_power_uv2",
+        "P4__delta_alpha_ratio",
+        "P4__sef95_hz",
+        "P4__spectral_entropy",
+        "Pz__alpha_power_uv2",
+        "Pz__delta_alpha_ratio",
+        "Pz__sef95_hz",
+        "Pz__spectral_entropy",
+        "T3__alpha_power_uv2",
+        "T3__delta_alpha_ratio",
+        "T3__sef95_hz",
+        "T3__spectral_entropy",
+        "T4__alpha_power_uv2",
+        "T4__delta_alpha_ratio",
+        "T4__sef95_hz",
+        "T4__spectral_entropy",
+        "T5__alpha_power_uv2",
+        "T5__delta_alpha_ratio",
+        "T5__sef95_hz",
+        "T5__spectral_entropy",
+        "T6__alpha_power_uv2",
+        "T6__delta_alpha_ratio",
+        "T6__sef95_hz",
+        "T6__spectral_entropy"
+      ],
+      "subjects_per_group": {
+        "healthy_control": 14,
+        "psychosis_spectrum": 14
+      },
+      "epochs": 6870,
+      "epoch_balanced_accuracy": 0.6899263887886558,
+      "subject_balanced_accuracy": 0.7857142857142858,
+      "subject_confusion_matrix": {
+        "labels": [
+          "healthy_control",
+          "psychosis_spectrum"
+        ],
+        "rows_true_cols_pred": [
+          [
+            13,
+            1
+          ],
+          [
+            5,
+            9
+          ]
+        ]
+      }
+    },
+    "left_frontal_temporal": {
+      "features": [
+        "F7__alpha_power_uv2",
+        "F7__delta_alpha_ratio",
+        "F7__sef95_hz",
+        "F7__spectral_entropy",
+        "Fp1__alpha_power_uv2",
+        "Fp1__delta_alpha_ratio",
+        "Fp1__sef95_hz",
+        "Fp1__spectral_entropy"
+      ],
+      "subjects_per_group": {
+        "healthy_control": 14,
+        "psychosis_spectrum": 14
+      },
+      "epochs": 6870,
+      "epoch_balanced_accuracy": 0.4800642259861465,
+      "subject_balanced_accuracy": 0.5,
+      "subject_confusion_matrix": {
+        "labels": [
+          "healthy_control",
+          "psychosis_spectrum"
+        ],
+        "rows_true_cols_pred": [
+          [
+            9,
+            5
+          ],
+          [
+            9,
+            5
+          ]
+        ]
+      }
+    },
+    "right_frontal_temporal": {
+      "features": [
+        "F8__alpha_power_uv2",
+        "F8__delta_alpha_ratio",
+        "F8__sef95_hz",
+        "F8__spectral_entropy",
+        "Fp2__alpha_power_uv2",
+        "Fp2__delta_alpha_ratio",
+        "Fp2__sef95_hz",
+        "Fp2__spectral_entropy"
+      ],
+      "subjects_per_group": {
+        "healthy_control": 14,
+        "psychosis_spectrum": 14
+      },
+      "epochs": 6870,
+      "epoch_balanced_accuracy": 0.4163359257025132,
+      "subject_balanced_accuracy": 0.25,
+      "subject_confusion_matrix": {
+        "labels": [
+          "healthy_control",
+          "psychosis_spectrum"
+        ],
+        "rows_true_cols_pred": [
+          [
+            1,
+            13
+          ],
+          [
+            8,
+            6
+          ]
+        ]
+      }
+    }
+  },
+  "cohort_features_sha256": "d2d4f8195d117cb347296f64edbd8620094be9722deff436113fdceaecb92f25",
+  "software_versions": {
+    "psi-qeeg-bis": "0.1.0",
+    "numpy": "2.3.5",
+    "scipy": "1.17.0",
+    "pandas": "2.2.3",
+    "mne": "1.13.2",
+    "scikit-learn": "1.8.0"
+  },
+  "runner_sha256": "398dc0bb977364297996e096dca4c4cb6badb4a4c1cc9c1930d09e59633cceba",
+  "clinical_validation": "not_established",
+  "event_prediction": {
+    "status": "not_trained_missing_event_annotations",
+    "meltdown": null,
+    "psychosis_onset": null,
+    "reason": "RepOD supplies diagnosis groups, not longitudinal event onsets or reviewed event-free follow-up"
+  },
+  "interpretation": "Exploratory schizophrenia-vs-healthy-control diagnosis-group benchmark only. It does not test autistic meltdown, psychosis onset, episode-state prediction, or clinical utility.",
+  "limitations": [
+    "Single public cohort/acquisition context; external-site generalization is not tested.",
+    "Diagnosis labels are not momentary episode labels.",
+    "No clinical or prospective validation.",
+    "Epoch metrics are secondary; subject-level metrics are the more meaningful result."
+  ],
+  "executed_at_utc": "2026-10-13T16:56:23.148632+00:00",
+  "code_parent_commit": "bea3d0a631be1e1da8c34b1c0e63afcbde4a9f96",
+  "source_metadata_sha256": "953215ca8c369c5502cc98110d004de02f8ee531bb7e5cee067680c1dca1b973",
+  "independent_subjects": 28,
+  "event_labels_from_eeg_or_diagnosis_created": false,
+  "verification_receipt": "methodology_corrections_verification.json"
+}

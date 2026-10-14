@@ -67,6 +67,50 @@ def main(argv=None) -> int:
     p.add_argument("input", type=Path)
     p.add_argument("--features", nargs="+", required=True)
     p.add_argument("--out", type=Path, required=True)
+    p = sub.add_parser('prepare-events', help='Research past windows with independently confirmed future events and reviewed follow-up')
+    p.add_argument('input', type=Path)
+    p.add_argument('--events', type=Path, required=True)
+    p.add_argument('--coverage', type=Path, required=True)
+    p.add_argument('--features', nargs='+', required=True)
+    p.add_argument('--history-s', type=float, default=60)
+    p.add_argument('--horizon-s', type=float, default=300)
+    p.add_argument('--min-lead-s', type=float, default=4)
+    p.add_argument('--stride-s', type=float)
+    p.add_argument('--out', type=Path, required=True)
+    p = sub.add_parser('train-events', help='Two research event SVMs; requires a prepared annotation-derived manifest')
+    p.add_argument('input', type=Path)
+    p.add_argument('--manifest', type=Path, required=True)
+    p.add_argument('--out', type=Path, required=True)
+    p = sub.add_parser('predict-events', help='Past-only research event-window inference; no clinical risk probability')
+    p.add_argument('input', type=Path)
+    p.add_argument('--model', type=Path, required=True)
+    p.add_argument('--out', type=Path, required=True)
+    p = sub.add_parser('analyze-animal-qeeg', help='Continuous autism-model mouse EEG/LFP to explicit band-power epochs')
+    p.add_argument('input', type=Path)
+    p.add_argument('--metadata', type=Path, required=True)
+    p.add_argument('--profile', choices=('shank3_2017_gamma', 'autism_research_1_100'), default='autism_research_1_100')
+    p.add_argument('--epoch-s', type=float, default=4)
+    p.add_argument('--out', type=Path, required=True)
+    p = sub.add_parser('prepare-animal-events', help='Past animal qEEG histories with independent future behavioral outcomes')
+    p.add_argument('input', type=Path)
+    p.add_argument('--events', type=Path, required=True)
+    p.add_argument('--coverage', type=Path, required=True)
+    p.add_argument('--features', nargs='+', required=True)
+    p.add_argument('--behavior-name', required=True)
+    p.add_argument('--behavior-definition', required=True)
+    p.add_argument('--history-s', type=float, default=60)
+    p.add_argument('--horizon-s', type=float, default=30)
+    p.add_argument('--min-lead-s', type=float, default=4)
+    p.add_argument('--stride-s', type=float)
+    p.add_argument('--out', type=Path, required=True)
+    p = sub.add_parser('train-animal-events', help='Annotation-dependent linear behavioral SVM with leave-one-animal-out evaluation')
+    p.add_argument('input', type=Path)
+    p.add_argument('--manifest', type=Path, required=True)
+    p.add_argument('--out', type=Path, required=True)
+    p = sub.add_parser('predict-animal-events', help='Past-only animal behavioral research decisions; no clinical warning')
+    p.add_argument('input', type=Path)
+    p.add_argument('--model', type=Path, required=True)
+    p.add_argument('--out', type=Path, required=True)
     args = parser.parse_args(argv)
     try:
         if args.command == "analyze":
@@ -132,6 +176,34 @@ def main(argv=None) -> int:
             from .ml import train_group_model
             result = train_group_model(args.input, args.out, args.features)
             print(json.dumps({k: result[k] for k in ("subjects_per_group", "epochs", "subject_balanced_accuracy", "epoch_balanced_accuracy")}))
+        elif args.command == 'prepare-events':
+            from .events import prepare_event_dataset
+            result = prepare_event_dataset(args.input, args.events, args.coverage, args.out, args.features,
+                                           args.history_s, args.horizon_s, args.min_lead_s, args.stride_s)
+            print(json.dumps({k: result[k] for k in ('subjects', 'rows', 'protocol', 'excluded_windows')}))
+        elif args.command == 'train-events':
+            from .events import train_event_models
+            result = train_event_models(args.input, args.manifest, args.out)
+            print(json.dumps({k: result[k] for k in ('use', 'clinical_validation', 'data_scope', 'subjects', 'windows', 'metrics')}))
+        elif args.command == 'predict-events':
+            from .events import predict_event_windows
+            print(json.dumps(predict_event_windows(args.model, args.input, args.out)))
+        elif args.command == 'analyze-animal-qeeg':
+            from .recording import read_recording
+            from .animal_qeeg import analyze_animal_qeeg
+            print(json.dumps(analyze_animal_qeeg(read_recording(args.input, args.metadata), args.out, args.epoch_s, args.profile)))
+        elif args.command == 'prepare-animal-events':
+            from .animal_events import prepare_animal_events
+            result = prepare_animal_events(args.input, args.events, args.coverage, args.out, args.features,
+                                           args.behavior_name, args.behavior_definition, args.history_s,
+                                           args.horizon_s, args.min_lead_s, args.stride_s)
+            print(json.dumps(result))
+        elif args.command == 'train-animal-events':
+            from .animal_events import train_animal_events
+            print(json.dumps(train_animal_events(args.input, args.manifest, args.out)))
+        elif args.command == 'predict-animal-events':
+            from .animal_events import predict_animal_events
+            print(json.dumps(predict_animal_events(args.model, args.input, args.out)))
     except (ValueError, OSError, KeyError) as exc:
         print(f"Error: {exc}", file=sys.stderr)
         return 2

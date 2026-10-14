@@ -1,0 +1,103 @@
+{
+  "schema_version": 1,
+  "clarified_date": "2026-10-13",
+  "timezone": "Asia/Jerusalem",
+  "stage": "implemented_annotation_dependent_animal_behavior_workflow",
+  "training_status": "behavioral_model_not_trained_on_real_data",
+  "animal_predictor_implemented": true,
+  "raw_ieeg_candidates_downloaded": true,
+  "clinical_transfer_validation": "not_established",
+  "working_target": "animal_behavioral_event_onset",
+  "working_target_supported_by_current_cli": true,
+  "operational_event_definition": null,
+  "history_seconds": null,
+  "prediction_horizon_seconds": null,
+  "minimum_lead_seconds": null,
+  "required_inputs": [
+    "species_and_model",
+    "animal_id_and_session_id",
+    "continuous_ieeg_or_lfp",
+    "anatomical_site_and_reference",
+    "sample_clock_units_and_acquisition_filter",
+    "artifact_annotations",
+    "independently_confirmed_event_onset_and_offset",
+    "fully_observed_event_free_follow_up",
+    "synchronized_behavior_or_expert_reference"
+  ],
+  "forbidden_substitute_outcomes": [
+    "genotype",
+    "injection_time_as_behavioral_onset",
+    "stimulus_time_as_crisis_onset",
+    "post_dose_condition_as_future_event",
+    "band_power_outlier_as_psychiatric_episode",
+    "epilepsy_labels_as_meltdown_or_psychosis"
+  ],
+  "proposed_candidate_bands_hz": {
+    "animal_high_gamma": [
+      60,
+      100
+    ],
+    "animal_hfo": [
+      150,
+      200
+    ]
+  },
+  "candidate_band_estimators_implemented": true,
+  "current_scalp_profile_hz": [
+    0.5,
+    40
+  ],
+  "evaluation_plan": [
+    "past_only_descriptors_and_pre_event_baseline",
+    "held_out_animal_and_future_session_evaluation",
+    "event_sensitivity",
+    "false_alerts_per_observed_hour",
+    "lead_time_distribution",
+    "animal_level_uncertainty",
+    "separate_human_transfer_validation"
+  ],
+  "sources": [
+    {
+      "doi": "10.17605/OSF.IO/CVEFK",
+      "status": "processed_erp_and_gating_analyzed_not_continuous_onset_data"
+    },
+    {
+      "doi": "10.3389/fnins.2022.1001869",
+      "status": "post_dose_lfp_mechanism_paper_raw_archive_not_identified_in_data_statement"
+    },
+    {
+      "doi": "10.6084/m9.figshare.30024880",
+      "status": "continuous_lfp_and_synchronized_video_excerpt_executed_wheel_task_events_not_crisis_labels"
+    },
+    {
+      "doi": "10.17632/kn3k9f5vph.2",
+      "status": "separate_epilepsy_candidate_onset_and_follow_up_files_not_inspected"
+    }
+  ],
+  "lstm_or_transformer_implemented": false,
+  "selected_event_domain": "behavioral",
+  "selected_event_domain_source": "user_instruction_2026_10_13",
+  "candidate_band_estimator_scope": "animal_1_80_and_1_100_profiles_plus_standalone_custom_bands",
+  "integrated_animal_qeeg_pipeline_implemented": true,
+  "calculation_example": "examples/animal_qeeg_calculation.py",
+  "default_history_seconds": 60,
+  "default_prediction_horizon_seconds": 30,
+  "default_minimum_lead_seconds": 4,
+  "default_window_status": "illustrative_not_validated_warning_times",
+  "real_auxiliary_genotype_benchmark": "43_unique_Fmr1_KO2_WT_animals_from_as7cz",
+  "real_video_lfp_example": {
+    "session_id": "274dacc9-05b2-4154-b4f7-8f6dd46efcc8",
+    "animal_id": "SH023",
+    "lfp_seconds": 240,
+    "sampling_rate_hz": 2500,
+    "channels": 4,
+    "complete_4s_epochs_per_channel": 60,
+    "clip_frames": 1805,
+    "published_wheel_intervals": 5,
+    "abnormal_event_labels_verified": false,
+    "individual_genotype_verified": false,
+    "anatomical_reference_verified": false,
+    "behavioral_model_trained": false,
+    "documentation": "docs/research/OPEN_VIDEO_LFP.md"
+  }
+}

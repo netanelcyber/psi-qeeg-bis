@@ -1,0 +1,167 @@
+{
+  "schema_version": 1,
+  "model_kind": "source_qeeg_genotype_classifier",
+  "target": "source_WT_KO_genotype_not_behavioral_onset",
+  "species": "Mus musculus",
+  "model_family": "Fmr1",
+  "data_scope": "real_published_processed_animal_qeeg_features",
+  "independent_animals": 43,
+  "animals_per_genotype": {
+    "KO": 22,
+    "WT": 21
+  },
+  "feature_count": 198,
+  "candidate_grid": {
+    "C": [
+      0.01,
+      0.1,
+      1.0,
+      10.0
+    ],
+    "pca_components": [
+      null,
+      5,
+      10
+    ],
+    "inner_folds": 3,
+    "seed": 20261013
+  },
+  "evaluation": "Exploratory nested leave-one-animal-out plus two previously inspected experiment holdouts",
+  "nested_animal_metrics": {
+    "animal_balanced_accuracy": 0.6742424242424242,
+    "confusion_matrix": {
+      "labels": [
+        "KO",
+        "WT"
+      ],
+      "rows_true_cols_pred": [
+        [
+          15,
+          7
+        ],
+        [
+          7,
+          14
+        ]
+      ]
+    }
+  },
+  "fixed_C1_animal_metrics": {
+    "animal_balanced_accuracy": 0.699134199134199,
+    "confusion_matrix": {
+      "labels": [
+        "KO",
+        "WT"
+      ],
+      "rows_true_cols_pred": [
+        [
+          14,
+          8
+        ],
+        [
+          5,
+          16
+        ]
+      ]
+    }
+  },
+  "model_fits": 1746,
+  "behavioral_model_trained_on_real_data": false,
+  "human_transfer_validation": "not_established",
+  "probability_calibration": "not_established",
+  "lstm_transformer_implemented": false,
+  "limitations": [
+    "Both source experiments and earlier C=1 results were already inspected; this is exploratory reuse, not a new locked external test",
+    "One animal per row, but shared laboratory/experiment effects may dominate; no clinical or prospective validation",
+    "No significance test or uncertainty interval is reported",
+    "Deposited power/frequency labels remain in native source representation; no raw EEG PSD or event labels are synthesized",
+    "Genotype SVM coefficients are not abnormal-wave thresholds or behavioral onset evidence"
+  ],
+  "source_provenance": [
+    {
+      "filename": "experiment1.csv",
+      "source_filename": "Power_DFA_fEI_Experiment1_forGAMM_Sep22.csv",
+      "source_url": "https://osf.io/download/qr8h2/",
+      "sha256": "c6d8358847723bec04fb75a979b17bbbd00331c4f45ce4483a0a5b5ef2e12221",
+      "bytes": 195708
+    },
+    {
+      "filename": "experiment2.csv",
+      "source_filename": "Power_DFA_fEI_Experiment2_forGAMM_Nov22.csv",
+      "source_url": "https://osf.io/download/fpnzy/",
+      "sha256": "3d871d826780933a4bf2124e53a8bc77b8584768aa48d48899ace5d26d5ad376",
+      "bytes": 974102
+    }
+  ],
+  "training_vectors_sha256": "8c58f7b5d93055aba72454c3785d1dfe0f7dd585c6f5275143cac3a81bb822e4",
+  "runner_sha256": "5c12734f7a5717e243ca042e95f5442a22a9bc5cd990b4ded3f60631203d82be",
+  "trainer_sha256": "c14e1fbaea514bf24ab97ae5e448a51745873e4f2c07f646f2841a7b5a452479",
+  "source_metadata_mode": "retained_verified_snapshot",
+  "source_metadata_snapshot_sha256": "1bf872d5162075243614a50503e03096e7afb817e303555bc9b914cb40d3c51d",
+  "experiment_holdouts": {
+    "test_experiment1": {
+      "animal_balanced_accuracy": 0.7727272727272727,
+      "confusion_matrix": {
+        "labels": [
+          "KO",
+          "WT"
+        ],
+        "rows_true_cols_pred": [
+          [
+            6,
+            5
+          ],
+          [
+            0,
+            9
+          ]
+        ]
+      },
+      "selected_parameters": {
+        "C": 0.01,
+        "pca_components": null
+      }
+    },
+    "test_experiment2_saline": {
+      "animal_balanced_accuracy": 0.5378787878787878,
+      "confusion_matrix": {
+        "labels": [
+          "KO",
+          "WT"
+        ],
+        "rows_true_cols_pred": [
+          [
+            10,
+            1
+          ],
+          [
+            10,
+            2
+          ]
+        ]
+      },
+      "selected_parameters": {
+        "C": 0.1,
+        "pca_components": 10
+      }
+    }
+  },
+  "final_refits": {
+    "final_fit": {
+      "parameters": {
+        "C": 0.01,
+        "pca_components": 5
+      },
+      "artifact": "final_43_animal_genotype_model.joblib",
+      "evaluation_status": "all-animal refit is not an independent test"
+    },
+    "fixed_C1_final_fit": {
+      "parameters": {
+        "C": 1.0,
+        "pca_components": null
+      },
+      "artifact": "fixed_C1_final_43_animal_genotype_model.joblib",
+      "evaluation_status": "reference all-animal refit is not an independent test"
+    }
+  }
+}

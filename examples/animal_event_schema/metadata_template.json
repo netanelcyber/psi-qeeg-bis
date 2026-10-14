@@ -1,0 +1,19 @@
+{
+  "animal_id": "REPLACE_WITH_ANIMAL_ID",
+  "session_id": "REPLACE_WITH_SESSION_ID",
+  "species": "Mus musculus",
+  "model_family": "Shank3",
+  "genotype": "REPLACE_WITH_DOCUMENTED_GENOTYPE",
+  "sampling_rate_hz": null,
+  "eeg_unit": "uV",
+  "eeg_columns": [],
+  "channel_locations": {},
+  "reference": "REPLACE_WITH_DOCUMENTED_REFERENCE",
+  "reference_verified": false,
+  "acquisition_filters": "REPLACE_WITH_DOCUMENTED_HARDWARE_FILTERS",
+  "recording_context": "awake_model_animal_research",
+  "signal_scope": "raw_continuous_eeg",
+  "source": "REPLACE_WITH_SOURCE_AND_VERSION",
+  "license": "REPLACE_WITH_SOURCE_LICENSE",
+  "animal_quality_policy": {"max_amplitude_uv": null, "min_std_uv": null}
+}

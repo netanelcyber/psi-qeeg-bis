@@ -1,0 +1,80 @@
+{
+  "verified_at_utc": "2026-10-13T16:52:26.774264+00:00",
+  "scope": "Real coupling numerical controls and human diagnosis-group evaluation",
+  "checks": {
+    "coupling_runner_and_estimator_fingerprints": true,
+    "coupling_input_fingerprints": true,
+    "pac_count_and_unique_family": true,
+    "configured_surrogate_count_consistent": true,
+    "strict_signed_one_second_exclusion": true,
+    "all_signal_samples_precede_cutoff": true,
+    "pre_onset_samples_precede_target": true,
+    "pac_matches_independent_entropy": true,
+    "bh_matches_independent_scipy": true,
+    "empirical_p_grid": true,
+    "real_pac_and_null_recomputed_independently": true,
+    "real_theta_coherence_matches_scipy": true,
+    "real_gamma_coherence_matches_scipy": true,
+    "reported_pac_counts_match_saved_tests": true,
+    "human_table_fingerprint": true,
+    "same_human_epoch_membership_as_original_run": true,
+    "full_scalp_one_scaler_unit_per_person": true,
+    "full_scalp_equal_svm_class_mass": true,
+    "full_scalp_held_out_subject_separation": true,
+    "full_scalp_saved_scaler_is_subject_weighted": true,
+    "full_scalp_subject_metrics_recomputed": true,
+    "full_scalp_model_reload": true,
+    "left_frontal_temporal_one_scaler_unit_per_person": true,
+    "left_frontal_temporal_equal_svm_class_mass": true,
+    "left_frontal_temporal_held_out_subject_separation": true,
+    "left_frontal_temporal_saved_scaler_is_subject_weighted": true,
+    "left_frontal_temporal_subject_metrics_recomputed": true,
+    "left_frontal_temporal_model_reload": true,
+    "right_frontal_temporal_one_scaler_unit_per_person": true,
+    "right_frontal_temporal_equal_svm_class_mass": true,
+    "right_frontal_temporal_held_out_subject_separation": true,
+    "right_frontal_temporal_saved_scaler_is_subject_weighted": true,
+    "right_frontal_temporal_subject_metrics_recomputed": true,
+    "right_frontal_temporal_model_reload": true,
+    "no_clinical_event_validation_claim": true
+  },
+  "all_passed": true,
+  "pac_q05_by_mode": {
+    "original": 273,
+    "notch_50_60": 190,
+    "bipolar": 8
+  },
+  "subject_balanced_accuracy": {
+    "full_scalp": 0.7857142857142858,
+    "left_frontal_temporal": 0.5,
+    "right_frontal_temporal": 0.25
+  },
+  "clinical_event_prediction_validated": false,
+  "verifier_sha256": "87fc98efe777cf731d9d295cb9174e13427cc51bea87cd09da283b973117dbea",
+  "unit_tests": {
+    "tests": 159,
+    "failures": 0,
+    "errors": 0,
+    "skips": 0,
+    "signal_controls": "known synthetic waveforms; fixture fitting is not clinical evidence"
+  },
+  "code_parent_commit": "bea3d0a631be1e1da8c34b1c0e63afcbde4a9f96",
+  "code_sha256": {
+    "src/psi_qeeg/coupling.py": "250030dadcdb538ae967fa554104654bac860538bae021397048dc380c7ea619",
+    "src/psi_qeeg/analysis.py": "4f50440295d5864e1fda5ab98c537169198b2d7834f5df14e29b34e8d9a22d51",
+    "src/psi_qeeg/events.py": "ee85540c2c5c191cd4b285448c9af7057f3531b00d69606c4f14438e66acd787",
+    "src/psi_qeeg/animal_qeeg.py": "438014269082c247c88474b15a37a8152b307b7da9cc5973a598fab8ea0eba87",
+    "src/psi_qeeg/animal_events.py": "d558a2952364e8c3eff0305c7d0964e9badcde998ff5d3f2b32f209f8edc1770",
+    "src/psi_qeeg/ml.py": "dd071674722647d334660e023b81df53c96aecf0070275b34b97d2677946c2c1",
+    "src/psi_qeeg/cohort.py": "37f94569ad714547ff4fabd65ce77604407606464082253ea544a8c97d6e781a",
+    "scripts/analyze_ibl_coupling.py": "b39149e5f5eb9dc1a389fdefdc5c0d17d3f920368554aced76c4908cc9744c6c",
+    "scripts/validate_public_ibl_video_lfp.py": "98db4a436c111084019d113e6735a4410f66768f4fbf898f122a186d783b2e3a",
+    "scripts/validate_public_schizophrenia_cohort.py": "398dc0bb977364297996e096dca4c4cb6badb4a4c1cc9c1930d09e59633cceba",
+    "scripts/verify_methodology_corrections.py": "87fc98efe777cf731d9d295cb9174e13427cc51bea87cd09da283b973117dbea"
+  },
+  "additional_checks": {
+    "real_VitalDB_example": "passed",
+    "python_compilation": "passed",
+    "diff_check": "passed"
+  }
+}

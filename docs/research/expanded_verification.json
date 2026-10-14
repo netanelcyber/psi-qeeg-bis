@@ -1,0 +1,29 @@
+{
+  "verified_at_utc": "2026-10-12T21:44:07.890315+00:00",
+  "code_base_commit": "8a016b4925fc44e56451474ca2dc180614e793e2",
+  "scope": "Engineering checks and actual human diagnosis-group evaluation; event fitting fixtures synthetic only",
+  "unit_tests": {
+    "tests": 105,
+    "failures": 0,
+    "errors": 0,
+    "skips": 0,
+    "event_fixtures": "synthetic_only"
+  },
+  "commands": [
+    "PYTHONPATH=src python3 -m unittest discover -s tests -v",
+    "PYTHONPATH=src python3 scripts/verify_example.py",
+    "python3 -m compileall -q src scripts/validate_public_schizophrenia_cohort.py",
+    "git diff --check"
+  ],
+  "example_check": "passed_real_VitalDB_excerpt",
+  "compilation": "passed",
+  "documentation_local_links": "passed",
+  "missing_event_labels_guard": "Error: Complete independently reviewed follow-up coverage is required; absence of labels is not a negative outcome",
+  "full_human_run": {
+    "complete_epochs": 7205,
+    "accepted_epochs": 6870,
+    "independent_subjects": 28,
+    "clinical_validation": "not_established",
+    "event_model_trained_on_real_data": false
+  }
+}

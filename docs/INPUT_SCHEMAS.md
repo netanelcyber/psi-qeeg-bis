@@ -24,6 +24,8 @@ Optional aligned auxiliary columns: `BIS`, `SQI`, `EMG`, `SEF`, `SR`, `TOTPOW`. 
 
 EDF/BDF uses an explicit sidecar selecting EEG channels. MNE supplies calibrated physical amplitudes in volts; the importer converts them to microvolts. Sensor/reference details still need independent documentation. EDF support is optional; the shipped real-data acceptance test uses CSV.
 
+`analyze` adds a serialized `acquisition_contract` to each epoch and the summary. It records the actual normalized units, sampling rate, sites/reference, epoch duration, filtering/preprocessing and QC configuration. Event preparation and inference require complete matching contracts; generic analysis can retain unknown sites/reference without qualifying for event training. See [event data requirements and legacy-table migration](research/EVENT_PREDICTION.md).
+
 ## Complete article features
 
 `score` expects JSON with `subject_id`, `medication_profile_id` and a `values` object:

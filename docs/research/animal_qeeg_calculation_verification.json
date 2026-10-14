@@ -1,0 +1,80 @@
+{
+  "data_scope": "synthetic_arithmetic_example_not_real_animal_data",
+  "expected_power_uv2": {
+    "70_hz_sine": 8.0,
+    "175_hz_sine": 4.5
+  },
+  "shank3_study_band_example": {
+    "estimator": "Welch, two-second Hann, 50% overlap, constant detrending",
+    "sampling_rate_hz": 1000.0,
+    "frequency_grid_hz": 0.5,
+    "bands_hz": {
+      "gamma": [
+        30,
+        80
+      ]
+    },
+    "power_unit": "uV^2",
+    "band_power": {
+      "gamma": 8.000000000000004
+    },
+    "relative_power_denominator_hz": [
+      1,
+      80
+    ],
+    "relative_power": {
+      "gamma": 1.0
+    },
+    "event_prediction": null
+  },
+  "mk801_study_band_example": {
+    "estimator": "Welch, two-second Hann, 50% overlap, constant detrending",
+    "sampling_rate_hz": 1000.0,
+    "frequency_grid_hz": 0.5,
+    "bands_hz": {
+      "delta": [
+        1,
+        4
+      ],
+      "theta": [
+        6,
+        8
+      ],
+      "alpha": [
+        8,
+        12
+      ],
+      "high_gamma": [
+        60,
+        100
+      ],
+      "hfo": [
+        150,
+        200
+      ]
+    },
+    "power_unit": "uV^2",
+    "band_power": {
+      "delta": 9.797320014660394e-28,
+      "theta": 2.28479163501873e-28,
+      "alpha": 3.4663577643962905e-28,
+      "high_gamma": 8.000000000000004,
+      "hfo": 4.499999999999988
+    },
+    "relative_power_denominator_hz": null,
+    "relative_power": null,
+    "event_prediction": null
+  },
+  "interpretation": "Band power arithmetic only; no genotype classification, behavioral forecast, psychiatric label or clinical threshold",
+  "numerical_checks": {
+    "analytic_sine_powers": "passed",
+    "explicit_relative_denominator": "passed",
+    "zero_power_not_invented": "passed",
+    "short_missing_nyquist_and_range_checks": "passed"
+  },
+  "versions": {
+    "python": "3.12.14",
+    "numpy": "2.3.5",
+    "scipy": "1.17.0"
+  }
+}

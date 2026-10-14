@@ -50,7 +50,7 @@ def electrode_feature_sets(columns) -> dict[str, list[str]]:
     return result
 
 
-def compare_electrode_coverage(table_path, out: Path) -> dict:
+def compare_electrode_coverage(table_path, out: Path, progress=None) -> dict:
     """LOSO fits with identical rows, subjects, QC and model settings for each set.
 
     Full-scalp outputs stay at ``out`` for compatibility. Restricted outputs are
@@ -62,7 +62,11 @@ def compare_electrode_coverage(table_path, out: Path) -> dict:
     results = {}
     for name, columns in sets.items():
         destination = out if name == "full_scalp" else out / "electrode_comparison" / name
-        result = train_group_model(table_path, destination, columns)
+        if progress:
+            progress(f'Evaluate {name}: {len(columns)} features')
+            result = train_group_model(table_path, destination, columns, progress=progress)
+        else:
+            result = train_group_model(table_path, destination, columns)
         results[name] = {key: result[key] for key in (
             "features", "subjects_per_group", "epochs", "epoch_balanced_accuracy",
             "subject_balanced_accuracy", "subject_confusion_matrix")}
@@ -78,7 +82,7 @@ def compare_electrode_coverage(table_path, out: Path) -> dict:
         "protocol": {
             "feature_selection": "Fixed channel names and four spectral families; no outcome-based selection",
             "quality_control": "Identical accepted full-scalp epochs used in all comparisons",
-            "model": "StandardScaler fitted within training fold; linear SVC, balanced class weights",
+            "model": "Training-fold StandardScaler weighted equally by subject; linear SVC C=1 with equal-subject mass and classes balanced by training-subject count",
             "reference": "Source common reference retained; no Fpz estimation or re-referencing",
             "selection": "All three comparisons reported; no best-side/model selection",
         },

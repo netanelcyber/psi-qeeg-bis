@@ -1,0 +1,17 @@
+{
+  "checks": {
+    "runner_hash_matches": true,
+    "probe_session_clock_exact": true,
+    "original_camera_frame_mapping_exact": true,
+    "calibrated_adc_values": true,
+    "complete_lfp_shape": true,
+    "four_channels_sixty_epochs": true,
+    "saved_band_powers_recomputed": true,
+    "published_wheel_labels_preserved": true,
+    "review_not_fabricated": true,
+    "source_video_excerpt.mp4_frames": true,
+    "annotated_video_lfp.mp4_frames": true
+  },
+  "all_passed": true,
+  "scope": "real excerpt/calculation/alignment verification; no clinical or behavioral forecasting validation"
+}

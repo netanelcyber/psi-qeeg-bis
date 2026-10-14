@@ -6,6 +6,22 @@ The repository contains a real, attributed VitalDB BIS EEG excerpt, a reproducib
 
 **Research status:** signal processing, mathematical implementation and exploratory diagnosis-group benchmarking on a public human cohort. Psychiatric classification has not been clinically validated. The included surgical recording has no meltdown or psychosis labels; its SOI/RDI scores remain unavailable and its psychiatric state is `indeterminate`.
 
+The [14 October clinical and measurement requirements](docs/research/CLINICAL_REQUIREMENTS.md) and [new perspective/proposed protocol](docs/research/PSI_CLINICAL_PERSPECTIVE.md) place psychiatric assessment first. Scalp gamma/PAC is excluded from the proposed primary human protocol because muscle/ocular contamination can dominate high-frequency recordings; accepted numerical QC is not proof of a neural source. The reference register separates full journal articles from preprints and conference abstracts. Psychiatric review of the prospective protocol is pending.
+
+**Current algorithm:** offline FFT-based qEEG feature extraction, experimental auto-bicoherence and an optional linear SVM research workflow. **No LSTM or Transformer is implemented, trained or used for inference in this checkout.** The article's sequence model is a proposed future research stage. `analyze` does not load an SVM or predict psychiatric states; `train` and `train-groups` are separate evaluation/training commands. See the [short technical brief](docs/TECHNICAL_BRIEF.md), [article alignment](docs/ARTICLE_ALIGNMENT.md) and [test/evidence boundaries](docs/VALIDATION.md).
+
+The separate `prepare-events`, `train-events` and `predict-events` commands now support an **annotation-dependent research workflow** for two future-event targets. They require confirmed independent onsets and reviewed follow-up coverage; no real event model is trained from RepOD's diagnosis groups. See [event data and causal prediction contract](docs/research/EVENT_PREDICTION.md) and [candidate EEG evidence](docs/research/PRE_EVENT_SIGNAL_EVIDENCE.md).
+
+The separate **autism-model mouse qEEG/behavioral SVM workflow** now implements continuous-signal power epochs, independent animal event/follow-up contracts and leave-one-animal-out fitting/inference. No behavioral model has been trained on real animal events. A real processed-qEEG Fmr1 benchmark evaluates WT/KO genotype across two experiments (43 animals); it does not forecast behavior. See [implemented animal workflow and results](docs/research/AUTISM_ANIMAL_MODEL.md), [qEEG calculation methods](docs/research/ANIMAL_QEEG_METHODS.md) and [preclinical source/transfer boundaries](docs/research/ANIMAL_IEEG_ONSET.md).
+
+An [executed public video/LFP example](docs/research/OPEN_VIDEO_LFP.md) downloads real IBL data: 240 seconds of 2.5 kHz intracranial LFP, 60 four-second epochs in four channels, and a one-minute video with five published wheel-movement intervals. These are task movements, not verified abnormal-event labels. No warning model is fitted; individual genotype, anatomical reference and artifact review remain incomplete for this example.
+
+The [executed coupling analysis](docs/research/IBL_COUPLING.md) adds window-contained theta/gamma PLV, magnitude-squared/imaginary coherency and Tort theta–gamma PAC with surrogate, line-filter and bipolar sensitivity checks. Original theta PLV/coherence medians are 0.809/0.862 versus 0.169/0.107 in bipolar derivations. The first video movement has no local PAC rejection after multiplicity correction; some later raw PAC increases overlap preceding movements. These findings do not establish an impending abnormal event or a one-minute warning.
+
+The [13 October methodology corrections](docs/research/METHODOLOGY_CORRECTIONS.md) rerun PAC with both one-second shift boundaries excluded and bind human/animal event inference to acquisition and QC metadata, keeping EEG and LFP separate. The full RepOD benchmark now weights each participant equally: subject balanced accuracies are 78.57% full scalp, 50% Fp1/F7 and 25% Fp2/F8. Prior unweighted results are retained as historical evidence. All 159 local tests and independent real-result checks pass; clinical event prediction remains unvalidated.
+
+Continue the genotype study with `python scripts/continue_fmr1_qeeg_training.py`. [Nested animal-separated tuning](docs/research/CONTINUED_FMR1_TRAINING.md) evaluates 12 parameter/dimension combinations and saves selected and fixed-C=1 models fitted on all 43 animals. It did not improve animal-held-out accuracy (67.42% vs 69.91%). These remain exploratory genotype models; final refits are not independent tests.
+
 ## Public psychiatric cohort and model-organism comparison
 
 ```bash
@@ -14,7 +30,16 @@ python scripts/validate_public_schizophrenia_cohort.py
 python scripts/compare_model_organism.py
 ```
 
-The human runner verifies the 28 RepOD source EDFs, analyzes a fixed first 120 seconds per subject, and evaluates full-scalp (19 channels), left Fp1/F7 and right Fp2/F8 feature sets using identical accepted epochs and leave-one-subject-out folds. The regional sets retain the source reference: they approximate electrode coverage, not actual BIS sensor derivations. All three results are reported without selecting a winning side.
+To expand the number of epochs over all available recording time while retaining the original four-second non-overlapping epochs:
+
+```bash
+python scripts/validate_public_schizophrenia_cohort.py --window-s 0 \
+  --discard-waveform-csv --out outputs/repod_full_recordings
+```
+
+The legacy command still selects the first 120 seconds per subject. `--window-s` accepts a positive time limit or zero for full duration; `--epoch-s` is at least four seconds. Cached EDFs must match source checksums/size; incomplete downloads are replaced atomically. The optional `--source-metadata` accepts an explicitly retained API snapshot. Full duration increases epochs, not independent subjects. Read [expanded results](docs/research/EXPANDED_HUMAN_COHORT.md).
+
+By default the human runner verifies the 28 RepOD source EDFs, analyzes the first 120 seconds per subject, and evaluates full-scalp (19 channels), left Fp1/F7 and right Fp2/F8 feature sets using identical accepted epochs and leave-one-subject-out folds. The regional sets retain the source reference: they approximate electrode coverage, not actual BIS sensor derivations. All three results are reported without selecting a winning side.
 
 The second runner verifies public processed auditory-gating measurements and five-channel ERPs from **22 Fmr1-KO2/WT mice** against OSF source SHA-256 hashes. It summarizes seven paired-tone intervals without treating repeated measurements as independent animals, reproduces the published gating ratios, and compares five-channel coverage against the original two-channel average using animal-held-out genotype prediction. These experimental sensory-response/genotype labels are not autistic-meltdown or psychosis-onset labels. Human resting-state data have no corresponding S1/S2 events, so a numerical cross-species gating comparison remains unavailable. Animal monitoring here covers additional EEG/ERP channels; synchronized video, EMG and autonomic measures are not supplied.
 
