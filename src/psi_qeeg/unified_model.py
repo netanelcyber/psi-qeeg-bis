@@ -34,6 +34,66 @@ from .behavior import (
 
 
 MouseModel = Literal["btbr", "shank3b", "fmr1", "vpa", "cntnap2", "generic"]
+Montage = Literal["2ch", "6ch", "8ch", "custom"]
+
+
+# ---------------------------------------------------------------------------
+# 0. Standard montages and ROI definitions
+# ---------------------------------------------------------------------------
+
+MONTAGE_6CH = {
+    "channels": ["F3", "F4", "C3", "C4", "T7", "T8"],
+    "pairs": {
+        "frontal": ("F3", "F4"),
+        "central": ("F3", "F4"),   # will be overridden below
+        "temporal": ("T7", "T8"),
+    },
+    "roi_map": {
+        "F3": "frontal_left",
+        "F4": "frontal_right",
+        "C3": "central_left",
+        "C4": "central_right",
+        "T7": "temporal_left",
+        "T8": "temporal_right",
+    },
+    "bilateral_pairs": [("F3", "F4"), ("C3", "C4"), ("T7", "T8")],
+    "cross_region_pairs": [("F3", "T7"), ("F4", "T8"), ("F3", "C3"), ("F4", "C4"), ("C3", "T7"), ("C4", "T8")],
+    "marker_channels": {
+        "freezing": ("F3", "F4"),
+        "rearing_stereotypy": ("F3", "F4", "C3", "C4"),
+        "bar_biting": ("C3", "C4"),
+        "repetitive_grooming": ("C3", "C4", "T7", "T8"),
+        "self_injurious_grooming": ("C3", "C4"),
+        "circling_stereotypy": ("T7", "T8"),
+        "meltdown_composite": ("F3", "F4", "C3", "C4", "T7", "T8"),
+    },
+}
+
+# Fix the central pair
+MONTAGE_6CH["pairs"]["central"] = ("C3", "C4")
+
+MONTAGE_8CH = {
+    "channels": ["F3", "F4", "C3", "C4", "T7", "T8", "P3", "P4"],
+    "pairs": {
+        "frontal": ("F3", "F4"),
+        "central": ("C3", "C4"),
+        "temporal": ("T7", "T8"),
+        "parietal": ("P3", "P4"),
+    },
+    "roi_map": {
+        "F3": "frontal_left", "F4": "frontal_right",
+        "C3": "central_left", "C4": "central_right",
+        "T7": "temporal_left", "T8": "temporal_right",
+        "P3": "parietal_left", "P4": "parietal_right",
+    },
+    "bilateral_pairs": [("F3", "F4"), ("C3", "C4"), ("T7", "T8"), ("P3", "P4")],
+    "cross_region_pairs": [
+        ("F3", "C3"), ("F4", "C4"), ("C3", "T7"), ("C4", "T8"),
+        ("C3", "P3"), ("C4", "P4"), ("F3", "T7"), ("F4", "T8"),
+    ],
+    "marker_channels": MONTAGE_6CH["marker_channels"].copy(),
+}
+MONTAGE_8CH["marker_channels"]["meltdown_composite"] = tuple(MONTAGE_8CH["channels"])
 
 
 # ---------------------------------------------------------------------------
@@ -269,19 +329,41 @@ BIOMARKER_PROFILES: dict[str, BiomarkerProfile] = {
 FeatureMode = Literal["fast", "full"]
 
 
+def _resolve_montage(
+    channel_names: list[str],
+    montage: Montage = "2ch",
+) -> dict | None:
+    """Resolve montage definition based on available channels."""
+    if montage == "2ch":
+        return None
+    template = MONTAGE_6CH if montage == "6ch" else MONTAGE_8CH if montage == "8ch" else None
+    if template is None and montage == "custom":
+        return None
+    if template is None:
+        return None
+    ch_set = set(channel_names)
+    expected = set(template["channels"])
+    if not expected.issubset(ch_set):
+        return None
+    return template
+
+
 def extract_features(
     eeg: np.ndarray,
     fs: float,
     channel_names: list[str],
     mode: FeatureMode = "fast",
+    montage: Montage = "2ch",
 ) -> dict[str, float]:
     """Extract features from a multi-channel EEG window.
 
     mode="fast": Welch band powers only (~5x faster).
     mode="full": Welch + coherence + PLV + theta-gamma PAC.
+    montage="6ch": ROI-specific features with spatial coherence.
     """
     n_ch = eeg.shape[1]
     features: dict[str, float] = {}
+    ch_idx = {name: j for j, name in enumerate(channel_names)}
 
     for j, name in enumerate(channel_names):
         x = eeg[:, j]
@@ -311,6 +393,127 @@ def extract_features(
                             xj, xk, fs, (lo, hi)
                         )
 
+    mtg = _resolve_montage(channel_names, montage)
+    if mtg is not None:
+        features.update(_extract_montage_features(eeg, fs, channel_names, ch_idx, mtg, mode))
+
+    return features
+
+
+def _extract_montage_features(
+    eeg: np.ndarray,
+    fs: float,
+    channel_names: list[str],
+    ch_idx: dict[str, int],
+    mtg: dict,
+    mode: FeatureMode,
+) -> dict[str, float]:
+    """Extract ROI-specific features for multi-channel montages."""
+    features: dict[str, float] = {}
+
+    # ROI-aggregated power: mean power per region pair
+    for roi_name, (ch_l, ch_r) in mtg["pairs"].items():
+        if ch_l not in ch_idx or ch_r not in ch_idx:
+            continue
+        xl = eeg[:, ch_idx[ch_l]]
+        xr = eeg[:, ch_idx[ch_r]]
+        if not (np.isfinite(xl).all() and np.isfinite(xr).all()):
+            continue
+        bands_l = _welch_bands(xl, fs)
+        bands_r = _welch_bands(xr, fs)
+        for band in bands_l:
+            features[f"roi_{roi_name}__mean_{band}"] = (bands_l[band] + bands_r[band]) / 2.0
+            features[f"roi_{roi_name}__asym_{band}"] = bands_l[band] - bands_r[band]
+
+    # Bilateral coherence per region
+    for ch_l, ch_r in mtg["bilateral_pairs"]:
+        if ch_l not in ch_idx or ch_r not in ch_idx:
+            continue
+        xl = eeg[:, ch_idx[ch_l]]
+        xr = eeg[:, ch_idx[ch_r]]
+        if not (np.isfinite(xl).all() and np.isfinite(xr).all()):
+            continue
+        pair_name = f"{ch_l}_{ch_r}"
+        for band_name, (lo, hi) in BANDS.items():
+            if hi > fs / 2:
+                continue
+            features[f"bilateral_{pair_name}__coh_{band_name}"] = coherence_between(
+                xl, xr, fs, (lo, hi)
+            )
+
+    # Cross-region coherence (spatial propagation)
+    for ch_a, ch_b in mtg.get("cross_region_pairs", []):
+        if ch_a not in ch_idx or ch_b not in ch_idx:
+            continue
+        xa = eeg[:, ch_idx[ch_a]]
+        xb = eeg[:, ch_idx[ch_b]]
+        if not (np.isfinite(xa).all() and np.isfinite(xb).all()):
+            continue
+        pair_name = f"{ch_a}_{ch_b}"
+        for band_name in ("gamma", "theta"):
+            lo, hi = BANDS[band_name]
+            if hi > fs / 2:
+                continue
+            features[f"cross_{pair_name}__coh_{band_name}"] = coherence_between(
+                xa, xb, fs, (lo, hi)
+            )
+
+    # Spatial gamma coherence gradient (temporal → central → frontal)
+    t_coh = features.get("bilateral_T7_T8__coh_gamma", None)
+    c_coh = features.get("bilateral_C3_C4__coh_gamma", None)
+    f_coh = features.get("bilateral_F3_F4__coh_gamma", None)
+    if t_coh is not None and c_coh is not None:
+        features["gradient__gamma_coh_temp_to_cent"] = t_coh - c_coh
+    if c_coh is not None and f_coh is not None:
+        features["gradient__gamma_coh_cent_to_front"] = c_coh - f_coh
+    if t_coh is not None and f_coh is not None:
+        features["gradient__gamma_coh_temp_to_front"] = t_coh - f_coh
+
+    # Theta gradient (frontal dominance index)
+    f_theta = features.get("roi_frontal__mean_theta_power", None)
+    t_theta = features.get("roi_temporal__mean_theta_power", None)
+    if f_theta is not None and t_theta is not None and (f_theta + t_theta) > 1e-12:
+        features["gradient__theta_frontal_dominance"] = (f_theta - t_theta) / (f_theta + t_theta)
+
+    # Marker-specific composite scores
+    marker_channels = mtg.get("marker_channels", {})
+    for marker, chs in marker_channels.items():
+        valid_chs = [c for c in chs if c in ch_idx]
+        if len(valid_chs) < 2:
+            continue
+        marker_def = MELTDOWN_MARKERS.get(marker, {})
+        sig = marker_def.get("eeg_signature", "").lower()
+        score = 0.0
+        n = 0
+        for c in valid_chs:
+            x = eeg[:, ch_idx[c]]
+            if not np.isfinite(x).all():
+                continue
+            bands = _welch_bands(x, fs)
+            if "theta" in sig:
+                score += bands.get("theta_power", 0)
+                n += 1
+            if "gamma" in sig:
+                score += bands.get("gamma_power", 0)
+                n += 1
+            if "beta" in sig:
+                score += bands.get("beta_power", 0)
+                n += 1
+        if n > 0:
+            features[f"marker_{marker}__spatial_score"] = score / n
+
+    # Theta-gamma PAC per ROI (full mode only)
+    if mode == "full" and fs / 2 > 40:
+        for roi_name, (ch_l, ch_r) in mtg["pairs"].items():
+            if ch_l not in ch_idx or ch_r not in ch_idx:
+                continue
+            xl = eeg[:, ch_idx[ch_l]]
+            xr = eeg[:, ch_idx[ch_r]]
+            if np.isfinite(xl).all():
+                features[f"roi_{roi_name}__pac_l"] = theta_gamma_coupling(xl, fs)
+            if np.isfinite(xr).all():
+                features[f"roi_{roi_name}__pac_r"] = theta_gamma_coupling(xr, fs)
+
     return features
 
 
@@ -323,6 +526,7 @@ class ModelConfig:
     """Configuration for the unified model."""
     mouse_model: MouseModel = "btbr"
     feature_mode: FeatureMode = "fast"
+    montage: Montage = "2ch"
     horizons_s: tuple[int, ...] = (10, 30, 60, 180)
     window_s: float = 4.0
     stride_s: float = 8.0
@@ -409,7 +613,7 @@ class UnifiedASDModel:
             if not np.isfinite(chunk).all():
                 continue
 
-            feats = extract_features(chunk, fs, channel_names, self.config.feature_mode)
+            feats = extract_features(chunk, fs, channel_names, self.config.feature_mode, self.config.montage)
 
             for h in self.config.horizons_s:
                 if len(onset_arr) > 0:
@@ -470,7 +674,7 @@ class UnifiedASDModel:
             if not np.isfinite(chunk).all():
                 continue
 
-            feats = extract_features(chunk, fs, channel_names, self.config.feature_mode)
+            feats = extract_features(chunk, fs, channel_names, self.config.feature_mode, self.config.montage)
 
             for h in self.config.horizons_s:
                 if len(onset_arr) > 0:
@@ -656,7 +860,7 @@ class UnifiedASDModel:
         if self._fitted_scorer is None:
             raise ValueError("Call fit_risk_scorer() first")
 
-        feats = extract_features(eeg_window, fs, channel_names, self.config.feature_mode)
+        feats = extract_features(eeg_window, fs, channel_names, self.config.feature_mode, self.config.montage)
         fn = self._fitted_scorer["feature_names"]
         mask = self._fitted_scorer["finite_mask"]
         model = self._fitted_scorer["model"]
@@ -1147,6 +1351,99 @@ class UnifiedASDModel:
                     })
 
         return recordings
+
+    # --- 6ch/8ch spatial escalation detection ---
+
+    def spatial_escalation_score(
+        self,
+        eeg_window: np.ndarray,
+        fs: float,
+        channel_names: list[str],
+    ) -> dict:
+        """Detect spatial propagation pattern in gamma coherence surge.
+
+        Meltdown cascade: temporal gamma → central spread → frontal involvement.
+        Returns escalation score (0-100) and propagation direction.
+        """
+        mtg = _resolve_montage(channel_names, self.config.montage)
+        if mtg is None:
+            return {"escalation_score": 0, "error": "requires 6ch or 8ch montage"}
+
+        ch_idx = {name: j for j, name in enumerate(channel_names)}
+        regions = {}
+        for roi_name, (ch_l, ch_r) in mtg["pairs"].items():
+            if ch_l not in ch_idx or ch_r not in ch_idx:
+                continue
+            xl = eeg_window[:, ch_idx[ch_l]]
+            xr = eeg_window[:, ch_idx[ch_r]]
+            if not (np.isfinite(xl).all() and np.isfinite(xr).all()):
+                continue
+            gamma_lo, gamma_hi = BANDS["gamma"]
+            if gamma_hi > fs / 2:
+                continue
+            coh = coherence_between(xl, xr, fs, (gamma_lo, gamma_hi))
+            regions[roi_name] = coh
+
+        t_g = regions.get("temporal", 0)
+        c_g = regions.get("central", 0)
+        f_g = regions.get("frontal", 0)
+
+        temporal_elevated = t_g > 0.5
+        spreading_central = c_g > 0.4 and t_g > c_g
+        frontal_involved = f_g > 0.3 and t_g > f_g
+
+        stage = 0
+        if temporal_elevated:
+            stage = 1
+        if temporal_elevated and spreading_central:
+            stage = 2
+        if temporal_elevated and spreading_central and frontal_involved:
+            stage = 3
+
+        escalation_score = min(100, int(stage * 25 + t_g * 25))
+
+        return {
+            "escalation_score": escalation_score,
+            "stage": stage,
+            "stage_label": ["baseline", "temporal_onset", "central_spread", "full_cascade"][stage],
+            "gamma_coherence": regions,
+            "temporal_elevated": temporal_elevated,
+            "spreading_to_central": spreading_central,
+            "frontal_involved": frontal_involved,
+        }
+
+    def optimal_channel_selection(
+        self,
+        n_target: int = 6,
+        horizon: float | None = None,
+    ) -> list[dict]:
+        """Rank channels by discriminative power for meltdown prediction.
+
+        Uses feature importance to identify which channels contribute
+        most to prediction, enabling selection for reduced montages.
+        """
+        if horizon is None:
+            horizon = self.config.risk_horizon_s
+        fi = self.feature_importance(horizon)
+
+        channel_scores: dict[str, float] = {}
+        for _, row in fi.iterrows():
+            feat = row["feature"]
+            score = row["weighted_importance"]
+            parts = feat.split("__")
+            ch = parts[0] if not parts[0].startswith(("pair_", "roi_", "bilateral_", "cross_", "gradient_", "marker_")) else ""
+            if ch and ch not in ("", "gradient", "marker"):
+                channel_scores[ch] = channel_scores.get(ch, 0) + score
+
+        ranked = sorted(channel_scores.items(), key=lambda kv: -kv[1])
+        result = []
+        for rank, (ch, score) in enumerate(ranked[:n_target], 1):
+            result.append({
+                "rank": rank,
+                "channel": ch,
+                "total_weighted_importance": round(score, 3),
+            })
+        return result
 
     def __repr__(self) -> str:
         return (
