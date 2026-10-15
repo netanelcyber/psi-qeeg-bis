@@ -15,7 +15,10 @@ Usage:
 import json
 import sys
 import time as _time
+import warnings
 from pathlib import Path
+
+warnings.filterwarnings("ignore", category=FutureWarning)
 
 import numpy as np
 import pandas as pd
