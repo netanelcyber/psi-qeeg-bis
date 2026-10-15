@@ -270,17 +270,35 @@ def main():
         "total_samples": len(all_samples),
     }}
 
+    # Downsample negatives to 10:1 ratio for tractable SVM training
+    MAX_NEG_RATIO = 10
+    ds_rng = np.random.default_rng(42)
+
+    def _downsample(samples_list, horizon):
+        """Keep all positives, subsample negatives to MAX_NEG_RATIO:1."""
+        h_all = [s for s in samples_list if s.horizon_s == horizon]
+        pos = [s for s in h_all if s.label == 1]
+        neg = [s for s in h_all if s.label == 0]
+        max_neg = len(pos) * MAX_NEG_RATIO
+        if len(neg) > max_neg:
+            idx = ds_rng.choice(len(neg), size=max_neg, replace=False)
+            neg = [neg[i] for i in idx]
+        return pos + neg
+
     for h in HORIZONS:
         h_key = f"{h}s"
-        h_samples = [s for s in all_samples if s.horizon_s == h]
-        n_pos = sum(1 for s in h_samples if s.label == 1)
-        n_neg = sum(1 for s in h_samples if s.label == 0)
-        print(f"\n  --- Horizon: {h_key} ({n_pos} pos / {n_neg} neg) ---")
-        results["horizons"][h_key] = {"n_positive": n_pos, "n_negative": n_neg}
+        h_samples_full = [s for s in all_samples if s.horizon_s == h]
+        n_pos = sum(1 for s in h_samples_full if s.label == 1)
+        n_neg = sum(1 for s in h_samples_full if s.label == 0)
+        h_samples = _downsample(all_samples, h)
+        print(f"\n  --- Horizon: {h_key} ({n_pos} pos / {n_neg} neg, "
+              f"downsampled to {len(h_samples)}) ---")
+        results["horizons"][h_key] = {"n_positive": n_pos, "n_negative": n_neg,
+                                       "downsampled_to": len(h_samples)}
 
         # Leave-animal-out
         try:
-            r = evaluate_prediction(all_samples, h, hold_out="animal")
+            r = evaluate_prediction(h_samples, h, hold_out="animal")
             results["horizons"][h_key]["leave_animal_out"] = {
                 "balanced_accuracy": r.balanced_accuracy,
                 "sensitivity": r.sensitivity,
@@ -297,9 +315,9 @@ def main():
             print(f"    Leave-animal-out: {exc}")
             results["horizons"][h_key]["leave_animal_out"] = {"error": str(exc)}
 
-        # Leave-day-out (sample 4 days for speed)
+        # Leave-day-out (sample 4 representative days)
         test_days = [f"day-{d:02d}" for d in [1, 5, 10, 14]]
-        day_subset = [s for s in all_samples if s.horizon_s == h and (s.day in test_days or s.day not in test_days)]
+        day_subset = _downsample(all_samples, h)
         try:
             r = evaluate_prediction(day_subset, h, hold_out="day")
             results["horizons"][h_key]["leave_day_out"] = {
@@ -319,7 +337,15 @@ def main():
     # Phase 3: Continuous risk scorer on held-out animal
     print(f"\n[3] Meltdown Risk Scorer (0-100, 180s horizon)")
     print(f"    Training: {animals[:3]}, held-out: {animals[3]}")
-    train_samples = [s for s in all_samples if s.animal_id != animals[3] and s.horizon_s == 180]
+    train_all = [s for s in all_samples if s.animal_id != animals[3] and s.horizon_s == 180]
+    train_pos = [s for s in train_all if s.label == 1]
+    train_neg = [s for s in train_all if s.label == 0]
+    max_neg = len(train_pos) * MAX_NEG_RATIO
+    if len(train_neg) > max_neg:
+        idx = ds_rng.choice(len(train_neg), size=max_neg, replace=False)
+        train_neg = [train_neg[i] for i in idx]
+    train_samples = train_pos + train_neg
+    print(f"    Training samples: {len(train_pos)} pos + {len(train_neg)} neg = {len(train_samples)}")
     scorer = MeltdownRiskScorer(horizon_s=180.0, window_s=WINDOW_S)
     scorer.fit(train_samples)
 
