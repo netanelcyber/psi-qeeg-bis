@@ -1,0 +1,59 @@
+name: Validate real public EEG feature pipeline
+
+on:
+  push:
+    branches:
+      - research/real-eeg-validation
+    paths:
+      - ".github/workflows/real-eeg-validation.yml"
+      - "research/meltdown_forecast/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install signal processing dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install mne numpy pandas scipy
+          python -m pip install awscli
+      - name: Find one public resting-state EEG file in OpenNeuro ds006780
+        id: dataset
+        shell: bash
+        run: |
+          set -euo pipefail
+          KEY="$(aws s3api list-objects-v2 --no-sign-request --region us-east-1 --bucket openneuro.org --prefix ds006780/ --query "Contents[?contains(Key, 'Restingstate') && ends_with(Key, '.bdf')].Key | [0]" --output text)"
+          if [[ -z "$KEY" || "$KEY" == "None" ]]; then
+            echo "No BDF resting-state file found through S3 listing. Dataset structure may have changed." >&2
+            exit 2
+          fi
+          echo "key=$KEY" >> "$GITHUB_OUTPUT"
+          echo "Selected public file key: $KEY"
+      - name: Download one real EEG recording
+        run: |
+          aws s3 cp --no-sign-request --region us-east-1 "s3://openneuro.org/${{ steps.dataset.outputs.key }}" sample_eeg.bdf
+          test -s sample_eeg.bdf
+          ls -lh sample_eeg.bdf
+      - name: Extract six-channel features and validate
+        env:
+          EEG_FILE: sample_eeg.bdf
+        run: python research/meltdown_forecast/validate_real_eeg.py
+      - name: Upload validation report and features
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: real-eeg-feature-validation
+          path: |
+            real_eeg_validation/
+            sample_eeg.bdf
+          if-no-files-found: warn
+          retention-days: 7
