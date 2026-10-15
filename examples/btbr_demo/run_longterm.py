@@ -26,10 +26,28 @@ import pandas as pd
 sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src"))
 
 from psi_qeeg.behavior import (
-    BehaviorEvent, extract_window_features,
+    BehaviorEvent, extract_window_features, _welch_bands,
     MeltdownRiskScorer, PredictionSample, evaluate_prediction,
     DEFINED_EVENTS,
 )
+
+
+def _fast_window_features(eeg: np.ndarray, fs: float, channel_names: list[str]) -> dict:
+    """Lightweight feature extraction: Welch bands only (skip PLV/coherence/PAC).
+
+    ~5x faster than full extract_window_features. Sufficient for the
+    longterm demo since the synthetic pre-event signature lives in
+    theta/gamma power.
+    """
+    features = {}
+    for j, name in enumerate(channel_names):
+        x = eeg[:, j]
+        if not np.isfinite(x).all():
+            continue
+        bands = _welch_bands(x, fs)
+        for k, v in bands.items():
+            features[f"{name}__{k}"] = v
+    return features
 
 # --- Parameters ---
 FS = 256.0
@@ -38,7 +56,7 @@ N_DAYS = 14
 HOURS_PER_DAY = 24
 CHUNK_DURATION_S = 3600.0  # process one hour at a time
 WINDOW_S = 4.0
-STRIDE_S = 4.0  # non-overlapping for speed on long recordings
+STRIDE_S = 8.0  # wide stride for throughput on 1344-hour simulation
 HORIZONS = [10, 30, 60, 180]
 
 
@@ -159,7 +177,7 @@ def process_hour_streaming(
         if not np.isfinite(chunk).all():
             continue
 
-        feats = extract_window_features(chunk, FS, channel_names)
+        feats = _fast_window_features(chunk, FS, channel_names)
         day_str = f"day-{day + 1:02d}"
 
         for h in HORIZONS:
@@ -235,7 +253,9 @@ def main():
                 animal_events += n_ev
             day_str = f"day-{day + 1:02d}"
             elapsed = _time.time() - wall_start
-            print(f"    {animal} / {day_str}: {day_events} events  ({elapsed:.0f}s elapsed)")
+            n_samples_so_far = len(all_samples)
+            print(f"    {animal} / {day_str}: {day_events} events, "
+                  f"{n_samples_so_far} total samples  ({elapsed:.0f}s elapsed)")
             day_events = 0
         event_counts[animal] = animal_events
 
