@@ -1,0 +1,427 @@
+{
+  "horizons": {
+    "10s": {
+      "leave_animal_out": {
+        "horizon_s": 10,
+        "accuracy": 0.9375663247258578,
+        "balanced_accuracy": 0.9679615175167907,
+        "sensitivity": 1.0,
+        "specificity": 0.9359230350335814,
+        "f1": 0.4510108864696734,
+        "auc_roc": 1.0,
+        "false_alarms_per_hour": 115.34,
+        "n_positive": 145,
+        "n_negative": 5509,
+        "held_out_type": "animal",
+        "folds": [
+          {
+            "held_out": "BTBR-001",
+            "n_test": 1440,
+            "tp": 35,
+            "fp": 0,
+            "tn": 1405,
+            "fn": 0,
+            "false_alarms_per_hour": 0.0
+          },
+          {
+            "held_out": "BTBR-002",
+            "n_test": 1466,
+            "tp": 35,
+            "fp": 353,
+            "tn": 1078,
+            "fn": 0,
+            "false_alarms_per_hour": 444.03
+          },
+          {
+            "held_out": "BTBR-003",
+            "n_test": 1462,
+            "tp": 35,
+            "fp": 0,
+            "tn": 1427,
+            "fn": 0,
+            "false_alarms_per_hour": 0.0
+          },
+          {
+            "held_out": "BTBR-004",
+            "n_test": 1286,
+            "tp": 40,
+            "fp": 0,
+            "tn": 1246,
+            "fn": 0,
+            "false_alarms_per_hour": 0.0
+          }
+        ]
+      },
+      "leave_day_out": {
+        "horizon_s": 10,
+        "accuracy": 1.0,
+        "balanced_accuracy": 1.0,
+        "sensitivity": 1.0,
+        "specificity": 1.0,
+        "f1": 1.0,
+        "auc_roc": 1.0,
+        "false_alarms_per_hour": 0.0,
+        "n_positive": 145,
+        "n_negative": 5509,
+        "held_out_type": "day",
+        "folds": [
+          {
+            "held_out": "day-1",
+            "n_test": 1646,
+            "tp": 55,
+            "fp": 0,
+            "tn": 1591,
+            "fn": 0,
+            "false_alarms_per_hour": 0.0
+          },
+          {
+            "held_out": "day-2",
+            "n_test": 2183,
+            "tp": 40,
+            "fp": 0,
+            "tn": 2143,
+            "fn": 0,
+            "false_alarms_per_hour": 0.0
+          },
+          {
+            "held_out": "day-3",
+            "n_test": 1825,
+            "tp": 50,
+            "fp": 0,
+            "tn": 1775,
+            "fn": 0,
+            "false_alarms_per_hour": 0.0
+          }
+        ]
+      }
+    },
+    "30s": {
+      "leave_animal_out": {
+        "horizon_s": 30,
+        "accuracy": 0.9406123822341858,
+        "balanced_accuracy": 0.9679615175167907,
+        "sensitivity": 1.0,
+        "specificity": 0.9359230350335814,
+        "f1": 0.7113654946852003,
+        "auc_roc": 1.0,
+        "false_alarms_per_hour": 115.34,
+        "n_positive": 435,
+        "n_negative": 5509,
+        "held_out_type": "animal",
+        "folds": [
+          {
+            "held_out": "BTBR-001",
+            "n_test": 1510,
+            "tp": 105,
+            "fp": 0,
+            "tn": 1405,
+            "fn": 0,
+            "false_alarms_per_hour": 0.0
+          },
+          {
+            "held_out": "BTBR-002",
+            "n_test": 1536,
+            "tp": 105,
+            "fp": 353,
+            "tn": 1078,
+            "fn": 0,
+            "false_alarms_per_hour": 444.03
+          },
+          {
+            "held_out": "BTBR-003",
+            "n_test": 1532,
+            "tp": 105,
+            "fp": 0,
+            "tn": 1427,
+            "fn": 0,
+            "false_alarms_per_hour": 0.0
+          },
+          {
+            "held_out": "BTBR-004",
+            "n_test": 1366,
+            "tp": 120,
+            "fp": 0,
+            "tn": 1246,
+            "fn": 0,
+            "false_alarms_per_hour": 0.0
+          }
+        ]
+      },
+      "leave_day_out": {
+        "horizon_s": 30,
+        "accuracy": 1.0,
+        "balanced_accuracy": 1.0,
+        "sensitivity": 1.0,
+        "specificity": 1.0,
+        "f1": 1.0,
+        "auc_roc": 1.0,
+        "false_alarms_per_hour": 0.0,
+        "n_positive": 435,
+        "n_negative": 5509,
+        "held_out_type": "day",
+        "folds": [
+          {
+            "held_out": "day-1",
+            "n_test": 1756,
+            "tp": 165,
+            "fp": 0,
+            "tn": 1591,
+            "fn": 0,
+            "false_alarms_per_hour": 0.0
+          },
+          {
+            "held_out": "day-2",
+            "n_test": 2263,
+            "tp": 120,
+            "fp": 0,
+            "tn": 2143,
+            "fn": 0,
+            "false_alarms_per_hour": 0.0
+          },
+          {
+            "held_out": "day-3",
+            "n_test": 1925,
+            "tp": 150,
+            "fp": 0,
+            "tn": 1775,
+            "fn": 0,
+            "false_alarms_per_hour": 0.0
+          }
+        ]
+      }
+    },
+    "60s": {
+      "leave_animal_out": {
+        "horizon_s": 60,
+        "accuracy": 0.9446621727543502,
+        "balanced_accuracy": 0.9679615175167907,
+        "sensitivity": 1.0,
+        "specificity": 0.9359230350335814,
+        "f1": 0.8313425704730053,
+        "auc_roc": 1.0,
+        "false_alarms_per_hour": 115.34,
+        "n_positive": 870,
+        "n_negative": 5509,
+        "held_out_type": "animal",
+        "folds": [
+          {
+            "held_out": "BTBR-001",
+            "n_test": 1615,
+            "tp": 210,
+            "fp": 0,
+            "tn": 1405,
+            "fn": 0,
+            "false_alarms_per_hour": 0.0
+          },
+          {
+            "held_out": "BTBR-002",
+            "n_test": 1641,
+            "tp": 210,
+            "fp": 353,
+            "tn": 1078,
+            "fn": 0,
+            "false_alarms_per_hour": 444.03
+          },
+          {
+            "held_out": "BTBR-003",
+            "n_test": 1637,
+            "tp": 210,
+            "fp": 0,
+            "tn": 1427,
+            "fn": 0,
+            "false_alarms_per_hour": 0.0
+          },
+          {
+            "held_out": "BTBR-004",
+            "n_test": 1486,
+            "tp": 240,
+            "fp": 0,
+            "tn": 1246,
+            "fn": 0,
+            "false_alarms_per_hour": 0.0
+          }
+        ]
+      },
+      "leave_day_out": {
+        "horizon_s": 60,
+        "accuracy": 0.9998432356168678,
+        "balanced_accuracy": 0.9994252873563219,
+        "sensitivity": 0.9988505747126437,
+        "specificity": 1.0,
+        "f1": 0.9994249568717654,
+        "auc_roc": 1.0,
+        "false_alarms_per_hour": 0.0,
+        "n_positive": 870,
+        "n_negative": 5509,
+        "held_out_type": "day",
+        "folds": [
+          {
+            "held_out": "day-1",
+            "n_test": 1921,
+            "tp": 330,
+            "fp": 0,
+            "tn": 1591,
+            "fn": 0,
+            "false_alarms_per_hour": 0.0
+          },
+          {
+            "held_out": "day-2",
+            "n_test": 2383,
+            "tp": 239,
+            "fp": 0,
+            "tn": 2143,
+            "fn": 1,
+            "false_alarms_per_hour": 0.0
+          },
+          {
+            "held_out": "day-3",
+            "n_test": 2075,
+            "tp": 300,
+            "fp": 0,
+            "tn": 1775,
+            "fn": 0,
+            "false_alarms_per_hour": 0.0
+          }
+        ]
+      }
+    },
+    "180s": {
+      "leave_animal_out": {
+        "horizon_s": 180,
+        "accuracy": 0.9656361620889272,
+        "balanced_accuracy": 0.9491727921360309,
+        "sensitivity": 0.9030651340996169,
+        "specificity": 0.995280450172445,
+        "f1": 0.9441217704786702,
+        "auc_roc": 0.969809625350089,
+        "false_alarms_per_hour": 8.5,
+        "n_positive": 2610,
+        "n_negative": 5509,
+        "held_out_type": "animal",
+        "folds": [
+          {
+            "held_out": "BTBR-001",
+            "n_test": 2035,
+            "tp": 587,
+            "fp": 22,
+            "tn": 1383,
+            "fn": 43,
+            "false_alarms_per_hour": 28.19
+          },
+          {
+            "held_out": "BTBR-002",
+            "n_test": 2061,
+            "tp": 562,
+            "fp": 3,
+            "tn": 1428,
+            "fn": 68,
+            "false_alarms_per_hour": 3.77
+          },
+          {
+            "held_out": "BTBR-003",
+            "n_test": 2057,
+            "tp": 558,
+            "fp": 1,
+            "tn": 1426,
+            "fn": 72,
+            "false_alarms_per_hour": 1.26
+          },
+          {
+            "held_out": "BTBR-004",
+            "n_test": 1966,
+            "tp": 650,
+            "fp": 0,
+            "tn": 1246,
+            "fn": 70,
+            "false_alarms_per_hour": 0.0
+          }
+        ]
+      },
+      "leave_day_out": {
+        "horizon_s": 180,
+        "accuracy": 0.9647739869442049,
+        "balanced_accuracy": 0.9461180207379216,
+        "sensitivity": 0.8938697318007662,
+        "specificity": 0.9983663096750771,
+        "f1": 0.9422455573505655,
+        "auc_roc": 0.968980609229481,
+        "false_alarms_per_hour": 2.94,
+        "n_positive": 2610,
+        "n_negative": 5509,
+        "held_out_type": "day",
+        "folds": [
+          {
+            "held_out": "day-1",
+            "n_test": 2581,
+            "tp": 871,
+            "fp": 4,
+            "tn": 1587,
+            "fn": 119,
+            "false_alarms_per_hour": 4.53
+          },
+          {
+            "held_out": "day-2",
+            "n_test": 2863,
+            "tp": 642,
+            "fp": 0,
+            "tn": 2143,
+            "fn": 78,
+            "false_alarms_per_hour": 0.0
+          },
+          {
+            "held_out": "day-3",
+            "n_test": 2675,
+            "tp": 820,
+            "fp": 5,
+            "tn": 1770,
+            "fn": 80,
+            "false_alarms_per_hour": 5.07
+          }
+        ]
+      }
+    }
+  },
+  "dataset": {
+    "total_samples_per_horizon": {
+      "10s": {
+        "positive": 145,
+        "negative": 5509
+      },
+      "30s": {
+        "positive": 435,
+        "negative": 5509
+      },
+      "60s": {
+        "positive": 870,
+        "negative": 5509
+      },
+      "180s": {
+        "positive": 2610,
+        "negative": 5509
+      }
+    },
+    "animals": [
+      "BTBR-001",
+      "BTBR-002",
+      "BTBR-003",
+      "BTBR-004"
+    ],
+    "days": [
+      "day-1",
+      "day-2",
+      "day-3"
+    ],
+    "event_definition": {
+      "repetitive_grooming": {
+        "description": "Self-directed grooming bout lasting >= 3 s with stereotyped rostro-caudal sequence",
+        "minimum_duration_s": 3.0,
+        "minimum_inter_event_s": 5.0,
+        "scoring_source": "manual_video_annotation",
+        "btbr_relevance": "Elevated repetitive grooming is a core BTBR behavioral phenotype (Silverman et al. 2010)"
+      }
+    },
+    "window_s": 4.0,
+    "stride_s": 2.0
+  },
+  "limitations": "Synthetic demonstration data. Real BTBR behavioral prediction requires: (1) video-scored events by trained raters with inter-rater reliability, (2) multi-day recordings from multiple animals, (3) prospective validation on unseen cohorts."
+}
