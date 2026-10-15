@@ -1,0 +1,95 @@
+{
+  "use": "research_only",
+  "clinical_validation": "not_established",
+  "classification": "indeterminate",
+  "SOI": null,
+  "RDI": null,
+  "index_reason": "The ten article components and a documented 24-hour awake personal baseline are not supplied to this raw-EEG analysis",
+  "recording_context": "awake_observational_research",
+  "sample_rate_hz": 256.0,
+  "samples": 30720,
+  "channels": [
+    "frontal_L",
+    "frontal_R"
+  ],
+  "epoch_s": 4,
+  "complete_epochs": 30,
+  "accepted_epochs": 30,
+  "rejected_epochs": 0,
+  "unused_tail_samples": 0,
+  "quality_policy": {
+    "min_sqi": 0.0,
+    "max_abs_uv": 300,
+    "flat_std_uv": 0.05,
+    "emg_warning_db": 40
+  },
+  "notch_hz": null,
+  "bicoherence": {
+    "estimator": "mean_squared_auto_bicoherence",
+    "history_s": 60,
+    "subsegment_s": 2,
+    "overlap": 0.5,
+    "f1_f2_hz": [
+      5,
+      15
+    ],
+    "claim": "experimental waveform descriptor; not the proprietary BIS algorithm or the article's calibrated bifrontal component"
+  },
+  "montage": {
+    "sensor": {
+      "family": "research_rodent",
+      "model": "synthetic_demo",
+      "species": "mouse",
+      "strain": "BTBR_T+Itpr3tf/J"
+    },
+    "scalp_locations": {},
+    "reference_verified": false,
+    "bilateral_measurement": "depends_on_verified_channel_metadata"
+  },
+  "article_components_required": {
+    "SOI": [
+      "alpha_variance",
+      "gating_efficiency",
+      "posterior_gamma",
+      "frontoparietal_plv",
+      "autonomic_surge"
+    ],
+    "RDI": [
+      "temporal_csd",
+      "delta_alpha_ratio",
+      "bifrontal_bicoherence",
+      "hemispheric_asymmetry",
+      "frontotemporal_coherence"
+    ]
+  },
+  "provenance": {
+    "sampling_rate_hz": 256.0,
+    "eeg_unit": "uV",
+    "eeg_columns": [
+      "frontal_L",
+      "frontal_R"
+    ],
+    "channel_locations": {},
+    "reference": "linked_mastoid",
+    "reference_verified": false,
+    "sensor": {
+      "family": "research_rodent",
+      "model": "synthetic_demo",
+      "species": "mouse",
+      "strain": "BTBR_T+Itpr3tf/J"
+    },
+    "recording_context": "awake_observational_research",
+    "subject_id": "btbr-demo-001",
+    "psychiatric_labels": null,
+    "source": "Synthetic demonstration \u2014 not real animal data",
+    "license": "MIT",
+    "excerpt": {
+      "start_s": 0.0,
+      "duration_s": 120.0,
+      "samples": 30720
+    },
+    "notes": "Synthetic EEG with BTBR-characteristic spectral profile: elevated delta/theta, reduced alpha. Generated for pipeline demonstration only. Not derived from any real recording.",
+    "generated_at_utc": "2026-10-15T19:18:41.262177+00:00",
+    "original_eeg_unit": "uV"
+  }
+}

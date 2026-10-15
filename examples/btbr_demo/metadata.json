@@ -1,0 +1,29 @@
+{
+  "sampling_rate_hz": 256.0,
+  "eeg_unit": "uV",
+  "eeg_columns": [
+    "frontal_L",
+    "frontal_R"
+  ],
+  "channel_locations": {},
+  "reference": "linked_mastoid",
+  "reference_verified": false,
+  "sensor": {
+    "family": "research_rodent",
+    "model": "synthetic_demo",
+    "species": "mouse",
+    "strain": "BTBR_T+Itpr3tf/J"
+  },
+  "recording_context": "awake_observational_research",
+  "subject_id": "btbr-demo-001",
+  "psychiatric_labels": null,
+  "source": "Synthetic demonstration \u2014 not real animal data",
+  "license": "MIT",
+  "excerpt": {
+    "start_s": 0.0,
+    "duration_s": 120.0,
+    "samples": 30720
+  },
+  "notes": "Synthetic EEG with BTBR-characteristic spectral profile: elevated delta/theta, reduced alpha. Generated for pipeline demonstration only. Not derived from any real recording.",
+  "generated_at_utc": "2026-10-15T19:18:41.262177+00:00"
+}
