@@ -112,6 +112,17 @@ class OpenNeuroValidationTests(unittest.TestCase):
         self.assertAlmostEqual(checks["flat_psd_integral"], 39.5)
         self.assertAlmostEqual(checks["mixture_delta_alpha_ratio"], 0.25)
 
+    def test_optional_mne_metadata_absent_does_not_break_offline_checks(self):
+        original = validator.version
+
+        def without_mne(name):
+            if name == "mne":
+                raise validator.PackageNotFoundError(name)
+            return original(name)
+
+        with mock.patch.object(validator, "version", side_effect=without_mne):
+            self.assertIsNone(validator.environment_versions()["mne"])
+
     def test_wrong_epoch_accounting_fails(self):
         original = analysis.analyze
 

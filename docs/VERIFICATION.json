@@ -2,7 +2,7 @@
   "recorded_date": "2026-10-17",
   "scope": "Engineering verification; no clinical prediction validation",
   "test_suite": {
-    "tests_per_environment": 91,
+    "tests_per_environment": 92,
     "failures": 0,
     "errors": 0,
     "command": "python -m unittest discover -s tests -v"
@@ -67,7 +67,7 @@
     "result": "passed"
   },
   "checks": [
-    "91 offline tests in each of two dependency environments",
+    "92 offline tests in each of two dependency environments",
     "NumPy 1.24.4 and 2.3.5 spectral consistency",
     "real VitalDB source checksum and 30 accepted epochs in both environments",
     "real BDF ingestion through recording.read_edf and analysis.analyze",
@@ -76,7 +76,8 @@
     "production spectrum partition, ranges and finite required features",
     "synthetic analytical tones, shared boundaries and interpolated endpoints",
     "normal CLI analyze/report feature table exactly matches validator (15 rows, 100 columns)",
-    "pip check in both environments"
+    "pip check in both environments",
+    "92 offline tests also pass with the optional MNE package uninstalled"
   ],
   "ci_status": "The workflow runs minimum/current dependency lanes on relevant main pushes and PRs; consult PR #4 for live remote status.",
   "github_pr": "https://github.com/netanelcyber/psi-qeeg-bis/pull/4",

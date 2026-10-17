@@ -131,6 +131,6 @@
     "psi_qeeg/analysis.py": "9f53a5df3c104219fa2d612b22494d6332e1f9c1042a28039abb36c0e36c38dc",
     "psi_qeeg/signal.py": "5fb0e59fc8974887e49692ff9f70bc63c3b3871c3e235463aff62404df0cbb8d",
     "psi_qeeg/quality.py": "48b73475b4ac08a6141b8fcf7f337c9ff63c1d2b4a721b74d939d7b543b7151e",
-    "validate_real_eeg.py": "8c9ec4fdbc013d3ccf73cdfb939eec33436fbccebb6a39b2f8953a314aceadc1"
+    "validate_real_eeg.py": "e56d4c4bb4cf6b21cf3c1f0faac42afc12a127bba2350625e4b56a62d937c61e"
   }
 }

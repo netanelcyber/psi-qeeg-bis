@@ -7,7 +7,7 @@ make meltdown/psychosis forecasting validation impossible on this recording.
 
 import argparse
 import hashlib
-from importlib.metadata import version
+from importlib.metadata import PackageNotFoundError, version
 import json
 import os
 from pathlib import Path
@@ -25,6 +25,20 @@ from psi_qeeg.signal import BANDS, SPECTRAL_RANGE_HZ, band_integral
 DEFAULT_MANIFEST = Path(__file__).with_name("ds006780_manifest.json")
 EPOCH_S = 4.0
 POLICY = QualityPolicy(amplitude_reference="epoch_mean")
+
+
+def environment_versions():
+    result = {"python": platform.python_version()}
+    for name in ("numpy", "scipy", "pandas", "mne", "psi-qeeg-bis"):
+        try:
+            result[name] = version(name)
+        except PackageNotFoundError:
+            if name != "mne":
+                raise
+            # Offline analytical/provenance tests do not need the optional reader.
+            # Actual BDF ingestion still requires MNE in recording.read_edf.
+            result[name] = None
+    return result
 
 
 def verify_file(path, expected):
@@ -186,8 +200,7 @@ def validate_file(eeg_path, manifest_path, out):
                         "Acquisition reference unverified; no connectivity validation",
                         "EMG quality unknown; gamma power is not established as neural activity",
                         "No BIS-index equivalence, diagnostic accuracy or prediction lead time measured"],
-        "environment": {"python": platform.python_version(),
-                        **{name: version(name) for name in ("numpy", "scipy", "pandas", "mne", "psi-qeeg-bis")}},
+        "environment": environment_versions(),
         "implementation_sha256": {
             **{f"psi_qeeg/{name}.py": hashlib.sha256(Path(recording.__file__).with_name(name + ".py").read_bytes()).hexdigest()
                for name in ("recording", "analysis", "signal", "quality")},
