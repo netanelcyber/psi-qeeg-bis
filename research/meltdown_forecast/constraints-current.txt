@@ -1,0 +1,7 @@
+# Verified Python 3.12 reference environment; update these pins deliberately.
+numpy==2.3.5
+scipy==1.17.0
+pandas==2.2.3
+matplotlib==3.10.8
+mne==1.13.2
+scikit-learn==1.8.0

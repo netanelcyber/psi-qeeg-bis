@@ -1,0 +1,136 @@
+{
+  "validation_status": "passed",
+  "errors": [],
+  "scope": "Engineering validation of real EEG ingestion, QC and spectral extraction only",
+  "dataset": "OpenNeuro ds006780 (SFARI_EEG multi-paradigm)",
+  "dataset_version": "1.0.0",
+  "dataset_git_commit": "799d1502296ba5f74033734e149160c3d333e470",
+  "input_sha256": "8b582451f21969960652931bcb880d55ff0da456b23fc5f6c872d0247ca8cc57",
+  "input_size_bytes": 6970880,
+  "download": {
+    "bucket": "openneuro.org",
+    "key": "ds006780/sub-10003/eeg/sub-10003_task-Restingstate_run-01_eeg.bdf",
+    "version_id": "m3WdGUp1FxE71ZuQgwWDztDdgUfMK2VI",
+    "size_bytes": 6970880,
+    "sha256": "8b582451f21969960652931bcb880d55ff0da456b23fc5f6c872d0247ca8cc57",
+    "checksum_source": "https://github.com/OpenNeuroDatasets/ds006780/blob/799d1502296ba5f74033734e149160c3d333e470/sub-10003/eeg/sub-10003_task-Restingstate_run-01_eeg.bdf"
+  },
+  "selected_channels": [
+    "Fp1",
+    "AF7",
+    "AF3",
+    "F1",
+    "F3",
+    "F5"
+  ],
+  "sampling_rate_hz": 512.0,
+  "samples_per_channel": 31744,
+  "duration_seconds": 62.0,
+  "window_seconds": 4.0,
+  "n_feature_windows": 15,
+  "accepted_epochs": 15,
+  "rejected_epochs": 0,
+  "unused_tail_samples": 1024,
+  "quality_policy": {
+    "min_sqi": 80,
+    "max_abs_uv": 300,
+    "flat_std_uv": 0.05,
+    "emg_warning_db": 40,
+    "amplitude_reference": "epoch_mean"
+  },
+  "spectrum": {
+    "bands_hz": {
+      "delta": [
+        0.5,
+        4
+      ],
+      "theta": [
+        4,
+        8
+      ],
+      "alpha": [
+        8,
+        13
+      ],
+      "beta": [
+        13,
+        30
+      ],
+      "gamma": [
+        30,
+        40
+      ]
+    },
+    "total_range_hz": [
+      0.5,
+      40
+    ],
+    "welch_segment_s": 2,
+    "welch_overlap": 0.5,
+    "detrend": "constant",
+    "scaling": "density",
+    "integration": "trapezoid_with_interpolated_exact_endpoints"
+  },
+  "notch_hz": 60,
+  "quality_warnings": [
+    "emg_quality_unknown"
+  ],
+  "required_spectral_checks_passed": true,
+  "missing_values": "Retained for SQI/EMG, unavailable history, undefined ratios and rejected epochs",
+  "synthetic_comparisons": {
+    "scope": "synthetic numerical fixtures; not patient evidence",
+    "tones": {
+      "delta": {
+        "expected_power_uv2": 50.0,
+        "measured_power_uv2": 49.99999999999998
+      },
+      "theta": {
+        "expected_power_uv2": 50.0,
+        "measured_power_uv2": 49.99999999999997
+      },
+      "alpha": {
+        "expected_power_uv2": 50.0,
+        "measured_power_uv2": 49.99999999999998
+      },
+      "beta": {
+        "expected_power_uv2": 50.0,
+        "measured_power_uv2": 49.99999999999997
+      },
+      "gamma": {
+        "expected_power_uv2": 50.0,
+        "measured_power_uv2": 49.999999999999986
+      }
+    },
+    "mixture_delta_alpha_ratio": 0.24999999999999994,
+    "flat_psd_integral": 39.5
+  },
+  "has_meltdown_event_labels": false,
+  "has_psychosis_onset_labels": false,
+  "forecast_validation": "NOT PERFORMED: no annotated behavioral/psychiatric event onsets",
+  "model_training": "NOT PERFORMED",
+  "clinical_validation": "not_established",
+  "classification": "indeterminate",
+  "SOI": null,
+  "RDI": null,
+  "limitations": [
+    "One recording and six selected EEG channels; not a cohort evaluation",
+    "Acquisition reference unverified; no connectivity validation",
+    "EMG quality unknown; gamma power is not established as neural activity",
+    "No BIS-index equivalence, diagnostic accuracy or prediction lead time measured"
+  ],
+  "environment": {
+    "python": "3.12.14",
+    "numpy": "2.3.5",
+    "scipy": "1.17.0",
+    "pandas": "2.2.3",
+    "mne": "1.13.2",
+    "psi-qeeg-bis": "0.1.0"
+  },
+  "implementation_sha256": {
+    "psi_qeeg/recording.py": "a079d356a78b40ab747f67d85a6d7c0c43c41755464ddaf525de396b6e3eceda",
+    "psi_qeeg/analysis.py": "9f53a5df3c104219fa2d612b22494d6332e1f9c1042a28039abb36c0e36c38dc",
+    "psi_qeeg/signal.py": "5fb0e59fc8974887e49692ff9f70bc63c3b3871c3e235463aff62404df0cbb8d",
+    "psi_qeeg/quality.py": "48b73475b4ac08a6141b8fcf7f337c9ff63c1d2b4a721b74d939d7b543b7151e",
+    "validate_real_eeg.py": "8c9ec4fdbc013d3ccf73cdfb939eec33436fbccebb6a39b2f8953a314aceadc1"
+  }
+}

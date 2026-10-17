@@ -11,12 +11,15 @@ class QualityPolicy:
     max_abs_uv: float = 300
     flat_std_uv: float = 0.05
     emg_warning_db: float = 40
+    amplitude_reference: str = "zero"
 
     def __post_init__(self):
         if not np.isfinite([self.min_sqi, self.max_abs_uv, self.flat_std_uv, self.emg_warning_db]).all():
             raise ValueError("QC thresholds must be finite")
         if not 0 <= self.min_sqi <= 100 or self.max_abs_uv <= 0 or self.flat_std_uv < 0:
             raise ValueError("Invalid SQI, amplitude or flat-signal threshold")
+        if self.amplitude_reference not in {"zero", "epoch_mean"}:
+            raise ValueError("amplitude_reference must be zero or epoch_mean")
 
 
 def assess_epoch(eeg: np.ndarray, frame: pd.DataFrame, policy: QualityPolicy, require_sqi: bool) -> dict:
@@ -24,7 +27,10 @@ def assess_epoch(eeg: np.ndarray, frame: pd.DataFrame, policy: QualityPolicy, re
     if not np.isfinite(eeg).all():
         rejected.append("missing_eeg_samples")
     else:
-        if np.max(abs(eeg)) > policy.max_abs_uv:
+        # BioSemi raw channels can carry a large constant electrode offset.
+        # Optional centering affects this QC check only, never the stored signal.
+        amplitude = eeg - eeg.mean(axis=0) if policy.amplitude_reference == "epoch_mean" else eeg
+        if np.max(abs(amplitude)) > policy.max_abs_uv:
             rejected.append("amplitude_outlier")
         if np.any(np.std(eeg, axis=0) < policy.flat_std_uv):
             rejected.append("flat_signal")

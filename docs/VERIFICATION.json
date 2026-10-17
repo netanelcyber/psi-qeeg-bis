@@ -1,11 +1,31 @@
 {
+  "recorded_date": "2026-10-17",
+  "scope": "Engineering verification; no clinical prediction validation",
   "test_suite": {
-    "tests": 62,
+    "tests_per_environment": 91,
     "failures": 0,
     "errors": 0,
     "command": "python -m unittest discover -s tests -v"
   },
-  "real_data": {
+  "environments": {
+    "numpy1": {
+      "python": "3.11.17",
+      "numpy": "1.24.4",
+      "scipy": "1.11.4",
+      "pandas": "2.0.3",
+      "mne": "1.6.0",
+      "psi-qeeg-bis": "0.1.0"
+    },
+    "numpy2": {
+      "python": "3.12.14",
+      "numpy": "2.3.5",
+      "scipy": "1.17.0",
+      "pandas": "2.2.3",
+      "mne": "1.13.2",
+      "psi-qeeg-bis": "0.1.0"
+    }
+  },
+  "existing_real_data": {
     "source": "VitalDB case 1",
     "start_s": 332,
     "duration_s": 120,
@@ -15,29 +35,50 @@
     "accepted_epochs": 30,
     "composites": "unavailable"
   },
-  "paper_arithmetic": {
-    "SOI": 100,
-    "RDI": "unavailable_missing_components"
+  "openneuro_real_data": {
+    "dataset": "ds006780",
+    "version": "1.0.0",
+    "sha256": "8b582451f21969960652931bcb880d55ff0da456b23fc5f6c872d0247ca8cc57",
+    "channels": 6,
+    "sample_rate_hz": 512,
+    "samples_per_channel": 31744,
+    "duration_s": 62,
+    "complete_epochs": 15,
+    "accepted_epochs": 15,
+    "rejected_epochs": 0,
+    "unused_tail_samples": 1024,
+    "quality_amplitude_reference": "epoch_mean",
+    "emg_quality": "unknown",
+    "clinical_validation": "not_established",
+    "classification": "indeterminate",
+    "SOI": null,
+    "RDI": null,
+    "has_behavioral_onset_labels": false,
+    "forecast_validation": "not_performed"
   },
-  "environment": {
-    "python": "3.12.14",
-    "numpy": "2.3.5",
-    "scipy": "1.17.0",
-    "pandas": "2.2.3",
-    "matplotlib": "3.10.8"
+  "cross_environment_spectrum": {
+    "columns_compared": 84,
+    "absolute_tolerance": 1e-10,
+    "relative_tolerance": 1e-10,
+    "max_absolute_difference": 1.1141310096718371e-11,
+    "max_relative_difference": 1.206003906207972e-12,
+    "accepted_masks_match": true,
+    "missing_value_masks_match": true,
+    "result": "passed"
   },
   "checks": [
-    "editable installation",
-    "62 offline tests",
-    "real EEG source checksum",
-    "real sample clock and spectral outputs",
-    "CLI analyze and report",
-    "article score CLI",
-    "wheel build",
-    "Python source compilation",
-    "visual inspection of scientific EEG figure"
+    "91 offline tests in each of two dependency environments",
+    "NumPy 1.24.4 and 2.3.5 spectral consistency",
+    "real VitalDB source checksum and 30 accepted epochs in both environments",
+    "real BDF ingestion through recording.read_edf and analysis.analyze",
+    "immutable S3 object version plus source snapshot SHA-256 and size",
+    "source BIDS sidecar checksums",
+    "production spectrum partition, ranges and finite required features",
+    "synthetic analytical tones, shared boundaries and interpolated endpoints",
+    "normal CLI analyze/report feature table exactly matches validator (15 rows, 100 columns)",
+    "pip check in both environments"
   ],
-  "ci_status": "workflow configured; remote execution pending repository creation",
-  "optional_edf_status": "implemented; not exercised on a real EDF recording in this session",
-  "github_status": "repository creation pending; connector has no repository-create action"
+  "ci_status": "The workflow runs minimum/current dependency lanes on relevant main pushes and PRs; consult PR #4 for live remote status.",
+  "github_pr": "https://github.com/netanelcyber/psi-qeeg-bis/pull/4",
+  "reference_reports": "docs/real_eeg_validation/{numpy1,numpy2}/real_eeg_validation_report.json"
 }

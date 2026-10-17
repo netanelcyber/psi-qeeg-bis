@@ -3,16 +3,25 @@ name: Validate real public EEG feature pipeline
 on:
   push:
     branches:
+      - main
       - research/real-eeg-validation
     paths:
       - ".github/workflows/real-eeg-validation.yml"
       - "research/meltdown_forecast/**"
+      - "src/psi_qeeg/**"
+      - "tests/**"
+      - "pyproject.toml"
+      - "poetry.lock"
   pull_request:
     branches:
       - main
     paths:
       - ".github/workflows/real-eeg-validation.yml"
       - "research/meltdown_forecast/**"
+      - "src/psi_qeeg/**"
+      - "tests/**"
+      - "pyproject.toml"
+      - "poetry.lock"
   workflow_dispatch:
 
 permissions:
@@ -20,46 +29,40 @@ permissions:
 
 jobs:
   validate:
-    runs-on: ubuntu-latest
-    timeout-minutes: 35
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - python: "3.10"
+            dependencies: min
+          - python: "3.12"
+            dependencies: current
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.12"
-      - name: Install signal processing dependencies
+          python-version: ${{ matrix.python }}
+      - name: Install the project and EDF/BDF reader in a constrained environment
         run: |
           python -m pip install --upgrade pip
-          python -m pip install mne numpy pandas scipy
-          python -m pip install awscli
-      - name: Find one public resting-state EEG file in OpenNeuro ds006780
-        id: dataset
-        shell: bash
+          python -m pip install -c research/meltdown_forecast/constraints-${{ matrix.dependencies }}.txt '.[edf,ml]'
+          python -m pip check
+      - name: Compare production features with analytical synthetic signals
+        run: python -m unittest discover -s tests -v
+      - name: Verify the existing real VitalDB acceptance fixture
+        run: python scripts/verify_example.py
+      - name: Download and validate the pinned real OpenNeuro recording
         run: |
-          set -euo pipefail
-          KEY="$(aws s3api list-objects-v2 --no-sign-request --region us-east-1 --bucket openneuro.org --prefix ds006780/ --query "Contents[?contains(Key, 'Restingstate') && ends_with(Key, '.bdf')].Key" --output json | python -c 'import json,sys; keys=json.load(sys.stdin); print(keys[0] if keys else "")')"
-          if [[ -z "$KEY" || "$KEY" == "None" ]]; then
-            echo "No BDF resting-state file found through S3 listing. Dataset structure may have changed." >&2
-            exit 2
-          fi
-          echo "key=$KEY" >> "$GITHUB_OUTPUT"
-          echo "Selected public file key: $KEY"
-      - name: Download one real EEG recording
-        run: |
-          aws s3 cp --no-sign-request --region us-east-1 "s3://openneuro.org/${{ steps.dataset.outputs.key }}" sample_eeg.bdf
-          test -s sample_eeg.bdf
-          ls -lh sample_eeg.bdf
-      - name: Extract six-channel features and validate
-        env:
-          EEG_FILE: sample_eeg.bdf
-        run: python research/meltdown_forecast/validate_real_eeg.py
-      - name: Upload validation report and features
+          python research/meltdown_forecast/validate_real_eeg.py --download \
+            --eeg-file sample_eeg.bdf --out real_eeg_validation
+          python -m pip freeze > real_eeg_validation/environment.txt
+      - name: Upload engineering validation reports and features
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: real-eeg-feature-validation
-          path: |
-            real_eeg_validation/
-            sample_eeg.bdf
+          name: real-eeg-feature-validation-${{ matrix.dependencies }}
+          path: real_eeg_validation/
           if-no-files-found: warn
-          retention-days: 7
+          retention-days: 14

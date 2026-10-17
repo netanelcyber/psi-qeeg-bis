@@ -6,6 +6,13 @@ The real-data check uses an attributed, public VitalDB case-1 BIS recording. It 
 
 The excerpt was selected for a complete 120-second window with recorded SQI ≥80 and EMG <40 dB. That selection is disclosed in its data card. It is not an estimate of whole-recording signal quality or evidence of diagnostic accuracy. Sensitivity to low quality, missing samples and muscle activity is tested separately with clearly synthetic fixtures.
 
+The [OpenNeuro real-EEG experiment](REAL_EEG_VALIDATION.md) additionally exercises
+the public BDF reader and the same production analyzer on a fixed ds006780
+version-1.0.0 recording. Its input, S3 version, hashes, channel selection, QC
+amplitude reference and spectral settings are recorded. It provides signal
+processing coverage in NumPy 1.24 and 2.x; it supplies no behavioural onset
+labels and does not establish prediction performance or clinical utility.
+
 ## Data needed for psychiatric evaluation
 
 1. Prospective consented observational acquisition with recorded sensor model, scalp sites, reference, sampling rate, impedances, medication context and synchronized events/autonomic signals.
