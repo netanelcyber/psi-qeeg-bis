@@ -1,0 +1,68 @@
+name: Validate real public EEG feature pipeline
+
+on:
+  push:
+    branches:
+      - main
+      - research/real-eeg-validation
+    paths:
+      - ".github/workflows/real-eeg-validation.yml"
+      - "research/meltdown_forecast/**"
+      - "src/psi_qeeg/**"
+      - "tests/**"
+      - "pyproject.toml"
+      - "poetry.lock"
+  pull_request:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/real-eeg-validation.yml"
+      - "research/meltdown_forecast/**"
+      - "src/psi_qeeg/**"
+      - "tests/**"
+      - "pyproject.toml"
+      - "poetry.lock"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - python: "3.10"
+            dependencies: min
+          - python: "3.12"
+            dependencies: current
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - name: Install the project and EDF/BDF reader in a constrained environment
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -c research/meltdown_forecast/constraints-${{ matrix.dependencies }}.txt '.[edf,ml]'
+          python -m pip check
+      - name: Compare production features with analytical synthetic signals
+        run: python -m unittest discover -s tests -v
+      - name: Verify the existing real VitalDB acceptance fixture
+        run: python scripts/verify_example.py
+      - name: Download and validate the pinned real OpenNeuro recording
+        run: |
+          python research/meltdown_forecast/validate_real_eeg.py --download \
+            --eeg-file sample_eeg.bdf --out real_eeg_validation
+          python -m pip freeze > real_eeg_validation/environment.txt
+      - name: Upload engineering validation reports and features
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: real-eeg-feature-validation-${{ matrix.dependencies }}
+          path: real_eeg_validation/
+          if-no-files-found: warn
+          retention-days: 14

@@ -100,6 +100,15 @@ python scripts/verify_example.py
 
 Analytical waveforms used by unit tests are explicitly synthetic test fixtures. They are not presented as real EEG or clinical evidence. CI runs the offline test suite; no subject data or network download is needed.
 
+An additional CI workflow validates the **same production pipeline** on a fixed
+OpenNeuro ds006780 version-1.0.0 BDF recording, with a versioned S3 object and
+SHA-256 checks. It exercises six documented EEG channels, four-second windows,
+the shared 0.5–40 Hz spectral definitions and explicit QC. Synthetic analytical
+comparisons and real-data runs cover NumPy 1.24 and 2.x environments. See the
+[reproducible experiment, results and limitations](docs/REAL_EEG_VALIDATION.md).
+The recording has no labelled meltdown or psychosis onsets: **forecasting and
+clinical prediction remain unvalidated**, with SOI/RDI unavailable.
+
 ## Create the GitHub repository
 
 With GitHub CLI (`gh`) authenticated and your Git author identity configured:

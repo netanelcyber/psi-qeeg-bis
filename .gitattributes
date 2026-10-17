@@ -1,1 +1,6 @@
 /examples/vitaldb_case1/recording.csv text eol=lf
+# Preserve original OpenNeuro sidecar bytes for reproducible SHA-256 checks.
+research/meltdown_forecast/ds006780_channels.tsv -text whitespace=cr-at-eol
+research/meltdown_forecast/ds006780_events.tsv -text whitespace=cr-at-eol
+research/meltdown_forecast/ds006780_eeg.json -text whitespace=cr-at-eol
+research/meltdown_forecast/ds006780_dataset_description.json -text whitespace=cr-at-eol
