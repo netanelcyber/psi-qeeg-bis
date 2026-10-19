@@ -13,6 +13,8 @@ Open-source pipeline that reads EEG from a wearable headband, tracks a **persona
 
 Psychosis profile with a BVC score of 3 entered at minute 4: [`docs/demo_psychosis_bvc.png`](docs/demo_psychosis_bvc.png).
 
+📐 **Full algorithm specification, with equations, pseudocode and the evaluation protocol: [`docs/ALGORITHM.md`](docs/ALGORITHM.md).**
+
 > ⚠️ **Not a medical device.** This is a research prototype for exploring whether EEG can contribute to early warning of autistic meltdowns. Do not use it to make care decisions.
 
 ---

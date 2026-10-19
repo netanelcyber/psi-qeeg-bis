@@ -206,7 +206,8 @@ class Detector:
             state = EARLY_WARNING
             if (alert is None and t - self.early_since >= cfg.early_min_duration_sec
                     and enough_quality and self._can_fire(EARLY_WARNING, t)):
-                when = (f"projected to reach the imminent level in ~{eta:.0f} min"
+                when = (("projected to reach the imminent level within a minute" if eta < 1 else
+                         f"projected to reach the imminent level in ~{eta:.0f} min")
                         if eta is not None and eta <= cfg.horizon_min else
                         f"escalation may follow within ~{cfg.horizon_min:.0f} min")
                 if band in ("moderate", "very_high"):
