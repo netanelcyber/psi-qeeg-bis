@@ -1,0 +1,17 @@
+{
+  "description": "Illustrative synthetic-demo parameters; these loadings and thresholds are not trained or clinically validated",
+  "subject_id": "synthetic-fft-demo",
+  "medication_profile_id": "not_applicable",
+  "loadings": {
+    "F3:log_beta_alpha": 1.0,
+    "F4:log_beta_alpha": 1.0,
+    "C3:log_beta_alpha": 0.8,
+    "C4:log_beta_alpha": 0.8,
+    "FAA": -0.2
+  },
+  "phi": 0.98,
+  "process_variance": 0.01,
+  "drift_variance": 0.00001,
+  "cusum_shift": 1.0,
+  "cusum_threshold": 8.0
+}
