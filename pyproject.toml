@@ -28,3 +28,6 @@ psi-qeeg = "psi_qeeg.cli:main"
 [tool.setuptools.packages.find]
 where = ["src"]
 
+[tool.setuptools.package-data]
+psi_qeeg = ["video_eeg_viewer.html"]
+

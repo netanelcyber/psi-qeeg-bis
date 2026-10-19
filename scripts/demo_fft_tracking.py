@@ -16,12 +16,10 @@ from psi_qeeg.recording import read_recording
 from psi_qeeg.tracking import track_recording
 
 
-def main():
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--out", type=Path, default=Path("outputs/fft_tracking_demo"))
-    parser.add_argument("--bootstrap-draws", type=int, default=1024)
-    args = parser.parse_args()
-    args.out.mkdir(parents=True, exist_ok=True)
+def create_fixture(out):
+    """Write the reusable synthetic raw EEG/metadata/model fixture."""
+    out = Path(out)
+    out.mkdir(parents=True, exist_ok=True)
     fs, seconds = 256, 180
     t = np.arange(fs * seconds) / fs
     rng = np.random.default_rng(42)
@@ -43,17 +41,28 @@ def main():
         eeg.append(sum(components) + rng.normal(size=len(t))*2)
     frame = pd.DataFrame(np.array(eeg).T, columns=channels)
     frame.insert(0, "time_s", t)
-    frame.to_csv(args.out/"recording.csv", index=False)
+    frame.to_csv(out/"recording.csv", index=False)
     metadata = {"subject_id": "synthetic-fft-demo", "medication_profile_id": "not_applicable",
                 "sampling_rate_hz": fs, "eeg_unit": "uV", "eeg_columns": channels,
                 "channel_locations": {ch: ch for ch in channels}, "reference_verified": True,
                 "reference": "synthetic common reference; no physical recording",
                 "source": "synthetic band-limited Gaussian components; seed 42",
                 "recording_context": "synthetic_numerical_demonstration", "psychiatric_labels": None}
-    (args.out/"metadata.json").write_text(json.dumps(metadata, indent=2) + "\n", encoding="utf-8")
+    (out/"metadata.json").write_text(json.dumps(metadata, indent=2) + "\n", encoding="utf-8")
     model_path = Path(__file__).resolve().parents[1]/"examples/fft_tracking/model.json"
     model = json.loads(model_path.read_text(encoding="utf-8"))
-    (args.out/"model.json").write_text(json.dumps(model, indent=2) + "\n", encoding="utf-8")
+    (out/"model.json").write_text(json.dumps(model, indent=2) + "\n", encoding="utf-8")
+    return frame, metadata, model
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--out", type=Path, default=Path("outputs/fft_tracking_demo"))
+    parser.add_argument("--bootstrap-draws", type=int, default=1024)
+    args = parser.parse_args()
+    frame, metadata, model = create_fixture(args.out)
+    t = frame.time_s.to_numpy()
+    modulation = np.clip((t - 100) / 50, 0, 1.5)
     recording = read_recording(args.out/"recording.csv", args.out/"metadata.json")
     trace, summary = track_recording(recording, model, 60, frontal_pair=("F3", "F4"),
                                      draws=args.bootstrap_draws, seed=5, high_z_limit=6)

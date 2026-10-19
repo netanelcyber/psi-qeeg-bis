@@ -81,6 +81,21 @@ def main(argv=None) -> int:
     p.add_argument("--bootstrap-draws", type=int, default=1024)
     p.add_argument("--seed", type=int, default=0)
     p.add_argument("--high-z-limit", type=float, help="Optional research QC threshold on high-band baseline z-score")
+    p = sub.add_parser("video-eeg", help="Replay paired video/EEG with explicit clocks and the project research tracker")
+    p.add_argument("input", type=Path)
+    p.add_argument("--metadata", type=Path, required=True)
+    p.add_argument("--video", type=Path, required=True, help="Local MP4/WebM participant, stimulus or synthetic video")
+    p.add_argument("--sync", type=Path, required=True, help="JSON provenance and at least two video_s/eeg_s clock anchors")
+    p.add_argument("--model", type=Path, required=True)
+    p.add_argument("--baseline-sec", type=float, required=True)
+    p.add_argument("--out", type=Path, required=True)
+    p.add_argument("--events", type=Path, help="Optional CSV with explicit annotation clocks and sources")
+    p.add_argument("--embed-video", action="store_true", help="Embed videos up to 25 MiB in the offline HTML")
+    p.add_argument("--motion-fps", type=float, default=4.0, help="Frame-difference sampling rate; 0 disables it")
+    p.add_argument("--bootstrap-draws", type=int, default=1024)
+    p.add_argument("--seed", type=int, default=0)
+    p.add_argument("--frontal", nargs=2, metavar=("LEFT", "RIGHT"))
+    p.add_argument("--high-z-limit", type=float)
     args = parser.parse_args(argv)
     try:
         if args.command == "analyze":
@@ -161,6 +176,18 @@ def main(argv=None) -> int:
             _write_json(summary, args.out / "tracking.json")
             print(json.dumps({k: summary[k] for k in ("use", "monitoring_windows", "measurement_updates",
                                                      "prediction_only_windows", "change_flag_windows")}))
+        elif args.command == "video-eeg":
+            from .recording import read_recording
+            from .video_eeg import write_video_eeg_report
+            recording = read_recording(args.input, args.metadata)
+            summary = write_video_eeg_report(
+                recording, json.loads(args.model.read_text(encoding="utf-8")), args.baseline_sec,
+                args.video, json.loads(args.sync.read_text(encoding="utf-8")), args.out,
+                events=args.events, embed_video=args.embed_video, motion_fps=args.motion_fps,
+                draws=args.bootstrap_draws, seed=args.seed,
+                frontal_pair=tuple(args.frontal) if args.frontal else None, high_z_limit=args.high_z_limit)
+            print(json.dumps({"use": summary["use"], "monitoring_windows": summary["monitoring_windows"],
+                              "report": str(args.out / "report.html")}))
     except (ValueError, OSError, KeyError) as exc:
         print(f"Error: {exc}", file=sys.stderr)
         return 2

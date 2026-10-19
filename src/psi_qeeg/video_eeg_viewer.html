@@ -1,0 +1,990 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; media-src 'self' file: data: blob:; img-src data: blob:; connect-src 'none'"
+    />
+    <title>PSI · Video + EEG research replay</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        font-family:
+          system-ui,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          sans-serif;
+        background: #0b1220;
+        color: #e9eef7;
+        --muted: #9aadc4;
+        --line: #27364b;
+        --panel: #111e30;
+        --cyan: #5de0cf;
+        --blue: #76aaff;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        padding: 30px;
+        max-width: 1560px;
+        margin-inline: auto;
+      }
+      header {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 20px;
+      }
+      .eyebrow {
+        color: var(--cyan);
+        font-size: 11px;
+        letter-spacing: 2px;
+        font-weight: 700;
+      }
+      h1 {
+        font-size: 32px;
+        margin: 8px 0 6px;
+        letter-spacing: -1px;
+      }
+      p {
+        color: var(--muted);
+        margin: 0;
+        line-height: 1.55;
+        font-size: 13px;
+      }
+      .badge {
+        border: 1px solid #716b39;
+        background: #342e1b;
+        color: #ffe091;
+        font-size: 11px;
+        letter-spacing: 1px;
+        border-radius: 30px;
+        padding: 10px 14px;
+        white-space: nowrap;
+      }
+      .note {
+        margin: 18px 0;
+        padding: 12px 16px;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        background: #101b2a;
+        color: #c3d0e1;
+        font-size: 12px;
+      }
+      .controls {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding: 14px 0 22px;
+      }
+      .controls input {
+        flex: 1;
+        accent-color: var(--cyan);
+      }
+      button,
+      select {
+        font: inherit;
+        background: #1e3048;
+        border: 1px solid #3a526d;
+        border-radius: 7px;
+        color: #e9eef7;
+        padding: 9px 14px;
+        cursor: pointer;
+      }
+      button:hover {
+        background: #294460;
+      }
+      button.primary {
+        background: var(--cyan);
+        color: #0b1220;
+        font-weight: 700;
+        border: 0;
+        min-width: 80px;
+      }
+      .mono {
+        font-variant-numeric: tabular-nums;
+        font-family: ui-monospace, monospace;
+      }
+      .controls output {
+        font-size: 12px;
+        min-width: 150px;
+        color: #c3d0e1;
+      }
+      .top {
+        display: grid;
+        grid-template-columns: 0.9fr 1.1fr;
+        gap: 18px;
+      }
+      .card {
+        background: var(--panel);
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        overflow: hidden;
+      }
+      .cardhead {
+        padding: 13px 16px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 12px;
+        font-weight: 650;
+        border-bottom: 1px solid var(--line);
+      }
+      .subtle {
+        color: var(--muted);
+        font-size: 10px;
+        font-weight: 450;
+      }
+      video {
+        width: 100%;
+        aspect-ratio: 16/9;
+        background: #090e18;
+        display: block;
+      }
+      .metrics {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        padding: 16px;
+        gap: 10px;
+      }
+      .metric label {
+        display: block;
+        color: var(--muted);
+        font-size: 10px;
+        letter-spacing: 0.6px;
+        margin-bottom: 7px;
+      }
+      .metric strong {
+        font-size: 23px;
+        font-weight: 600;
+        letter-spacing: -0.5px;
+      }
+      .metric small {
+        display: block;
+        color: var(--muted);
+        font-size: 10px;
+        margin-top: 5px;
+      }
+      .status {
+        padding: 0 16px 16px;
+        color: var(--cyan);
+        font-size: 12px;
+        min-height: 32px;
+      }
+      .plot {
+        width: 100%;
+        display: block;
+      }
+      .plots {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 18px;
+        margin-top: 18px;
+      }
+      .wide {
+        margin-top: 18px;
+      }
+      .legend {
+        padding: 10px 16px 14px;
+        color: var(--muted);
+        font-size: 11px;
+        line-height: 1.5;
+      }
+      .events {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        padding: 14px 16px;
+      }
+      .events button {
+        font-size: 11px;
+        padding: 7px 10px;
+      }
+      .bottom {
+        margin-top: 18px;
+        display: grid;
+        grid-template-columns: 1.3fr 0.7fr;
+        gap: 18px;
+      }
+      .provenance {
+        padding: 14px 16px;
+        overflow-wrap: anywhere;
+        font-size: 11px;
+        color: var(--muted);
+        line-height: 1.8;
+      }
+      a {
+        color: var(--cyan);
+      }
+      #error {
+        display: none;
+        background: #442330;
+        border: 1px solid #bc6f8a;
+        color: #ffccdc;
+        padding: 16px;
+        border-radius: 10px;
+        margin-bottom: 15px;
+      }
+      canvas {
+        touch-action: pan-y;
+      }
+      .hint {
+        font-size: 11px;
+        color: var(--muted);
+        padding-bottom: 18px;
+      }
+      details {
+        padding: 14px 16px;
+        font-size: 12px;
+        color: var(--muted);
+      }
+      pre {
+        white-space: pre-wrap;
+        font-size: 10px;
+        max-height: 300px;
+        overflow: auto;
+      }
+      .cursorLabel {
+        color: var(--cyan);
+      }
+      @media (max-width: 900px) {
+        header {
+          flex-wrap: wrap;
+        }
+        body {
+          padding: 16px;
+        }
+        .top,
+        .plots,
+        .bottom {
+          grid-template-columns: 1fr;
+        }
+        .badge {
+          font-size: 9px;
+          padding: 8px;
+        }
+        h1 {
+          font-size: 26px;
+        }
+        .controls {
+          flex-wrap: wrap;
+        }
+        .controls input {
+          min-width: 160px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="error" role="alert"></div>
+    <header>
+      <div>
+        <div class="eyebrow">PSI RESEARCH WORKBENCH / SYNCHRONIZED REPLAY</div>
+        <h1>Video + EEG</h1>
+        <p id="subtitle"></p>
+      </div>
+      <div class="badge" id="badge"></div>
+    </header>
+    <div class="note" id="note"></div>
+    <div class="controls">
+      <button id="play" class="primary" type="button">Play</button
+      ><input
+        id="seek"
+        type="range"
+        step="0.01"
+        aria-label="Video replay time"
+      /><output id="clock" class="mono"></output
+      ><select id="speed" aria-label="Playback speed">
+        <option value="1">1× speed</option>
+        <option value="2">2× speed</option>
+        <option value="4">4× speed</option>
+        <option value="8">8× speed</option>
+      </select>
+    </div>
+    <div class="top">
+      <section class="card">
+        <div class="cardhead">
+          <span id="videoTitle">Video</span
+          ><span class="subtle" id="alignment"></span>
+        </div>
+        <video
+          id="video"
+          controls
+          playsinline
+          preload="metadata"
+          aria-label="Synchronized source video"
+        ></video>
+        <div class="metrics">
+          <div class="metric">
+            <label>LATENT STATE</label><strong id="state">—</strong
+            ><small id="stateSd">Awaiting complete window</small>
+          </div>
+          <div class="metric">
+            <label>CUSUM</label><strong id="cusum">—</strong
+            ><small id="flag">Illustrative threshold</small>
+          </div>
+          <div class="metric">
+            <label>EEG CLOCK</label><strong id="eegTime" class="mono">—</strong
+            ><small>seconds, native recording clock</small>
+          </div>
+        </div>
+        <div class="status" id="status"></div>
+      </section>
+      <section class="card">
+        <div class="cardhead">
+          <span>Raw EEG · trailing 8 seconds</span
+          ><span class="subtle" id="rawUnits"></span>
+        </div>
+        <canvas
+          class="plot"
+          id="raw"
+          height="245"
+          aria-label="EEG waveforms"
+        ></canvas>
+        <div class="cardhead">
+          <span>Latest complete-window Welch spectrum</span
+          ><span class="subtle">Mean of measured channels · dB µV²/Hz</span>
+        </div>
+        <canvas
+          class="plot"
+          id="spectrum"
+          height="130"
+          aria-label="Welch spectrum"
+        ></canvas>
+        <div class="legend">
+          Waveforms use min–max display blocks and break at missing samples.
+          FFT/Kalman calculations use the original sampling rate.
+        </div>
+      </section>
+    </div>
+    <section class="card wide">
+      <div class="cardhead">
+        <span>Welch spectrogram</span
+        ><span class="subtle"
+          >Recording overview · dark columns = unavailable / rejected</span
+        >
+      </div>
+      <canvas
+        class="plot"
+        id="spectrogram"
+        height="140"
+        aria-label="Welch spectrogram timeline"
+      ></canvas>
+    </section>
+    <div class="plots">
+      <section class="card">
+        <div class="cardhead">
+          <span>Kalman state + model interval</span
+          ><span class="subtle">State estimate ± 1.96 model SD</span>
+        </div>
+        <canvas
+          class="plot"
+          id="latent"
+          height="175"
+          aria-label="Kalman state timeline"
+        ></canvas>
+        <div class="legend">
+          Estimates become available at window ends. An interval is conditional
+          on the model; clinical coverage is unvalidated.
+        </div>
+      </section>
+      <section class="card">
+        <div class="cardhead">
+          <span>Innovation CUSUM</span
+          ><span class="subtle" id="threshold"></span>
+        </div>
+        <canvas
+          class="plot"
+          id="change"
+          height="175"
+          aria-label="CUSUM timeline"
+        ></canvas>
+        <div class="legend">
+          Threshold crossings are statistical change flags. Prediction-only
+          windows reset CUSUM.
+        </div>
+      </section>
+    </div>
+    <section class="card wide">
+      <div class="cardhead">
+        <span>Video frame difference</span
+        ><span class="subtle"
+          >Independent scene-change descriptor · not used as a Kalman
+          measurement</span
+        >
+      </div>
+      <canvas
+        class="plot"
+        id="motion"
+        height="110"
+        aria-label="Video frame-difference timeline"
+      ></canvas>
+      <div class="legend">
+        Changes can reflect movement, lighting or camera effects. No emotion,
+        agitation, seizure or psychiatric inference is made from the video.
+      </div>
+    </section>
+    <div class="bottom">
+      <section class="card">
+        <div class="cardhead">
+          <span>Supplied event annotations</span
+          ><span class="subtle">Click to seek · sources retained</span>
+        </div>
+        <div class="events" id="events"></div>
+        <div class="legend" id="eventNow"></div>
+      </section>
+      <section class="card">
+        <div class="cardhead">Synchronization & provenance</div>
+        <div class="provenance" id="provenance"></div>
+        <details>
+          <summary>View clock mapping and data sources</summary>
+          <pre id="manifest"></pre>
+        </details>
+      </section>
+    </div>
+    <p class="hint" style="margin-top: 18px">
+      Offline review of a recorded session. The overview includes later recorded
+      data; model estimates use only the declared baseline and past EEG windows.
+      This replay is not a clinically validated detector.
+    </p>
+    <!-- prettier-ignore -->
+    <script type="application/json" id="payload">__VIDEO_EEG_PAYLOAD__</script>
+    <script>
+      "use strict";
+      const D = JSON.parse(document.getElementById("payload").textContent),
+        $ = (id) => document.getElementById(id);
+      const V = D.summary.video_eeg,
+        C = V.synchronization,
+        [vStart, vEnd] = V.common_video_interval_s;
+      const video = $("video"),
+        seek = $("seek"),
+        trace = D.trace,
+        ends = trace.map((r) => r.window_end_s),
+        spec = D.spectrogram;
+      const toEEG = (v) => C.offset_s + C.rate * v,
+        toVideo = (t) => (t - C.offset_s) / C.rate;
+      const start = toEEG(vStart),
+        finish = toEEG(vEnd),
+        total = finish - start;
+      const plotTrace = trace.filter(
+        (r) => r.window_end_s >= start && r.window_end_s <= finish,
+      );
+      const latentLo = plotTrace.reduce(
+          (a, r) => Math.min(a, r.latent_state - 1.96 * r.state_sd),
+          -1,
+        ),
+        latentHi = plotTrace.reduce(
+          (a, r) => Math.max(a, r.latent_state + 1.96 * r.state_sd),
+          1,
+        );
+      const cusumHi = plotTrace.reduce(
+          (a, r) => Math.max(a, r.cusum),
+          D.summary.effective_model.cusum_threshold * 1.2,
+        ),
+        motionHi = D.motion.reduce(
+          (a, r) => Math.max(a, r.frame_difference || 0),
+          0.01,
+        );
+      const synthetic =
+        C.manifest.video_kind === "synthetic" ||
+        String(D.summary.provenance.recording_context || "").startsWith(
+          "synthetic",
+        );
+      const number = (x, n = 2) => (x == null ? "—" : Number(x).toFixed(n));
+      const showError = (message) => {
+        $("error").style.display = "block";
+        $("error").textContent = message;
+        video.pause();
+      };
+      const lastIndex = (array, value) => {
+        let lo = 0,
+          hi = array.length;
+        while (lo < hi) {
+          const m = (lo + hi) >> 1;
+          if (array[m] <= value + 1e-8) lo = m + 1;
+          else hi = m;
+        }
+        return lo - 1;
+      };
+      const clamp = (value, a, b) => Math.min(b, Math.max(a, value));
+      function go(v) {
+        video.currentTime = clamp(v, vStart, Math.max(vStart, vEnd - 0.001));
+        render();
+      }
+      $("subtitle").textContent =
+        D.summary.subject_id +
+        " · " +
+        D.channels.join(" / ") +
+        " · " +
+        D.raw.original_fs +
+        " Hz · " +
+        number(vEnd - vStart, 1) +
+        " s common coverage";
+      $("badge").textContent = synthetic
+        ? "SYNTHETIC DEMONSTRATION"
+        : "RESEARCH REPLAY";
+      $("note").textContent = synthetic
+        ? "Synthetic EEG and a scripted avatar video share a declared clock. Scripted movements/events are engineering fixtures, not patient observations or clinical labels."
+        : "EEG and video are aligned using caller-supplied anchors. The pairing, clock uncertainty and annotations require independent verification before scientific interpretation.";
+      $("videoTitle").textContent = {
+        synthetic: "Scripted avatar video",
+        participant: "Participant video (caller supplied)",
+        stimulus: "Stimulus video (not participant behavior)",
+        eeg_screen_capture: "EEG screen capture (raw EEG supplied separately)",
+      }[C.manifest.video_kind];
+      $("alignment").textContent =
+        "Declared sync ± " + number(C.uncertainty_ms, 1) + " ms";
+      $("rawUnits").textContent =
+        "µV · " + D.raw.block_samples + "-sample display blocks";
+      $("threshold").textContent =
+        "Illustrative h = " + D.summary.effective_model.cusum_threshold;
+      $("manifest").textContent = JSON.stringify(
+        {
+          video: V.video,
+          synchronization: C,
+          alignment_status: V.alignment_status,
+          EEG_source: D.summary.provenance.source,
+        },
+        null,
+        2,
+      );
+      $("provenance").textContent =
+        "EEG = " +
+        number(C.offset_s, 5) +
+        " + " +
+        number(C.rate, 8) +
+        " × video seconds. Anchor fit error: " +
+        number(C.max_anchor_error_ms, 3) +
+        " ms. Status: " +
+        V.alignment_status +
+        ". Video source: " +
+        C.manifest.source +
+        ". License: " +
+        C.manifest.license +
+        ".";
+      seek.min = vStart;
+      seek.max = vEnd;
+      seek.value = vStart;
+      if (D.media.base64) {
+        const bytes = Uint8Array.from(atob(D.media.base64), (c) =>
+          c.charCodeAt(0),
+        );
+        video.src = URL.createObjectURL(
+          new Blob([bytes], { type: D.media.mime }),
+        );
+      } else video.src = D.media.relative_path;
+      for (const e of V.events) {
+        const b = document.createElement("button");
+        b.type = "button";
+        b.textContent = e.label + " · " + number(toVideo(e.start_s), 1) + " s";
+        b.title = "Annotation source: " + e.source;
+        b.onclick = () => go(toVideo(e.start_s));
+        $("events").appendChild(b);
+      }
+      if (!V.events.length)
+        $("events").textContent = "No behavioral/event labels supplied.";
+      $("play").onclick = async () => {
+        if (video.paused) {
+          if (video.currentTime >= vEnd - 0.02) go(vStart);
+          try {
+            await video.play();
+          } catch (e) {
+            showError("Video playback failed: " + e.message);
+          }
+        } else video.pause();
+      };
+      seek.addEventListener("input", () => go(Number(seek.value)));
+      $("speed").onchange = () => {
+        video.playbackRate = Number($("speed").value);
+      };
+      video.addEventListener("loadedmetadata", () => {
+        if (Math.abs(video.duration - V.video.duration_s) > 0.5) {
+          showError(
+            "The decoded video duration differs from the inspected media; verify the clip and synchronization anchors.",
+          );
+          return;
+        }
+        go(vStart);
+      });
+      video.addEventListener("error", () =>
+        showError(
+          "The video could not be played. Use an MP4/WebM codec supported by this browser.",
+        ),
+      );
+      video.addEventListener("play", () => {
+        $("play").textContent = "Pause";
+      });
+      video.addEventListener("pause", () => {
+        $("play").textContent = "Play";
+      });
+      video.addEventListener("timeupdate", () => {
+        if (video.currentTime >= vEnd) video.pause();
+        render();
+      });
+      video.addEventListener("seeked", render);
+      const COLORS = ["#5de0cf", "#76aaff", "#ffc870", "#ceabff"];
+      function canvas(id) {
+        const c = $(id),
+          ratio = window.devicePixelRatio || 1,
+          w = c.clientWidth || 600,
+          h = Number(
+            c.dataset.cssHeight ||
+              (c.dataset.cssHeight = c.getAttribute("height")),
+          );
+        c.style.height = h + "px";
+        if (
+          c.width !== Math.round(w * ratio) ||
+          c.height !== Math.round(h * ratio)
+        ) {
+          c.width = Math.round(w * ratio);
+          c.height = Math.round(h * ratio);
+        }
+        const ctx = c.getContext("2d");
+        ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
+        ctx.clearRect(0, 0, w, h);
+        ctx.font = "10px system-ui";
+        return { ctx, w, h };
+      }
+      function text(ctx, value, x, y, color = "#9aadc4") {
+        ctx.fillStyle = color;
+        ctx.fillText(value, x, y);
+      }
+      function cursor(ctx, w, h, t, left = 45, right = 15) {
+        const x = left + ((t - start) / total) * (w - left - right);
+        ctx.strokeStyle = "#5de0cf";
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(x, 8);
+        ctx.lineTo(x, h - 23);
+        ctx.stroke();
+      }
+      function axes(ctx, w, h, lo, hi, timeline = true) {
+        const l = 45,
+          r = 15,
+          top = 12,
+          bottom = h - 25;
+        ctx.strokeStyle = "#27364b";
+        ctx.lineWidth = 1;
+        for (let i = 0; i <= 3; i++) {
+          const y = top + ((bottom - top) * i) / 3;
+          ctx.beginPath();
+          ctx.moveTo(l, y);
+          ctx.lineTo(w - r, y);
+          ctx.stroke();
+          text(
+            ctx,
+            number(hi - ((hi - lo) * i) / 3, hi - lo < 0.1 ? 3 : 1),
+            4,
+            y + 3,
+          );
+        }
+        if (timeline) {
+          for (let i = 0; i <= 4; i++) {
+            const x = l + ((w - l - r) * i) / 4;
+            text(ctx, number(start + (total * i) / 4, 0), x - 9, h - 7);
+          }
+          text(ctx, "EEG s", w - 44, 10);
+        }
+        return {
+          x: (t) => l + ((t - start) / total) * (w - l - r),
+          y: (v) => bottom - ((v - lo) / (hi - lo)) * (bottom - top),
+          l,
+          r,
+          top,
+          bottom,
+        };
+      }
+      function series(ctx, points, x, y, color) {
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        let begun = false;
+        for (const [a, b] of points) {
+          if (b == null || !Number.isFinite(b)) {
+            begun = false;
+            continue;
+          }
+          if (!begun) {
+            ctx.moveTo(x(a), y(b));
+            begun = true;
+          } else ctx.lineTo(x(a), y(b));
+        }
+        ctx.stroke();
+      }
+      function drawRaw(t) {
+        const { ctx, w, h } = canvas("raw"),
+          l = 46,
+          r = 12,
+          top = 15,
+          bottom = h - 24,
+          a = Math.max(D.eeg_start_s, t - 8),
+          b = Math.max(a + 0.1, t),
+          span = (bottom - top) / D.channels.length;
+        const raw = D.raw,
+          first = Math.max(0, lastIndex(raw.end_s, a)),
+          last = lastIndex(raw.end_s, t);
+        for (let ch = 0; ch < D.channels.length; ch++) {
+          const mid = top + span * (ch + 0.5);
+          ctx.strokeStyle = "#27364b";
+          ctx.beginPath();
+          ctx.moveTo(l, mid);
+          ctx.lineTo(w - r, mid);
+          ctx.stroke();
+          text(ctx, D.channels[ch], 7, mid + 3, COLORS[ch % 4]);
+          ctx.save();
+          ctx.beginPath();
+          ctx.rect(l, top + span * ch, w - l - r, span);
+          ctx.clip();
+          const points = [];
+          for (let i = first; i <= last; i++) {
+            if (i < 0 || raw.end_s[i] < a) continue;
+            const x = l + ((raw.end_s[i] - a) / (b - a)) * (w - l - r),
+              mn = raw.min_uv[i][ch],
+              mx = raw.max_uv[i][ch];
+            points.push([
+              raw.end_s[i],
+              mn == null || mx == null ? null : (mn + mx) / 2,
+            ]);
+            if (mn != null && mx != null) {
+              ctx.strokeStyle = COLORS[ch % 4];
+              ctx.beginPath();
+              ctx.moveTo(x, mid - (mn * span) / 200);
+              ctx.lineTo(x, mid - (mx * span) / 200);
+              ctx.stroke();
+            }
+          }
+          series(
+            ctx,
+            points,
+            (v) => l + ((v - a) / (b - a)) * (w - l - r),
+            (v) => mid - (v * span) / 200,
+            COLORS[ch % 4],
+          );
+          ctx.restore();
+        }
+        text(ctx, number(a, 2) + " s", l, h - 7);
+        text(ctx, number(b, 2) + " s", w - 65, h - 7);
+        text(ctx, "±100 µV / channel", w - 130, 12);
+      }
+      const allSpec = spec.db_uv2_hz.filter(Boolean).flat(),
+        sorted = allSpec.slice().sort((a, b) => a - b);
+      const floor = sorted.length
+          ? sorted[Math.floor(sorted.length * 0.05)]
+          : -30,
+        ceiling = sorted.length ? sorted[Math.floor(sorted.length * 0.95)] : 20;
+      function heat(z) {
+        const a = clamp((z - floor) / Math.max(1, ceiling - floor), 0, 1);
+        return (
+          "rgb(" +
+          Math.round(22 + 215 * a) +
+          "," +
+          Math.round(38 + 132 * Math.sin(a * Math.PI * 0.8)) +
+          "," +
+          Math.round(70 + 115 * (1 - a)) +
+          ")"
+        );
+      }
+      function drawSpec(t) {
+        const { ctx, w, h } = canvas("spectrogram"),
+          l = 45,
+          r = 15,
+          top = 10,
+          bottom = h - 25;
+        for (let i = 0; i < spec.end_s.length; i++) {
+          const end = spec.end_s[i],
+            begin = end - D.summary.noise_calibration.config.hop_s;
+          if (end < start || begin > finish) continue;
+          const x = l + ((begin - start) / total) * (w - l - r),
+            bw = Math.max(
+              1,
+              ((w - l - r) * D.summary.noise_calibration.config.hop_s) / total,
+            );
+          if (!spec.db_uv2_hz[i]) continue;
+          for (let k = 0; k < spec.frequencies_hz.length; k++) {
+            const f = spec.frequencies_hz[k],
+              y = bottom - (f / 45) * (bottom - top);
+            ctx.fillStyle = heat(spec.db_uv2_hz[i][k]);
+            ctx.fillRect(
+              x,
+              y,
+              bw + 1,
+              (bottom - top) / spec.frequencies_hz.length + 1,
+            );
+          }
+        }
+        text(ctx, "45 Hz", 3, 15);
+        text(ctx, "0 Hz", 6, bottom);
+        for (let i = 0; i <= 4; i++)
+          text(
+            ctx,
+            number(start + (total * i) / 4, 0),
+            l + ((w - l - r) * i) / 4 - 9,
+            h - 7,
+          );
+        cursor(ctx, w, h, t);
+      }
+      function drawPSD(t) {
+        const { ctx, w, h } = canvas("spectrum"),
+          idx = lastIndex(spec.end_s, t),
+          p = idx >= 0 ? spec.db_uv2_hz[idx] : null;
+        if (!p) {
+          text(
+            ctx,
+            "No accepted, completed spectral window at this time",
+            45,
+            55,
+          );
+          return;
+        }
+        const ax = axes(ctx, w, h, floor - 5, ceiling + 5, false),
+          x = (f) => ax.l + (f / 45) * (w - ax.l - ax.r);
+        series(
+          ctx,
+          spec.frequencies_hz.map((f, i) => [f, p[i]]),
+          x,
+          ax.y,
+          "#76aaff",
+        );
+        for (const f of [4, 8, 13, 30, 45])
+          text(ctx, String(f) + " Hz", x(f) - 13, h - 7);
+      }
+      function drawTraces(t) {
+        let { ctx, w, h } = canvas("latent");
+        let lo = latentLo,
+          hi = latentHi;
+        let ax = axes(ctx, w, h, lo, hi);
+        ctx.fillStyle = "#24405e";
+        ctx.beginPath();
+        plotTrace.forEach((r, i) => {
+          const x = ax.x(r.window_end_s),
+            y = ax.y(r.latent_state + 1.96 * r.state_sd);
+          if (i) ctx.lineTo(x, y);
+          else ctx.moveTo(x, y);
+        });
+        for (const r of plotTrace.slice().reverse())
+          ctx.lineTo(
+            ax.x(r.window_end_s),
+            ax.y(r.latent_state - 1.96 * r.state_sd),
+          );
+        ctx.closePath();
+        ctx.fill();
+        series(
+          ctx,
+          plotTrace.map((r) => [r.window_end_s, r.latent_state]),
+          ax.x,
+          ax.y,
+          "#76aaff",
+        );
+        for (const r of plotTrace.filter((r) => !r.measurement_used)) {
+          ctx.fillStyle = "#ffc870";
+          ctx.beginPath();
+          ctx.arc(
+            ax.x(r.window_end_s),
+            ax.y(r.latent_state),
+            2,
+            0,
+            Math.PI * 2,
+          );
+          ctx.fill();
+        }
+        cursor(ctx, w, h, t);
+        ({ ctx, w, h } = canvas("change"));
+        const threshold = D.summary.effective_model.cusum_threshold;
+        ax = axes(ctx, w, h, 0, cusumHi);
+        ctx.strokeStyle = "#97a8be";
+        ctx.setLineDash([4, 4]);
+        ctx.beginPath();
+        ctx.moveTo(ax.l, ax.y(threshold));
+        ctx.lineTo(w - ax.r, ax.y(threshold));
+        ctx.stroke();
+        ctx.setLineDash([]);
+        series(
+          ctx,
+          plotTrace.map((r) => [r.window_end_s, r.cusum]),
+          ax.x,
+          ax.y,
+          "#ceabff",
+        );
+        cursor(ctx, w, h, t);
+        ({ ctx, w, h } = canvas("motion"));
+        ax = axes(ctx, w, h, 0, motionHi);
+        series(
+          ctx,
+          D.motion.map((r) => [r.eeg_s, r.frame_difference]),
+          ax.x,
+          ax.y,
+          "#5de0cf",
+        );
+        if (!D.motion.length) text(ctx, "Motion extraction disabled", 65, 36);
+        cursor(ctx, w, h, t);
+      }
+      function render() {
+        const v = clamp(
+            Number.isFinite(video.currentTime) ? video.currentTime : vStart,
+            vStart,
+            vEnd,
+          ),
+          t = toEEG(v);
+        seek.value = v;
+        $("clock").textContent =
+          number(v, 2) + " / " + number(vEnd, 2) + " video s";
+        $("eegTime").textContent = number(t, 2);
+        const idx = lastIndex(ends, t),
+          row = idx >= 0 ? trace[idx] : null;
+        $("state").textContent = row ? number(row.latent_state) : "—";
+        $("stateSd").textContent = row
+          ? "Model SD " + number(row.state_sd)
+          : "Calibration / awaiting complete window";
+        $("cusum").textContent = row ? number(row.cusum) : "—";
+        $("flag").textContent =
+          row && row.change_flag
+            ? "Statistical change flag"
+            : "No threshold crossing";
+        $("status").textContent = row
+          ? row.measurement_used
+            ? "Measurement update · EEG window ended " +
+              number(row.window_end_s, 2) +
+              " s"
+            : "Prediction only · " +
+              row.quality_reasons.replaceAll("_", " ").replaceAll(";", " · ")
+          : "Declared calibration prefix / no state estimate yet";
+        $("status").style.color =
+          row && !row.measurement_used ? "#ffc870" : "#5de0cf";
+        const current = V.events.filter((e) => e.start_s <= t && t <= e.end_s);
+        $("eventNow").textContent = current.length
+          ? current.map((e) => e.label + " — source: " + e.source).join(" | ")
+          : "No supplied annotation active at the cursor.";
+        drawRaw(t);
+        drawPSD(t);
+        drawSpec(t);
+        drawTraces(t);
+      }
+      for (const id of ["latent", "change", "motion", "spectrogram"])
+        $(id).addEventListener("click", (event) => {
+          const r = $(id).getBoundingClientRect(),
+            fraction = clamp(
+              (event.clientX - r.left - 45) / (r.width - 60),
+              0,
+              1,
+            );
+          go(toVideo(start + fraction * total));
+        });
+      window.addEventListener("resize", render);
+      let lastPaint = 0;
+      function animate(now) {
+        if (!video.paused && now - lastPaint > 80) {
+          render();
+          lastPaint = now;
+        }
+        requestAnimationFrame(animate);
+      }
+      requestAnimationFrame(animate);
+      render();
+    </script>
+  </body>
+</html>

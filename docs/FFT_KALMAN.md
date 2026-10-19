@@ -185,6 +185,10 @@ diagnosis or ability to predict a meltdown/psychotic episode is established.
 
 ## Python API and spectrogram access
 
+For synchronized video playback, see [the video-EEG demonstration](VIDEO_EEG.md).
+It reuses this tracker and keeps video frame differences separate from its
+measurement model.
+
 ```python
 from psi_qeeg.spectral_tracking import (
     SpectralConfig, SpectralExtractor, fit_fft_noise, KalmanCUSUM,
