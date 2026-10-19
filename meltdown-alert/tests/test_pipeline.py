@@ -125,3 +125,21 @@ def test_region_lookup_and_unknown():
     assert region_of("AF8") == ("right frontal", "R")
     assert region_of("X1") == ("X1", "?")
     assert "no channel-level onset" in describe(None)
+
+
+# --- state-space (Kalman) model -----------------------------------------------
+from eeg_alert.kalman import apply_kalman_defaults, spectral_variance, welch_dof  # noqa: E402
+
+
+def test_fft_noise_theory():
+    m, k = welch_dof(Config())
+    assert m == 3 and k["beta"] > k["alpha"] > 0
+    v = spectral_variance(Config())
+    assert v["frontal_asymmetry"] > v["beta_alpha_ratio"] > v["muscle_tension"]
+
+
+def test_kalman_model_warns_before_events():
+    cfg = apply_kalman_defaults(Config())
+    steps = list(run(SyntheticEEG(cfg, seed=7).stream(), cfg))
+    res = evaluate(steps, [22 * 60, 42 * 60], cfg.horizon_min)
+    assert res["detected_early"] == 2 and res["false_alarms"] == 0

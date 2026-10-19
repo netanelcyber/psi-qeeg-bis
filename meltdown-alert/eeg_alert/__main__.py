@@ -55,6 +55,9 @@ def main() -> None:
                                baseline_sec=a.baseline_sec, cusum_k=a.cusum_k, cusum_h=a.cusum_h),
                         a.profile)
     cfg.model = a.model
+    if a.model == "kalman":
+        from .kalman import apply_kalman_defaults
+        apply_kalman_defaults(cfg, keep_k=a.cusum_k != 0.3, keep_h=a.cusum_h != 80.0)
     if a.horizon_min is not None:
         cfg.horizon_min = a.horizon_min
     context = None

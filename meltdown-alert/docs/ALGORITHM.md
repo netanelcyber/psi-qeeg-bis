@@ -252,7 +252,7 @@ These numbers show that the detector does what it was designed to do on data gen
 
 ## 14b. Alternative model: state-space arousal with FFT-derived noise (`--model kalman`)
 
-> **Status: experimental, not yet calibrated.** On synthetic data with $h = 40$, the early warning came a median 7.5 min ahead (5.5–10.3), with no false alarms. The imminent level (2.5) is never reached, because the posterior is on a smaller scale than the index. The extra EWMA also adds lag on top of the filter's own smoothing. The default remains `--model index`.
+> **Status: experimental.** The posterior is converted to z units by its own robust spread during calibration, and it is used directly as the level, with no extra EWMA because the filter already smooths. The output is smooth and autocorrelated, so it uses higher thresholds: imminent level $A = 6$, $k = 2$, $h = 150$, tuned on synthetic seeds 1–6. **Held-out synthetic results** (12 sessions, 24 events, plus 4 h without events): early warning a median 8.5 min ahead (6.0–11.3), imminent a median 5.9 min ahead, 0 missed, 0 false alarms. For comparison, the index model gives 8.4 min (6.7–10.1) and 2.4 min. The two models perform equally on synthetic data. Only real data can tell them apart. The default remains `--model index`.
 
 This model replaces the hand-weighted index of §7 with the posterior mean of a latent arousal state ([`eeg_alert/kalman.py`](../eeg_alert/kalman.py)).
 

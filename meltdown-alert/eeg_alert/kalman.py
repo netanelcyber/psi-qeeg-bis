@@ -59,6 +59,21 @@ def spectral_variance(cfg: Config) -> Dict[str, float]:
     }
 
 
+def apply_kalman_defaults(cfg: Config, keep_k: bool = False, keep_h: bool = False) -> Config:
+    """Thresholds tuned for the Kalman output (synthetic tuning seeds 1-6; checked on held-out 50-61).
+
+    The filtered output is smooth and autocorrelated, so the same z level carries more evidence
+    than for the raw index; it therefore needs a higher imminent level and CUSUM reference.
+    """
+    cfg.model = "kalman"
+    cfg.alert_level = 6.0
+    if not keep_k:
+        cfg.cusum_k = 2.0
+    if not keep_h:
+        cfg.cusum_h = 150.0
+    return cfg
+
+
 class KalmanArousal:
     def __init__(self, cfg: Config, phi: float = 0.98) -> None:
         self.cfg = cfg
@@ -71,6 +86,7 @@ class KalmanArousal:
         self.R: Dict[str, float] = {}
         self.a = 0.0
         self.P = 1.0
+        self.z_mu, self.z_sd = 0.0, 1.0
         self.ready = False
 
     @staticmethod
@@ -102,10 +118,19 @@ class KalmanArousal:
             self.lam[f] = w * sd
             self.R[f] = spec + phys
         self.ready = True
+        # Normalise the posterior to z units: run the filter over the calm baseline and use the
+        # robust spread of the posterior mean, so thresholds share the same scale as the index model.
+        post = [self._step(s) for s in self.samples]
+        burn = post[min(len(post) // 4, 30):] or post
+        self.z_mu = float(np.median(burn))
+        self.z_sd = max(float(np.median(np.abs(np.asarray(burn) - self.z_mu))) * 1.4826, 1e-3)
+        self.a, self.P = 0.0, 1.0
 
     def update(self, feats: Dict[str, float]) -> float:
-        """One Kalman step; returns posterior mean of latent arousal (z-like units)."""
-        y = self.to_log(feats)
+        """One Kalman step; returns the posterior mean in baseline z units."""
+        return (self._step(self.to_log(feats)) - self.z_mu) / self.z_sd
+
+    def _step(self, y: Dict[str, float]) -> float:
         a_pred = self.phi * self.a
         p_pred = self.phi ** 2 * self.P + self.q
         info = 1.0 / p_pred

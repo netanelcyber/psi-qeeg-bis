@@ -164,7 +164,10 @@ class Detector:
 
         raw = self.kf.update(feats) if self.kf is not None else self._index(feats)
         a = 1.0 - np.exp(-cfg.step_sec / cfg.smooth_tau_sec)
-        self.level = raw if self.level is None else self.level + a * (raw - self.level)
+        if self.kf is not None:
+            self.level = raw              # the Kalman filter already smooths; avoid double lag
+        else:
+            self.level = raw if self.level is None else self.level + a * (raw - self.level)
         self.hist.append((t, self.level))
         slope = self._slope(t)
         self.cusum = max(0.0, self.cusum + raw - cfg.cusum_k)
