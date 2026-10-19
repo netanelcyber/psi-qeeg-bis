@@ -2,6 +2,13 @@
 
 Open-source pipeline that reads EEG from a wearable headband, tracks a **personalised arousal index**, and sends a **two-level alert** to the person, a caregiver or the clinical team. There are two profiles: `meltdown` (autistic meltdowns, 10-minute horizon) and `psychosis` (agitation and aggression risk in acute psychosis, 20-minute horizon, optionally combined with the Brøset Violence Checklist).
 
+**Optional physiological file input:** timestamped heart rate, precomputed HRV
+(RMSSD), respiration, skin temperature and movement can now be processed alongside
+EEG. The existing EEG-only commands still work. [Wearable input documentation](docs/WEARABLES.md)
+covers canonical CSV schemas, causal clock alignment, per-metric quality and the
+synthetic demo. No Equivital hardware or SDK connection has been verified, and
+wearable fusion has **no clinically validated prediction performance**.
+
 | Level | Meaning | Typical lead time on the synthetic test set* |
 |---|---|---|
 | **Early warning** | A slow, sustained rise in arousal has built up while the trend is still rising. Aimed at a horizon of **up to 10 minutes** (configurable). | median 8.4 min (range 6.7–10.1) |

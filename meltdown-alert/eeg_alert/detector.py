@@ -52,6 +52,7 @@ class Step:
     quality: float
     alert: Optional[Alert] = None
     cusum: float = 0.0
+    wearable: Optional[dict] = None  # optional QC/provenance; absent on the legacy EEG path
 
 
 class Baseline:
@@ -126,9 +127,23 @@ class Detector:
         last = self.last_alert_t.get(level)
         return self.armed[level] and (last is None or t - last >= self.cfg.refractory_sec)
 
+    def reset_evidence(self) -> None:
+        """Break persistence after a time gap or a change in fused feature availability.
+
+        Preserve personal calibration, refractory times, and alert arming. A data
+        discontinuity must not supply evidence of a sustained physiological rise.
+        """
+        self.level = None
+        self.hist.clear()
+        self.quality_hist.clear()
+        self.early_since = self.alert_since = None
+        self.cusum = 0.0
+        self.onset.reset()
+
     # ------------------------------------------------------------------
     def update(self, t: float, feats: Optional[Dict[str, float]],
-               per_channel: Optional[Dict[str, Dict[str, float]]] = None) -> Step:
+               per_channel: Optional[Dict[str, Dict[str, float]]] = None, *,
+               auxiliary_index: Optional[float] = None, auxiliary_weight: float = 0.0) -> Step:
         cfg = self.cfg
         self.quality_hist.append(feats is not None)
         quality = float(np.mean(self.quality_hist))
@@ -155,6 +170,10 @@ class Detector:
         alert_level = cfg.alert_level + lvl_off
 
         raw = self._index(feats)
+        if auxiliary_index is not None and auxiliary_weight:
+            if not np.isfinite(auxiliary_index) or not 0 <= auxiliary_weight <= 1:
+                raise ValueError("Auxiliary index must be finite and its weight in [0, 1]")
+            raw = (1.0 - auxiliary_weight) * raw + auxiliary_weight * auxiliary_index
         a = 1.0 - np.exp(-cfg.step_sec / cfg.smooth_tau_sec)
         self.level = raw if self.level is None else self.level + a * (raw - self.level)
         self.hist.append((t, self.level))

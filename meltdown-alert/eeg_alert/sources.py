@@ -10,6 +10,7 @@ from typing import Iterator, List, Optional, Sequence
 import numpy as np
 
 from .config import Config
+from .timing import EEGChunk, session_seconds
 
 
 # ---------------------------------------------------------------------------
@@ -147,17 +148,34 @@ class CSVSource:
     An optional first column named ``timestamp`` / ``time`` is ignored.
     """
 
-    def __init__(self, cfg: Config, path: str, chunk_sec: float = 1.0, realtime: bool = False) -> None:
+    def __init__(self, cfg: Config, path: str, chunk_sec: float = 1.0, realtime: bool = False,
+                 *, timestamped: bool = False, session_start: Optional[str] = None) -> None:
         import csv
-        with open(path, newline="") as f:
+        with open(path, newline="", encoding="utf-8-sig") as f:
             reader = csv.reader(f)
-            header = next(reader)
+            header = next(reader, None)
             rows = [r for r in reader if r]
+        if not header or not rows:
+            raise ValueError("EEG CSV must contain a header and at least one data row")
+        if any(len(row) != len(header) for row in rows):
+            raise ValueError("EEG CSV rows must have the same number of fields as the header")
         cols = [i for i, h in enumerate(header) if h.strip().lower() not in ("timestamp", "time", "t")]
         names = [header[i].strip() for i in cols]
         arr = np.array([[float(r[i]) for i in cols] for r in rows]).T
         wanted = [names.index(c) for c in cfg.channels if c in names]
         self.data = arr[wanted] if wanted else arr[: len(cfg.channels)]
+        self.timestamps = None
+        if timestamped:
+            if len(names) != len(cfg.channels) or set(names) != set(cfg.channels):
+                raise ValueError("Timestamped EEG CSV must supply every configured EEG channel")
+            time_cols = [i for i, h in enumerate(header) if h.strip().lower() in ("timestamp", "time", "t")]
+            if len(time_cols) != 1:
+                raise ValueError("Wearable fusion requires exactly one EEG timestamp column")
+            self.timestamps = np.array([session_seconds(r[time_cols[0]], session_start) for r in rows])
+            if not self.timestamps.size or np.any(np.diff(self.timestamps) <= 0):
+                raise ValueError("EEG timestamps must be nonempty and strictly increasing")
+            if self.timestamps[0] < 0:
+                raise ValueError("EEG timestamps must start at or after the shared session origin")
         self.chunk = int(cfg.fs * chunk_sec)
         self.realtime = realtime
         self.chunk_sec = chunk_sec
@@ -167,3 +185,12 @@ class CSVSource:
             if self.realtime:
                 time.sleep(self.chunk_sec)
             yield self.data[:, i:i + self.chunk]
+
+    def timestamped_stream(self) -> Iterator[EEGChunk]:
+        """Replay actual sample times without compressing acquisition gaps."""
+        if self.timestamps is None:
+            raise ValueError("Construct CSVSource with timestamped=True first")
+        for i in range(0, self.data.shape[1], self.chunk):
+            if self.realtime:
+                time.sleep(self.chunk_sec)
+            yield EEGChunk(self.data[:, i:i + self.chunk], self.timestamps[i:i + self.chunk])
