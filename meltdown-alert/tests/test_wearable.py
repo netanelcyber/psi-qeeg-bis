@@ -206,8 +206,10 @@ def test_source_contract_rejects_future_observations():
         WearableProcessor(BadSource(), 20).update(0)
 
 
-def test_missing_wearable_input_preserves_eeg_only_results_exactly():
+@pytest.mark.parametrize("model", ["index", "kalman"])
+def test_missing_wearable_input_preserves_eeg_only_results_exactly(model):
     cfg, _, x = eeg()
+    cfg.model = model
     plain = list(run(chunks(x), cfg))
     absent = list(run(chunks(x), cfg, wearable=WearableProcessor(WearableReplay([]), 20)))
     for a, b in zip(plain, absent):
@@ -216,8 +218,10 @@ def test_missing_wearable_input_preserves_eeg_only_results_exactly():
         assert a.wearable is None and b.wearable["fusion_weight"] == 0
 
 
-def test_zero_fusion_weight_preserves_eeg_even_during_artifacts_and_dropouts():
+@pytest.mark.parametrize("model", ["index", "kalman"])
+def test_zero_fusion_weight_preserves_eeg_even_during_artifacts_and_dropouts(model):
     cfg, _, x = eeg()
+    cfg.model = model
     x[:, 30*128:31*128] += 500
     plain = list(run(chunks(x), cfg))
     disabled = list(run(chunks(x), cfg, wearable=processor(fusion_weight=0)))
@@ -266,6 +270,16 @@ def test_reset_evidence_preserves_refractory_and_calibration():
     assert det.level is None and det.cusum == 0
     assert det.early_since is det.alert_since is None
     assert det.last_alert_t["IMMINENT"] == 30 and det.baseline.ready
+
+
+def test_gap_reset_discards_kalman_state_without_losing_calibrated_coefficients():
+    det = Detector(Config(model="kalman"))
+    det.kf.a, det.kf.P = 4.0, 0.2
+    det.kf.mu = {"muscle_tension": 1.0}
+    det.kf.ready = True
+    det.reset_evidence()
+    assert det.kf.a == 0 and det.kf.P == 1
+    assert det.kf.mu == {"muscle_tension": 1.0} and det.kf.ready
 
 
 def test_regular_timestamped_eeg_matches_sample_clock():

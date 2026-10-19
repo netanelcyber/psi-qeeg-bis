@@ -7,6 +7,7 @@ from typing import Dict, List, Optional, Tuple
 
 @dataclass
 class Config:
+    model: str = "index"                   # "index" (weighted z-sum) or "kalman" (state-space, FFT-derived noise)
     profile: str = "meltdown"               # see profiles.py: "meltdown" or "psychosis"
     early_msg: str = ("Early warning: sustained rise in arousal; {when}. Consider a calm break, "
                       "lowering sensory load, or the person's own regulation strategy now.")

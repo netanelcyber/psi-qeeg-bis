@@ -124,6 +124,14 @@ Rejected EEG also breaks persistence on the optional fusion path. Wearable data
 alone cannot bypass EEG quality or generate an alert. This is not a standalone
 wearable detector.
 
+Both EEG models from main are retained: `--model index` (default) and the
+experimental `--model kalman`. Fusion is applied after the selected EEG model's
+output, before the common EWMA/CUSUM. Evidence resets also reset the Kalman state
+and covariance while retaining calibration coefficients. The Kalman posterior
+has a different scale from the weighted index; neither its fusion thresholds
+nor a clinical interpretation are calibrated. JSONL provenance identifies the
+selected EEG model. No wearable measurement is assigned FFT-derived noise.
+
 Per-metric QC states are `missing`, `calibrating`, `uncalibrated`, `ok`, `stale`,
 `invalid_value`, `out_of_range`, and `low_quality`. Broad acquisition sanity
 limits are HR 20–250 bpm, RMSSD 0–300 ms, respiration 1–80 breaths/min, skin

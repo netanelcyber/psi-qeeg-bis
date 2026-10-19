@@ -23,9 +23,11 @@ def invoke(monkeypatch, *args):
     main()
 
 
-def test_file_replay_exports_strict_jsonl_with_qc_and_no_invented_event_labels(files, monkeypatch):
+@pytest.mark.parametrize("model", ["index", "kalman"])
+def test_file_replay_exports_strict_jsonl_with_qc_and_no_invented_event_labels(files, monkeypatch, model):
     output, report = files / "steps.jsonl", files / "report.json"
     invoke(monkeypatch, "--source", "csv", "--file", files / "eeg.csv", "--fs", 128,
+           "--model", model,
            "--baseline-sec", 25, "--wearable-file", files / "cardiorespiratory.csv",
            "--wearable-file", files / "temperature_motion.csv",
            "--steps-jsonl", output, "--report", report)
@@ -36,8 +38,10 @@ def test_file_replay_exports_strict_jsonl_with_qc_and_no_invented_event_labels(f
         "heart_rate_bpm", "hrv_rmssd_ms", "respiration_bpm", "skin_temperature_c", "movement_g"}
     assert rows[-1]["wearable"]["metrics"]["skin_temperature_c"]["status"] == "uncalibrated"
     assert rows[-1]["provenance"]["clinical_validation"] is False
+    assert rows[-1]["provenance"]["eeg_model"] == model
     assert rows[-1]["provenance"]["event_labels"] == "none"
     assert rows[-1]["wearable"]["fusion_weight"] == 0.25
+    assert np.isfinite(rows[-1]["raw_index"])
     assert json.loads(report.read_text())["evaluation"] is None
 
 

@@ -102,6 +102,10 @@ class Detector:
         self.cusum = 0.0
         from .onset import OnsetTracker
         self.onset = OnsetTracker(cfg.channels)
+        self.kf = None
+        if cfg.model == "kalman":
+            from .kalman import KalmanArousal
+            self.kf = KalmanArousal(cfg)
 
     # ------------------------------------------------------------------
     def _index(self, feats: Dict[str, float]) -> float:
@@ -139,6 +143,8 @@ class Detector:
         self.early_since = self.alert_since = None
         self.cusum = 0.0
         self.onset.reset()
+        if self.kf is not None:
+            self.kf.reset_state()
 
     # ------------------------------------------------------------------
     def update(self, t: float, feats: Optional[Dict[str, float]],
@@ -152,11 +158,15 @@ class Detector:
         if not self.baseline.ready:
             if feats is not None:
                 self.baseline.add(feats)
+                if self.kf is not None:
+                    self.kf.add_baseline(feats)
                 if per_channel is not None:
                     self.onset.add_baseline(per_channel)
             if t >= cfg.baseline_sec and len(self.baseline.samples) >= 20:
                 self.baseline.finalize()
                 self.onset.finalize()
+                if self.kf is not None:
+                    self.kf.finalize()
             return Step(t, CALIBRATING, None, None, None, None, quality)
 
         if feats is None:
@@ -169,7 +179,7 @@ class Detector:
         cusum_h = cfg.cusum_h * h_mult
         alert_level = cfg.alert_level + lvl_off
 
-        raw = self._index(feats)
+        raw = self.kf.update(feats) if self.kf is not None else self._index(feats)
         if auxiliary_index is not None and auxiliary_weight:
             if not np.isfinite(auxiliary_index) or not 0 <= auxiliary_weight <= 1:
                 raise ValueError("Auxiliary index must be finite and its weight in [0, 1]")
@@ -191,6 +201,8 @@ class Detector:
             self.armed = {EARLY_WARNING: True, IMMINENT: True}
             if cfg.adapt_baseline:
                 self.baseline.adapt(feats, cfg.adapt_rate)
+                if self.kf is not None:
+                    self.kf.adapt(feats, cfg.adapt_rate)
 
         # --- projected time to the imminent level --------------------
         eta = None
