@@ -67,6 +67,20 @@ def main(argv=None) -> int:
     p.add_argument("input", type=Path)
     p.add_argument("--features", nargs="+", required=True)
     p.add_argument("--out", type=Path, required=True)
+    p = sub.add_parser("track", help="Research FFT/Welch -> personal covariance -> Kalman/CUSUM trace")
+    p.add_argument("input", type=Path)
+    p.add_argument("--metadata", type=Path, required=True)
+    p.add_argument("--model", type=Path, required=True, help="JSON with explicit named loadings and subject identity")
+    p.add_argument("--baseline-sec", type=float, required=True, help="Declared clean baseline prefix, excluded from monitoring")
+    p.add_argument("--out", type=Path, required=True)
+    p.add_argument("--window-sec", type=float, default=2.0)
+    p.add_argument("--hop-sec", type=float, default=1.0)
+    p.add_argument("--segment-sec", type=float, default=1.0)
+    p.add_argument("--nfft", type=int)
+    p.add_argument("--frontal", nargs=2, metavar=("LEFT", "RIGHT"), help="FAA channels; verified reference and scalp sites required")
+    p.add_argument("--bootstrap-draws", type=int, default=1024)
+    p.add_argument("--seed", type=int, default=0)
+    p.add_argument("--high-z-limit", type=float, help="Optional research QC threshold on high-band baseline z-score")
     args = parser.parse_args(argv)
     try:
         if args.command == "analyze":
@@ -132,6 +146,21 @@ def main(argv=None) -> int:
             from .ml import train_group_model
             result = train_group_model(args.input, args.out, args.features)
             print(json.dumps({k: result[k] for k in ("subjects_per_group", "epochs", "subject_balanced_accuracy", "epoch_balanced_accuracy")}))
+        elif args.command == "track":
+            from .recording import read_recording
+            from .tracking import track_recording
+            recording = read_recording(args.input, args.metadata)
+            model = json.loads(args.model.read_text(encoding="utf-8"))
+            trace, summary = track_recording(
+                recording, model, args.baseline_sec, window_s=args.window_sec, hop_s=args.hop_sec,
+                segment_s=args.segment_sec, nfft=args.nfft,
+                frontal_pair=tuple(args.frontal) if args.frontal else None,
+                draws=args.bootstrap_draws, seed=args.seed, high_z_limit=args.high_z_limit)
+            args.out.mkdir(parents=True, exist_ok=True)
+            trace.to_csv(args.out / "tracking.csv", index=False)
+            _write_json(summary, args.out / "tracking.json")
+            print(json.dumps({k: summary[k] for k in ("use", "monitoring_windows", "measurement_updates",
+                                                     "prediction_only_windows", "change_flag_windows")}))
     except (ValueError, OSError, KeyError) as exc:
         print(f"Error: {exc}", file=sys.stderr)
         return 2

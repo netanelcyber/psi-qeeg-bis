@@ -59,6 +59,7 @@ Read [BIS electrodes and montage coverage](docs/BIS_ELECTRODES.md) for sources, 
 - Explicit-unit CSV input; optional EDF/BDF through MNE. Standard scalp labels are recorded separately from physical channel derivations.
 - Personal baseline fitting from explicitly labelled calm epochs and exact section 6.5 normalization with five components per index. Missing components are never silently reweighted.
 - Optional research SVM with leave-one-subject-out evaluation and training-fold-only scaling. No model is pretrained on invented psychiatric labels.
+- Experimental `track` command: two-second Welch windows, personal log-feature calibration, full FFT-derived measurement covariance, an augmented Kalman model for state/drift and approximate overlap noise, and innovation CUSUM. Explicit model loadings are required. See [FFT/Kalman derivation and runnable synthetic demo](docs/FFT_KALMAN.md).
 
 This is not an implementation of the proprietary commercial BIS algorithm. Exported EEG cannot reproduce the device's higher-frequency EMG measurement above its 64 Hz Nyquist frequency.
 

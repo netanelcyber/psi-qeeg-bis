@@ -7,6 +7,33 @@ from scipy.integrate import trapezoid
 BANDS = {"delta": (0.5, 4), "theta": (4, 8), "alpha": (8, 13), "beta": (13, 30), "gamma": (30, 40)}
 
 
+def welch_psd(x: np.ndarray, fs: float, nperseg: int, noverlap: int | None = None,
+              nfft: int | None = None) -> tuple[np.ndarray, np.ndarray]:
+    """One-sided Hann PSD (input units squared/Hz), with samples on the last axis.
+
+    Explicit segment and FFT lengths prevent zero padding from being mistaken
+    for more independent spectral observations. Leading batch/channel axes are
+    supported so calibration and live measurements use the same estimator.
+    """
+    if np.iscomplexobj(x):
+        raise ValueError("One-sided EEG PSD requires real samples")
+    x = np.asarray(x, dtype=float)
+    if not np.isfinite(fs) or fs <= 0 or x.ndim < 1 or not np.isfinite(x).all():
+        raise ValueError("Welch requires finite real samples and a positive sampling rate")
+    if not isinstance(nperseg, (int, np.integer)) or not 2 <= nperseg <= x.shape[-1]:
+        raise ValueError("nperseg must be an integer within the available samples")
+    noverlap = nperseg // 2 if noverlap is None else noverlap
+    nfft = nperseg if nfft is None else nfft
+    if not isinstance(noverlap, (int, np.integer)) or not 0 <= noverlap < nperseg:
+        raise ValueError("noverlap must be an integer smaller than nperseg")
+    if not isinstance(nfft, (int, np.integer)) or nfft < nperseg:
+        raise ValueError("nfft must be an integer at least nperseg")
+    return signal.welch(x, fs=fs, window=signal.windows.hann(nperseg, sym=False),
+                        nperseg=nperseg, noverlap=noverlap, nfft=nfft,
+                        detrend="constant", scaling="density", return_onesided=True,
+                        average="mean", axis=-1)
+
+
 def band_integral(f: np.ndarray, psd: np.ndarray, low: float, high: float) -> float:
     if low < f[0] or high > f[-1] or high <= low:
         raise ValueError("Requested band lies outside measured frequencies")
@@ -29,8 +56,7 @@ def spectral_features(x: np.ndarray, fs: float, line_hz: float | None = None) ->
         b, a = signal.iirnotch(line_hz, 30, fs=fs)
         x = signal.filtfilt(b, a, x)
     nperseg = round(2 * fs)
-    f, p = signal.welch(x, fs=fs, window="hann", nperseg=nperseg,
-                        noverlap=nperseg // 2, detrend="constant", scaling="density")
+    f, p = welch_psd(x, fs, nperseg)
     powers = {name: band_integral(f, p, *limits) for name, limits in BANDS.items()}
     total = band_integral(f, p, 0.5, 40)
     out = {f"{name}_power_uv2": value for name, value in powers.items()}
