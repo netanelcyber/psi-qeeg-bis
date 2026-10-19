@@ -1,0 +1,50 @@
+{
+  "sessions": "held-out seeds 50-61 (12 sessions, 24 events) + 6 no-event sessions with stress spikes (4 h)",
+  "note": "BVC observation recorded at minute 4 of each session; synthetic data only",
+  "results": {
+    "meltdown profile": {
+      "early_median_min": 8.4,
+      "early_range": [
+        6.7,
+        10.1
+      ],
+      "early_missed": 0,
+      "imminent_median_min": 2.4,
+      "false_alarms_event_sessions": 0,
+      "false_alarms_no_event_sessions_4h": 0
+    },
+    "psychosis, no BVC": {
+      "early_median_min": 8.9,
+      "early_range": [
+        6.8,
+        10.4
+      ],
+      "early_missed": 0,
+      "imminent_median_min": 3.5,
+      "false_alarms_event_sessions": 0,
+      "false_alarms_no_event_sessions_4h": 0
+    },
+    "psychosis, BVC 1 (moderate)": {
+      "early_median_min": 9.6,
+      "early_range": [
+        6.8,
+        11.2
+      ],
+      "early_missed": 0,
+      "imminent_median_min": 4.4,
+      "false_alarms_event_sessions": 0,
+      "false_alarms_no_event_sessions_4h": 2
+    },
+    "psychosis, BVC 3 (very high)": {
+      "early_median_min": 9.9,
+      "early_range": [
+        6.8,
+        11.4
+      ],
+      "early_missed": 0,
+      "imminent_median_min": 5.3,
+      "false_alarms_event_sessions": 0,
+      "false_alarms_no_event_sessions_4h": 5
+    }
+  }
+}

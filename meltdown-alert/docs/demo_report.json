@@ -1,0 +1,18 @@
+{
+  "events": [
+    {
+      "event_min": 22.0,
+      "early_warning_lead_min": 9.28,
+      "imminent_lead_min": 3.52
+    },
+    {
+      "event_min": 42.0,
+      "early_warning_lead_min": 8.45,
+      "imminent_lead_min": 2.83
+    }
+  ],
+  "n_alerts": 5,
+  "false_alarms": 0,
+  "detected_early": 2,
+  "detected_imminent": 2
+}

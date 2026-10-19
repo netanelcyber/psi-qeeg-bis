@@ -6,6 +6,10 @@ The repository contains a real, attributed VitalDB BIS EEG excerpt, a reproducib
 
 **Research status:** signal processing and mathematical implementation. Psychiatric classification has not been clinically validated. The included surgical recording has no meltdown or psychosis labels; its SOI/RDI scores remain unavailable and its psychiatric state is `indeterminate`.
 
+## Early-warning sub-project
+
+[`meltdown-alert/`](meltdown-alert/) is a self-contained real-time prototype. It streams wearable EEG (Muse, OpenBCI, LSL or CSV) and sends two-level alerts to a caregiver: an early warning aimed up to 10 minutes ahead (20 minutes for the psychosis profile) and an imminent alert. Each alert includes a sensor-level onset map and can be combined with the Brøset Violence Checklist. It has been tested on synthetic data only and is not a medical device. See its [README](meltdown-alert/README.md).
+
 ## Run the real-data example
 
 Python 3.10 or later:
