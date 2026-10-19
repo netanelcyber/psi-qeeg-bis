@@ -35,6 +35,8 @@ def main() -> None:
     p.add_argument("--baseline-sec", type=float, default=180.0)
     p.add_argument("--profile", choices=["meltdown", "psychosis"], default="meltdown",
                    help="meltdown = autistic meltdown (10 min); psychosis = agitation/aggression risk in acute psychosis (20 min)")
+    p.add_argument("--model", choices=["index", "kalman"], default="index",
+                   help="index = weighted z-sum; kalman = state-space model with FFT-derived noise")
     p.add_argument("--bvc-file", help="CSV of Broset Violence Checklist observations (raises sensitivity for 24 h)")
     p.add_argument("--horizon-min", type=float, default=None, help="override the profile's early-warning horizon (min)")
     p.add_argument("--cusum-k", type=float, default=0.3, help="early-warning drift reference (z)")
@@ -52,6 +54,7 @@ def main() -> None:
     cfg = apply_profile(Config(fs=a.fs, channels=a.channels, frontal_pair=tuple(a.frontal),
                                baseline_sec=a.baseline_sec, cusum_k=a.cusum_k, cusum_h=a.cusum_h),
                         a.profile)
+    cfg.model = a.model
     if a.horizon_min is not None:
         cfg.horizon_min = a.horizon_min
     context = None

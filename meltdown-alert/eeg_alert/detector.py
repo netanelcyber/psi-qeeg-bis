@@ -101,6 +101,10 @@ class Detector:
         self.cusum = 0.0
         from .onset import OnsetTracker
         self.onset = OnsetTracker(cfg.channels)
+        self.kf = None
+        if cfg.model == "kalman":
+            from .kalman import KalmanArousal
+            self.kf = KalmanArousal(cfg)
 
     # ------------------------------------------------------------------
     def _index(self, feats: Dict[str, float]) -> float:
@@ -137,11 +141,15 @@ class Detector:
         if not self.baseline.ready:
             if feats is not None:
                 self.baseline.add(feats)
+                if self.kf is not None:
+                    self.kf.add_baseline(feats)
                 if per_channel is not None:
                     self.onset.add_baseline(per_channel)
             if t >= cfg.baseline_sec and len(self.baseline.samples) >= 20:
                 self.baseline.finalize()
                 self.onset.finalize()
+                if self.kf is not None:
+                    self.kf.finalize()
             return Step(t, CALIBRATING, None, None, None, None, quality)
 
         if feats is None:
@@ -154,7 +162,7 @@ class Detector:
         cusum_h = cfg.cusum_h * h_mult
         alert_level = cfg.alert_level + lvl_off
 
-        raw = self._index(feats)
+        raw = self.kf.update(feats) if self.kf is not None else self._index(feats)
         a = 1.0 - np.exp(-cfg.step_sec / cfg.smooth_tau_sec)
         self.level = raw if self.level is None else self.level + a * (raw - self.level)
         self.hist.append((t, self.level))
@@ -172,6 +180,8 @@ class Detector:
             self.armed = {EARLY_WARNING: True, IMMINENT: True}
             if cfg.adapt_baseline:
                 self.baseline.adapt(feats, cfg.adapt_rate)
+                if self.kf is not None:
+                    self.kf.adapt(feats, cfg.adapt_rate)
 
         # --- projected time to the imminent level --------------------
         eta = None

@@ -250,6 +250,42 @@ procedure UPDATE(t, X_t):
 
 These numbers show that the detector does what it was designed to do on data generated under its own assumptions. **They say nothing about real meltdowns or real aggression.**
 
+## 14b. Alternative model: state-space arousal with FFT-derived noise (`--model kalman`)
+
+> **Status: experimental, not yet calibrated.** On synthetic data with $h = 40$, the early warning came a median 7.5 min ahead (5.5–10.3), with no false alarms. The imminent level (2.5) is never reached, because the posterior is on a smaller scale than the index. The extra EWMA also adds lag on top of the filter's own smoothing. The default remains `--model index`.
+
+This model replaces the hand-weighted index of §7 with the posterior mean of a latent arousal state ([`eeg_alert/kalman.py`](../eeg_alert/kalman.py)).
+
+**Spectral measurement (FFT/Welch).** Each window of $N = W f_s$ samples is split into $M$ Hann-tapered segments of length $L = \min(N, f_s)$ with 50% overlap:
+
+$$X^{(m)}_c[k]=\sum_{n=0}^{L-1}w[n]\,x^{(m)}_c[n]\,e^{-2\pi i kn/L},\qquad P_{c}(f_k)=\frac1M\sum_m\frac{|X^{(m)}_c[k]|^2}{f_s\sum_n w[n]^2}$$
+
+The measurement vector $\mathbf y_t$ holds **log** features: $\ln B^\beta-\ln B^\alpha$, $\ln(B^\alpha/T)$, $\ln(B^\theta/T)$, $\ln B^\alpha_R-\ln B^\alpha_L$ and $\ln B^{\text{high}}$.
+
+**Model.**
+
+$$a_t=\phi a_{t-1}+\eta_t,\ \ \eta_t\sim\mathcal N(0,1-\phi^2);\qquad y_{f,t}=\mu_f+\lambda_f a_t+\epsilon_{f,t},\ \ \epsilon_{f,t}\sim\mathcal N(0,R_f)$$
+
+Here $\phi = 0.98$ per second, and $\lambda_f = w_f\,\tilde\sigma_f$: one unit of arousal shifts feature $f$ by $w_f$ of its baseline standard deviations.
+
+**Noise from the FFT.** A Welch bin is distributed as $P\,\chi^2_{2M}/(2M)$, so a band sum over $K_b$ bins gives
+
+$$\operatorname{Var}(\ln B^b)\approx\frac{1}{K_bM}$$
+
+It is divided by $C$ when averaged over channels, and added for differences of logs. The measurement noise is
+
+$$R_f=\sigma^2_{\text{spec},f}+\sigma^2_{\text{phys},f},\qquad \sigma^2_{\text{phys},f}=\max\big(\tilde\sigma_f^2-\sigma^2_{\text{spec},f},\ 0.1\,\tilde\sigma_f^2\big)$$
+
+The spectral part comes from FFT theory, and the physiological remainder is estimated during calibration. Narrow bands, which have small $K_b$, therefore get less weight automatically.
+
+**Filter** (scalar state, information form):
+
+$$P^{-}=\phi^2P+q,\quad P=\Big(\frac1{P^-}+\sum_f\frac{\lambda_f^2}{R_f}\Big)^{-1},\quad \hat a_t=P\Big(\frac{\phi\hat a_{t-1}}{P^-}+\sum_f\frac{\lambda_f(y_{f,t}-\mu_f)}{R_f}\Big)$$
+
+$\hat a_t$ is fed to the same EWMA, trend, CUSUM and alert logic described above. Each feature's effective weight is $|\lambda_f|/R_f$, normalised, and is reported by `snr_weights()`.
+
+**Optimal CUSUM.** For a change of drift from 0 to $\delta$ in a unit-variance statistic, Page's CUSUM with $k=\delta/2$ is optimal in Lorden's minimax sense. The average run length before a false alarm satisfies $\text{ARL}_0\approx e^{2kh'}/(2k^2)$, where $h'$ is $h$ in units of the statistic's standard deviation. The detection delay is approximately $h/(\delta-k)$ windows. Together these turn the choice of lead time against false alarms into an explicit calculation.
+
 ## 15. Assumptions, limitations and next steps
 
 1. **Core assumption.** Arousal builds up gradually over several minutes before an event, and the build-up is visible in wearable EEG. This is plausible, given peripheral studies showing changes 1–40 min before aggression, but it is unproven for EEG.
