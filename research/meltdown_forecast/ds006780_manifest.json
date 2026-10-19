@@ -1,0 +1,69 @@
+{
+  "source": "OpenNeuro ds006780 (SFARI_EEG multi-paradigm)",
+  "source_url": "https://openneuro.org/datasets/ds006780/versions/1.0.0",
+  "dataset_version": "1.0.0",
+  "dataset_git_commit": "799d1502296ba5f74033734e149160c3d333e470",
+  "dataset_doi": "10.18112/openneuro.ds006780.v1.0.0",
+  "authors": [
+    "Sophie Molholm",
+    "Theo Vanneau",
+    "John J. Foxe"
+  ],
+  "license": "CC0",
+  "recording_context": "awake_resting_state_research",
+  "subject_id": "ds006780-sub-10003",
+  "psychiatric_labels": null,
+  "has_meltdown_event_labels": false,
+  "eeg_columns": [
+    "Fp1",
+    "AF7",
+    "AF3",
+    "F1",
+    "F3",
+    "F5"
+  ],
+  "channel_locations": {
+    "Fp1": "Fp1",
+    "AF7": "AF7",
+    "AF3": "AF3",
+    "F1": "F1",
+    "F3": "F3",
+    "F5": "F5"
+  },
+  "reference": "not_reported_in_BIDS_sidecar; acquisition reference retained",
+  "reference_verified": false,
+  "sensor": {
+    "family": "BioSemi",
+    "model": "ActiveTwo"
+  },
+  "sampling_rate_hz": 512.0,
+  "eeg_unit": "uV",
+  "power_line_frequency_hz": 60,
+  "expected_samples_per_channel": 31744,
+  "download": {
+    "bucket": "openneuro.org",
+    "key": "ds006780/sub-10003/eeg/sub-10003_task-Restingstate_run-01_eeg.bdf",
+    "version_id": "m3WdGUp1FxE71ZuQgwWDztDdgUfMK2VI",
+    "size_bytes": 6970880,
+    "sha256": "8b582451f21969960652931bcb880d55ff0da456b23fc5f6c872d0247ca8cc57",
+    "checksum_source": "https://github.com/OpenNeuroDatasets/ds006780/blob/799d1502296ba5f74033734e149160c3d333e470/sub-10003/eeg/sub-10003_task-Restingstate_run-01_eeg.bdf"
+  },
+  "source_metadata": {
+    "ds006780_eeg.json": {
+      "source_path": "sub-10003/eeg/sub-10003_task-Restingstate_run-01_eeg.json",
+      "sha256": "1e55e84655b5957650d82e0a8e4b9b6aa8f1ad701e13ad1dde023483c8edb150"
+    },
+    "ds006780_channels.tsv": {
+      "source_path": "sub-10003/eeg/sub-10003_task-Restingstate_run-01_channels.tsv",
+      "sha256": "3a12b3d313b2578e2982be89fae8290047e0a6756d64d23a7537d1bdfd0c5561"
+    },
+    "ds006780_events.tsv": {
+      "source_path": "sub-10003/eeg/sub-10003_task-Restingstate_run-01_events.tsv",
+      "sha256": "b761c14ff2d3a7d68448e5e5fb52844a7df38ad2c5e529876198451008c0bc27"
+    },
+    "ds006780_dataset_description.json": {
+      "source_path": "dataset_description.json",
+      "sha256": "aed18ab8e6383c0732f2fbc6eb62856a4604c540b081be1cc096d5aed9cf8e7a"
+    }
+  }
+}

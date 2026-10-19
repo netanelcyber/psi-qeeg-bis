@@ -25,6 +25,8 @@ def main(argv=None) -> int:
     p.add_argument("--epoch-s", type=float, default=4)
     p.add_argument("--line-hz", type=float, choices=(50, 60))
     p.add_argument("--min-sqi", type=float, default=80)
+    p.add_argument("--amplitude-reference", choices=("zero", "epoch_mean"), default="zero",
+                   help="QC amplitude relative to zero or each channel's epoch mean (for DC-offset raw EEG)")
     p = sub.add_parser("convert", help="Convert EDF/BDF/EEGLAB/FIF to project CSV + metadata; optional BIS-proxy analysis")
     p.add_argument("input", type=Path)
     p.add_argument("--out", type=Path, required=True)
@@ -75,7 +77,8 @@ def main(argv=None) -> int:
             from .quality import QualityPolicy
             from .report import write_report
             recording = read_recording(args.input, args.metadata)
-            features, summary = analyze(recording, args.epoch_s, args.line_hz, QualityPolicy(min_sqi=args.min_sqi))
+            features, summary = analyze(recording, args.epoch_s, args.line_hz,
+                                        QualityPolicy(min_sqi=args.min_sqi, amplitude_reference=args.amplitude_reference))
             write_report(recording, features, summary, args.out)
             print(json.dumps({k: summary[k] for k in ("complete_epochs", "accepted_epochs", "rejected_epochs", "SOI", "RDI", "classification")}))
         elif args.command == "convert":

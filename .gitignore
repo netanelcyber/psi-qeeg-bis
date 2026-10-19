@@ -9,4 +9,6 @@ dist/
 *.bdf
 *.vital
 *.joblib
+/real_eeg_validation/
+outputs/
 

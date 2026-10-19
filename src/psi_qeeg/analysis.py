@@ -5,13 +5,13 @@ import numpy as np
 import pandas as pd
 
 from .quality import QualityPolicy, assess_epoch
-from .signal import spectral_features, squared_bicoherence, phase_locking_value
+from .signal import BANDS, SPECTRAL_RANGE_HZ, spectral_features, squared_bicoherence, phase_locking_value
 from .indices import SOI_DIRECTIONS, RDI_COMPONENTS
 
 
 def analyze(recording, epoch_s=4.0, line_hz=None, policy: QualityPolicy | None = None):
     policy = policy or QualityPolicy()
-    if recording.fs / 2 <= 40:
+    if recording.fs / 2 <= SPECTRAL_RANGE_HZ[1]:
         raise ValueError("The full 0.5-40 Hz feature set needs a sampling rate above 80 Hz")
     if not np.isfinite(epoch_s) or epoch_s < 4:
         raise ValueError("Epochs must be at least four seconds")
@@ -74,6 +74,10 @@ def analyze(recording, epoch_s=4.0, line_hz=None, policy: QualityPolicy | None =
         "epoch_s": epoch_s, "complete_epochs": len(rows), "accepted_epochs": accepted,
         "rejected_epochs": len(rows) - accepted, "unused_tail_samples": len(x) % n,
         "quality_policy": asdict(policy), "notch_hz": line_hz,
+        "spectrum": {"bands_hz": BANDS, "total_range_hz": SPECTRAL_RANGE_HZ,
+                     "welch_segment_s": 2, "welch_overlap": 0.5,
+                     "detrend": "constant", "scaling": "density",
+                     "integration": "trapezoid_with_interpolated_exact_endpoints"},
         "bicoherence": {"estimator": "mean_squared_auto_bicoherence", "history_s": 60,
                         "subsegment_s": 2, "overlap": 0.5, "f1_f2_hz": [5, 15],
                         "claim": "experimental waveform descriptor; not the proprietary BIS algorithm or the article's calibrated bifrontal component"},

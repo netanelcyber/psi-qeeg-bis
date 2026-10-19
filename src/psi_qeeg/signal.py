@@ -5,15 +5,22 @@ from scipy import signal
 from scipy.integrate import trapezoid
 
 BANDS = {"delta": (0.5, 4), "theta": (4, 8), "alpha": (8, 13), "beta": (13, 30), "gamma": (30, 40)}
+SPECTRAL_RANGE_HZ = (BANDS["delta"][0], BANDS["gamma"][1])
 
 
-def band_integral(f: np.ndarray, psd: np.ndarray, low: float, high: float) -> float:
+def _band_samples(f: np.ndarray, psd: np.ndarray, low: float, high: float):
     if low < f[0] or high > f[-1] or high <= low:
         raise ValueError("Requested band lies outside measured frequencies")
     # Insert exact endpoints so adjacent bands partition the total integral.
     inside = (f > low) & (f < high)
     ff = np.r_[low, f[inside], high]
     pp = np.r_[np.interp(low, f, psd), psd[inside], np.interp(high, f, psd)]
+    return ff, pp
+
+
+def band_integral(f: np.ndarray, psd: np.ndarray, low: float, high: float) -> float:
+    ff, pp = _band_samples(f, psd, low, high)
+    # scipy.integrate.trapezoid supports the declared NumPy >=1.24 range.
     return float(trapezoid(pp, ff))
 
 
@@ -21,7 +28,7 @@ def spectral_features(x: np.ndarray, fs: float, line_hz: float | None = None) ->
     x = np.asarray(x, dtype=float)
     if x.ndim != 1 or len(x) < round(2 * fs) or not np.isfinite(x).all():
         raise ValueError("PSD needs at least two seconds of complete one-dimensional EEG")
-    if fs / 2 <= 40:
+    if fs / 2 <= SPECTRAL_RANGE_HZ[1]:
         raise ValueError("Full 0.5-40 Hz qEEG requires a sampling rate above 80 Hz")
     if line_hz is not None:
         if not 0 < line_hz < fs / 2:
@@ -32,14 +39,13 @@ def spectral_features(x: np.ndarray, fs: float, line_hz: float | None = None) ->
     f, p = signal.welch(x, fs=fs, window="hann", nperseg=nperseg,
                         noverlap=nperseg // 2, detrend="constant", scaling="density")
     powers = {name: band_integral(f, p, *limits) for name, limits in BANDS.items()}
-    total = band_integral(f, p, 0.5, 40)
+    total = band_integral(f, p, *SPECTRAL_RANGE_HZ)
     out = {f"{name}_power_uv2": value for name, value in powers.items()}
     out.update({f"{name}_relative_power": value / total if total > 0 else None
                 for name, value in powers.items()})
     out["total_power_uv2"] = total
     out["delta_alpha_ratio"] = powers["delta"] / powers["alpha"] if powers["alpha"] > 1e-12 else None
-    mask = (f >= 0.5) & (f <= 40)
-    ff, pp = f[mask], p[mask]
+    ff, pp = _band_samples(f, p, *SPECTRAL_RANGE_HZ)
     mass = (pp[:-1] + pp[1:]) / 2 * np.diff(ff)
     cumulative = np.r_[0.0, np.cumsum(mass)]
     out["sef95_hz"] = float(np.interp(0.95 * total, cumulative, ff)) if total > 0 else None
