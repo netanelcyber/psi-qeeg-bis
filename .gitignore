@@ -9,4 +9,7 @@ dist/
 *.bdf
 *.vital
 *.joblib
+data/public_schizophrenia/
+data/model_organism/
+outputs/
 

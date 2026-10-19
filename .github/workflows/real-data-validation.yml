@@ -1,0 +1,78 @@
+name: Real-data engineering validation
+
+on:
+  push:
+    branches: [research/run-vitaldb-validation]
+    paths:
+      - ".github/workflows/real-data-validation.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  vitaldb:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - name: Install project with EDF and ML support
+        run: python -m pip install -e ".[edf,ml]"
+      - name: Run offline unit tests
+        run: python -m unittest discover -s tests -v
+      - name: Verify checked-in VitalDB acceptance fixture
+        run: python scripts/verify_example.py
+      - name: Fetch documented public VitalDB excerpt
+        run: >-
+          psi-qeeg fetch-vitaldb --caseid 1 --start-s 332 --duration-s 120
+          --out outputs/vitaldb_download --cache outputs/vitaldb_cache
+      - name: Analyze freshly downloaded excerpt
+        run: >-
+          psi-qeeg analyze outputs/vitaldb_download/recording.csv
+          --metadata outputs/vitaldb_download/metadata.json
+          --out outputs/vitaldb_analysis
+      - name: Validate metadata, checksums, dimensions, and non-diagnostic status
+        run: |
+          python - <<'PY'
+          import hashlib, json
+          from pathlib import Path
+          import pandas as pd
+          root = Path("outputs/vitaldb_download")
+          meta = json.loads((root / "metadata.json").read_text())
+          csv_path = root / "recording.csv"
+          assert hashlib.sha256(csv_path.read_bytes()).hexdigest() == meta["recording_csv_sha256"]
+          frame = pd.read_csv(csv_path)
+          assert len(frame) == 15360, f"Expected 15360 samples, got {len(frame)}"
+          assert meta["sampling_rate_hz"] == 128
+          assert meta["recording_context"] == "perioperative_anesthesia"
+          assert meta["psychiatric_labels"] is None
+          report = Path("outputs/vitaldb_analysis/summary.json")
+          summary = json.loads(report.read_text())
+          assert summary.get("classification") == "indeterminate", summary
+          assert summary.get("SOI") is None and summary.get("RDI") is None, summary
+          print(json.dumps({
+              "status": "passed",
+              "caseid": meta["caseid"],
+              "samples": len(frame),
+              "sample_rate_hz": meta["sampling_rate_hz"],
+              "sha256_verified": True,
+              "classification": summary["classification"],
+              "SOI": summary["SOI"],
+              "RDI": summary["RDI"]
+          }, indent=2))
+          PY
+      - name: Upload reproducibility report (no source cache)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: vitaldb-engineering-validation
+          path: |
+            outputs/vitaldb_download/recording.csv
+            outputs/vitaldb_download/metadata.json
+            outputs/vitaldb_analysis/
+          if-no-files-found: warn
+          retention-days: 14
