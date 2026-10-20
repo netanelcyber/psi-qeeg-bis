@@ -101,6 +101,11 @@ class KalmanArousal:
     def add_baseline(self, feats: Dict[str, float]) -> None:
         self.samples.append(self.to_log(feats))
 
+    def reset_state(self) -> None:
+        """Discard pre-gap state evidence while retaining calibrated coefficients."""
+        self.a = 0.0
+        self.P = 1.0
+
     def finalize(self) -> None:
         for f in LOG_FEATURES:
             v = np.array([s[f] for s in self.samples if f in s])
