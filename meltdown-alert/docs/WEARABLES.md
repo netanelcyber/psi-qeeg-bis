@@ -227,3 +227,13 @@ Clinical prediction needs a separate prospective study with synchronized human
 recordings, independent behavioral labels, participant-held-out evaluation,
 confounder analysis, calibration and false-alarm burden. None of those are
 established by this PR or by the scripted synthetic demo.
+
+
+## WESAD offline sensor conversion
+
+For genuine (non-synthetic) laboratory physiological recordings, see
+[WESAD raw-to-canonical CSV and QC](WESAD.md). It emits wearable CSV and a
+per-metric quality report only; the dataset contains no EEG and this adapter
+never generates events, EEG-free alerts or clinically validated predictions.
+The WESAD source recordings are scientific/non-commercial and must be obtained
+separately from the original owners; they are not redistributed here.
