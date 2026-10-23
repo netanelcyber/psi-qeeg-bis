@@ -29,6 +29,7 @@ Sister project: the EEG-only prototype in [netanelcyber/psi-qeeg-bis/meltdown-al
 
 **Key design choices**
 
+- **fNIRS quality check.** An optional 2.5-minute verbal fluency task measures this person's prefrontal response. If it is weak or noisy, fNIRS is weighted down instead of driving false alerts. The metrics are a quality check and a research profile, **not** a diagnostic test.
 - **Personal baseline.** Each feature is scored as a robust z (median/MAD) against the wearer's own calm calibration (3 minutes). The baseline then adapts slowly, and only while the wearer is calm.
 - **Short-separation fNIRS.** Arousal raises blood flow in the scalp, and a long fNIRS channel would report that as brain activity. An ~8 mm channel sees only the scalp, so its signal is subtracted. The coupling is fitted on calm data only, because during a build-up the cortical and scalp signals rise together.
 - **Movement gating.** Exercise raises HR and EDA just like stress does. While the head IMU shows clear physical activity, and for 2 minutes after, the autonomic features are left out. Cortical and muscle channels carry the index during that time.
@@ -73,6 +74,7 @@ calm_helmet/
   config.py     features, weights, all thresholds
   simulate.py   synthetic multimodal sessions (assumptions spelled out)
   fnirs.py      short-separation regression
+  calibration.py  verbal fluency task: fNIRS quality check and trait profile (not diagnostic)
   fusion.py     personal baseline, movement gating, weighted index
   detector.py   CUSUM early warning, imminent alert, hysteresis
   evaluate.py   lead time, missed events, false alarms

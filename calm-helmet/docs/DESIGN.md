@@ -61,12 +61,32 @@ A helmet can carry brain, muscle, autonomic and movement sensors at the same tim
 
 **Time-domain fNIRS** (picosecond photon timing with SPAD detectors) separates early, shallow photons from late, deep ones. That improves depth sensitivity and scalp rejection. It is a candidate upgrade.
 
+### 4.1 Trait calibration with a verbal fluency task (VFT)
+
+Implemented in `calm_helmet/calibration.py`. The protocol is a single block of about 2.5 minutes: 30 s rest, then 60 s of verbal fluency (as many words as possible starting with a given letter or syllable, with the letter changed every 20 s), then 70 s rest. This follows the block design used clinically in Japan, where optical topography assists the differential diagnosis of depressive, bipolar and schizophrenic disorders based on the shape of the frontal response.
+
+| Metric | Meaning |
+|---|---|
+| `integral` | mean HbO change during the task (linear baseline from the pre-task and post-task rest) |
+| `centroid_s` | centre of gravity of the response, in seconds after task onset. A higher value means a later, slower response |
+| `persistence` | how much of the response remains in the first 30 s after the task |
+| `laterality` | (R − L)/(|R| + |L|) of the task response |
+| `snr` | task response relative to the noise during pre-task rest |
+
+**How it is used now.** `apply_calibration` scales the fNIRS weights by a reliability score derived from the SNR. If a person's fNIRS shows no clear task response that day (hair, poor optode contact, skin tone, or just a weak response), fNIRS is weighted down or switched off. It cannot then drive alerts, and EEG, EMG and autonomic signals carry the index.
+
+**How it is used later (research).** The trait profile (amplitude, timing, laterality) is stored per person. Once labelled data exist, it will be tested as a moderator: for example, whether people with slower trait responses also show slower pre-event haemodynamic build-ups, which would argue for a longer CUSUM horizon for them.
+
+**What it must not be used for.** Group studies report reduced frontal VFT responses in autism, and reduced and *delayed* responses in schizophrenia. These are group-level findings with large overlap between people, and medication (especially antipsychotics), smoking and caffeine all change the haemodynamic response. The VFT metrics are **not** a diagnostic test, and they must not decide between the `meltdown` and `psychosis` profiles. That is a clinical decision. Few studies compare autism and psychotic disorders directly with fNIRS, and none, to our knowledge, measures either group in the minutes before an episode.
+
+**Practical notes.** Many autistic participants find timed speech tasks stressful, and some are minimally verbal. Use a non-verbal alternative where needed, such as category fluency by pointing, or a simple n-back. Do not make the calibration itself a stressor; it can be skipped, in which case fNIRS keeps its default weight.
+
 ## 5. Signal processing and alert logic
 
 This is implemented in `calm_helmet/`. The README has the diagram.
 
 1. **Per-device adapters** produce 1 Hz features. Not written yet; the first targets are an OpenBCI/LSL EEG adapter and an fNIRS adapter (SNIRF files or LSL).
-2. **Calibration.** 3 calm minutes at the start of each session set the median and MAD for every feature.
+2. **Calibration.** An optional VFT block (§4.1) checks fNIRS quality and sets its weight. Then 3 calm minutes at the start of each session set the median and MAD for every feature.
 3. **Robust z-scores, sign-aligned** so that "up" always means more arousal, and clipped at ±6.
 4. **Movement gating.** HR, HRV and EDA are removed while head-IMU activity is above 3 z, and for 120 s after.
 5. **Weighted fusion.** Default weights: EEG 0.20, fNIRS 0.20, EMG 0.15, autonomic 0.35, IMU 0 (context only). Weights are renormalised over the features that are valid that second.
