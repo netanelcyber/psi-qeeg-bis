@@ -1,0 +1,167 @@
+{
+  "note": "Synthetic data only. Results show the software behaves as designed, not that it works on people.",
+  "main": {
+    "early_warning_lead_min": {
+      "median": 6.4,
+      "min": 5.3,
+      "max": 9.2,
+      "n": 21
+    },
+    "imminent_lead_min": {
+      "median": 2.8,
+      "min": 2.4,
+      "max": 4.2,
+      "n": 23
+    },
+    "missed": 1,
+    "false_alarms": 0,
+    "false_alarms_in_quiet_hours": 3,
+    "quiet_hours": 4
+  },
+  "fnirs_without_short_separation_cleaning": {
+    "early_warning_lead_min": {
+      "median": 5.9,
+      "min": 3.2,
+      "max": 11.8,
+      "n": 18
+    },
+    "imminent_lead_min": {
+      "median": 2.6,
+      "min": 0.8,
+      "max": 7.1,
+      "n": 23
+    },
+    "missed": 1,
+    "false_alarms": 1,
+    "false_alarms_in_quiet_hours": 8,
+    "quiet_hours": 4
+  },
+  "with_fnirs_contact_loss": {
+    "early_warning_lead_min": {
+      "median": 6.4,
+      "min": 5.2,
+      "max": 9.2,
+      "n": 21
+    },
+    "imminent_lead_min": {
+      "median": 2.8,
+      "min": 2.2,
+      "max": 4.2,
+      "n": 23
+    },
+    "missed": 1,
+    "false_alarms": 0,
+    "false_alarms_in_quiet_hours": 5,
+    "quiet_hours": 4
+  },
+  "ablation": {
+    "all (helmet + wrist)": {
+      "early_warning_lead_min": {
+        "median": 6.4,
+        "min": 5.3,
+        "max": 9.2,
+        "n": 21
+      },
+      "imminent_lead_min": {
+        "median": 2.8,
+        "min": 2.4,
+        "max": 4.2,
+        "n": 23
+      },
+      "missed": 1,
+      "false_alarms": 0,
+      "false_alarms_in_quiet_hours": 3,
+      "quiet_hours": 4
+    },
+    "eeg only": {
+      "early_warning_lead_min": {
+        "median": 6.6,
+        "min": 5.6,
+        "max": 7.7,
+        "n": 20
+      },
+      "imminent_lead_min": {
+        "median": 2.6,
+        "min": 1.8,
+        "max": 3.7,
+        "n": 23
+      },
+      "missed": 1,
+      "false_alarms": 0,
+      "false_alarms_in_quiet_hours": 0,
+      "quiet_hours": 4
+    },
+    "fnirs only": {
+      "early_warning_lead_min": {
+        "median": 6.7,
+        "min": 5.2,
+        "max": 9.7,
+        "n": 17
+      },
+      "imminent_lead_min": {
+        "median": 2.9,
+        "min": 2.0,
+        "max": 6.3,
+        "n": 23
+      },
+      "missed": 1,
+      "false_alarms": 0,
+      "false_alarms_in_quiet_hours": 2,
+      "quiet_hours": 4
+    },
+    "autonomic only (wrist-style, no movement gating)": {
+      "early_warning_lead_min": {
+        "median": 7.6,
+        "min": 6.9,
+        "max": 14.9,
+        "n": 18
+      },
+      "imminent_lead_min": {
+        "median": 4.4,
+        "min": 3.2,
+        "max": 7.9,
+        "n": 19
+      },
+      "missed": 3,
+      "false_alarms": 13,
+      "false_alarms_in_quiet_hours": 27,
+      "quiet_hours": 4
+    },
+    "eeg + fnirs": {
+      "early_warning_lead_min": {
+        "median": 6.6,
+        "min": 5.4,
+        "max": 7.8,
+        "n": 21
+      },
+      "imminent_lead_min": {
+        "median": 2.7,
+        "min": 1.9,
+        "max": 4.1,
+        "n": 23
+      },
+      "missed": 1,
+      "false_alarms": 0,
+      "false_alarms_in_quiet_hours": 0,
+      "quiet_hours": 4
+    },
+    "eeg + fnirs + emg": {
+      "early_warning_lead_min": {
+        "median": 6.1,
+        "min": 5.3,
+        "max": 9.2,
+        "n": 22
+      },
+      "imminent_lead_min": {
+        "median": 2.8,
+        "min": 2.4,
+        "max": 4.2,
+        "n": 23
+      },
+      "missed": 1,
+      "false_alarms": 0,
+      "false_alarms_in_quiet_hours": 0,
+      "quiet_hours": 4
+    }
+  }
+}
