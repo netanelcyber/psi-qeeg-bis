@@ -8,7 +8,7 @@ Correspondence: nsh531@gmail.com
 
 Article type: Hypothesis and proposed validation framework
 
-Version 1 | 25 October 2026 | Manuscript draft, not peer reviewed
+Version 1.1 | 25 October 2026 | Manuscript draft, not peer reviewed
 
 ## Abstract
 
@@ -158,11 +158,11 @@ Netanel Stern is the proposed sole author and corresponding author, identified a
 
 ## Funding
 
-Funding information has not been supplied for this draft. A final author declaration is required before submission.
+The author declares that no funding was received for this work.
 
 ## Conflicts of interest
 
-The author's competing interest declaration has not been supplied. A final declaration is required before submission.
+The author declares no conflicts of interest.
 
 ## Use of artificial intelligence
 
