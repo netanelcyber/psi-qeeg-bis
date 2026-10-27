@@ -8,7 +8,7 @@ Correspondence: nsh531@gmail.com
 
 Article type: Hypothesis and proposed validation framework
 
-Version 1.1 | 25 October 2026 | Manuscript draft, not peer reviewed
+Version 1.2 | 27 October 2026 | Manuscript draft, not peer reviewed
 
 ## Abstract
 
@@ -78,11 +78,29 @@ flowchart TD
 A["Awake recovered animal with depth recording and external EEG"] --> B["Paired signal analysis in training animals"]
 B --> C["External EEG forecasting in held out animals"]
 C --> D["Event sensitivity warning time and false alarms"]
-E["Synchronized video and EMG controls"] --> B
+E["Synchronized video, EMG, and qualified ocular controls"] --> B
 E --> C
 ```
 
 Figure 1 Proposed validation sequence. No experimental results are shown.
+
+### 5.1 Proposed ocular monitoring and acquisition quality
+
+The existing EMG, movement, video, and reference controls do not explicitly identify eye movements or blinks. Rodent video-EEG guidance emphasizes montage-specific artifacts and synchronization [17]. Simultaneous EEG/EOG/EMG has been used in freely moving rats for sleep-wake measurements [18]; eye cameras with electrophysiology have been demonstrated in freely moving mice [19], and bilateral eye tracking has been used during prey capture [20]. These establish measurement feasibility in those settings, not validated ocular-artifact rejection during social attacks. Human EEG work distinguishes corneo-retinal, eyelid, and saccadic spike contributions and finds limitations of both regression and ICA [21]. Its thresholds and performance must not be transferred to animals without testing.
+
+The implementing laboratory would select and document an ocular-monitoring route before confirmatory recording:
+
+| Recording context | Proposed ocular measurements | Required qualification |
+| --- | --- | --- |
+| Awake freely moving mice or rats | Separate periocular EOG derivations where feasible, eye-resolving video, or both; synchronized head pose and arena video | Pilot each species, age, and montage; lateral eyes and eye-head coupling make head movement alone an inadequate eye measure. Assess both eyes where possible; validate any single-eye limitation. |
+| Nonhuman primate scalp EEG | Horizontal and vertical EOG derivations where feasible, supplemented or replaced by calibrated eye-resolving video | Qualify blink and saccade detection in the intended posture and movement context; head-fixed performance does not validate free social behavior. |
+| Skull-surface, epidural, cortical-surface, or depth recordings | The same independent ocular checks, adapted to recording geometry and reference | Intracranial proximity does not prove immunity; assess channel-specific ocular coupling rather than applying a human scalp template. |
+
+EOG would be acquired as separate auxiliary channels, not included in an EEG average reference. Electrode geometry, differential derivations, references, acquisition bandwidth, sampling, and clock alignment would be reported. Horizontal and vertical sensitivity would be tested separately; a single derivation cannot be presumed to capture every blink or eye movement. EOG can itself contain neural, facial-muscle, or mechanical contributions, so it is an indicator rather than a pure signal to subtract automatically. Additional electrodes or cameras require species-appropriate welfare and behavioral-burden assessment.
+
+Eye video would resolve eyelid closure and pupil/eye position relative to the head, rather than merely whole-body motion. Report frame rate, exposure, spatial resolution, illumination, tracking confidence, visibility of each eye, dropped frames, and synchronization drift. Pilot timing and detection against manually annotated blinks and rapid movements, with an independent annotated sample and inter-rater agreement. An occluded eye, failed pupil fit, or inadequate frame rate is missing ocular information, not evidence of a clean interval; eyelid closure does not reveal movement behind the lid.
+
+Before confirmatory testing, a species/montage-specific pilot would freeze numerical criteria for contact impedance or the system's equivalent contact-quality measure, clipping, flatlines/dropouts, drift, line noise, abrupt amplitude/slope changes, eye-event detection, tracking failure, timing tolerance, and minimum usable channels. Robust baseline amplitude and derivative statistics are candidate detectors, not universal thresholds. Sampling and anti-aliasing would cover the highest analyzed frequency. Compare raw traces, spectra, spatial patterns, and eye-event-triggered responses across EOG, EEG, EMG, and head motion, including matched non-attack behaviors. Failure to qualify the ocular-monitoring route would limit interpretation or require redesign before confirmatory claims; no such pilot or acceptance result is reported here.
 
 ## 6 Defining baseline and the future event
 
@@ -106,6 +124,24 @@ For questions about interaction between distinct neural populations, imaginary c
 
 Surrogate tests would preserve important temporal structure while disrupting the proposed depth to external alignment, using shifts or block based procedures longer than the relevant autocorrelation interval. The surrogate scheme would be selected before confirmatory analysis and avoid shifts that repeatedly align distinct attack periods. Uncertainty would be summarized at the animal level rather than treating thousands of correlated time windows as independent observations.
 
+### 7.1 Ocular labels and contaminated windows
+
+All rules below are proposed. Preserve raw data and annotate intervals before feature extraction. Keep observable events (`blink`, `eye_movement`) separate from electrical-artifact judgments (`ocular_suspected`, `ocular_supported`), other failures (`emg_motion`, `clipping`, `dropout`, `bad_reference`), and `ocular_unassessable`. A visible eye event alone does not prove electrical contamination, and an EEG/EOG correlation alone does not prove a non-neural origin. Supported ocular contamination would require convergent event timing and montage-consistent electrical evidence under prespecified rules. For a conservative primary analysis, exclude suspected or supported ocular artifacts and detected eye-event intervals even when electrical contamination remains uncertain; explicitly acknowledge that this also removes genuine eye-related neural activity.
+
+For each annotation retain animal/session, onset/offset, affected channels, evidence source, confidence, detector/version or rater, and the time the flag became available. Keep the attack labels separate. Reviewers would be blinded to neural prediction scores, model condition where feasible, and later attack outcomes. Set event padding from pilot timing uncertainty and measured acquisition/filter transients, not from whichever padding improves prediction.
+
+A feature window would be invalid if any required channel's complete input support, including preprocessing history, overlaps a flagged interval or lacks qualified ocular coverage. A prespecified validated reduced montage may be analyzed separately; silently changing channels by window is not allowed. Missing EOG is not automatically fatal if the prequalified video-only route provides adequate coverage, and vice versa. If neither qualified route covers the interval, mark it unassessable and exclude it from the primary clean-window analysis.
+
+Do not interpolate across excluded gaps, replace them with zeros, concatenate separated intervals for spectral analysis, or compute coherence/phase estimates across gaps. Restart causal processing after a gap with a documented warm-up rule. Keep rejected windows and their reasons in the audit record. A separate retrospective mask may include evidence or backward padding unavailable online; it must not retrospectively alter the prospective alarm log.
+
+### 7.2 Sensitivity to ocular exclusion and correction
+
+Repeat depth-to-external analyses with a fixed feature set and animal-level splits using: technically usable data before ocular exclusion; the conservative clean-window set; prespecified stricter masks and alternative references; and, only if qualified, an EOG-regression or ICA correction branch. Fit correction weights/components on training or explicitly permitted earlier calibration data only, then freeze them. Sparse or rank-deficient montages may not support meaningful ICA. Inspect residual eye-locked waveforms, spectral/topographic changes, and preservation of clean reference segments; reduced EOG correlation alone is insufficient evidence of successful correction [21]. Primary inference would not depend on correction rescuing rejected intervals.
+
+Report associations, animal-level uncertainty, and changes in direction and magnitude, not only significance. Report excluded duration and window/event counts by animal, condition, behavior, and time relative to attack; check whether exclusion preferentially removes active or pre-attack periods. Compare methods on their common retained intervals as well as their own coverage. Add ocular/head-motion/EMG-only comparators and matched non-attack eye events. A disappearing effect would leave neural specificity unsupported; a surviving effect would support robustness under these controls, not prove source identity or validated forecasting.
+
+Repeat forecasting under the same prespecified masks, reporting both a frozen-model mask-only comparison and separately retrained pipelines whose fitting and tuning use training animals only. Apply each gate consistently to EEG and behavioral comparators; compare on shared assessable time and on the complete eligible timeline. Do not select the exclusion rule or correction method that performs best on test animals.
+
 ## 8 Forecasting and independent validation
 
 The decisive test would use external EEG alone at prediction time. Depth data could identify candidate mechanisms or guide feature selection within training data, but could not supply unavailable information to the external EEG test model. Any mapping between modalities would be fitted using training animals only.
@@ -115,6 +151,16 @@ Three baseline predictors would anchor the analysis: behavioral history and cont
 Training, tuning, and evaluation would be separated by animal, with a further future session evaluation when individual calibration is a target. Standardization, feature selection, threshold choice, and any representation learning would be restricted to training partitions. Overlapping windows from the same encounter must not be split between training and testing. Causal preprocessing is required for warning claims; an offline filter or smoother that uses future samples can manufacture an apparently early signal.
 
 Continuous recording evaluation is necessary. Performance on a balanced set of selected pre-attack and rest windows can substantially misrepresent the burden of alarms in ordinary observation. The primary report would include the proportion of events warned, the distribution of warning intervals, positive predictive value, false alarms per hour of eligible recording, and time spent under warning. Precision-recall summaries, probability calibration, and animal level confidence intervals would supplement these results. No target accuracy is assumed in this proposal.
+
+### 8.1 Artifact-aware forecasting without future information
+
+The clean-window analyses in Section 7 are retrospective tests of neural specificity. A continuous forecasting evaluation would additionally replay acquisition in chronological order, preserving every emitted alarm and quality decision. For a feature window ending at time t, preprocessing, baseline updates, eye tracking, artifact decisions, and features may use only samples and fitted parameters available by the actual decision time. Prohibit forward-backward filtering, centered smoothing or derivatives, future-frame interpolation, full-session normalization, and ICA or detector fitting on held-out sessions. Fit preprocessing and quality thresholds within training partitions; any animal-specific calibration must precede its evaluation interval and be reported separately.
+
+If a detector requires a later frame or post-event confirmation, delay the decision explicitly. Define warning time from actual alarm emission, including acquisition, buffering, detection, feature, and computation latency, rather than from the nominal EEG window endpoint. An alarm emitted at or after attack onset cannot count as a forecast. Future attack annotations may define evaluation outcomes, but cannot choose features, masks, or thresholds. A retrospective ocular label or backward mask cannot cancel an earlier false alarm. Purge boundaries in time-split calibration/evaluation so that feature histories, overlapping windows, and future-label horizons do not cross partitions; animal holdout remains mandatory for generalization claims.
+
+The external-EEG-only predictor would consume EEG features alone. An EOG/video-assisted quality gate would be declared as an auxiliary-sensor system and evaluated separately, with those sensors available at deployment. Claims about a complete EEG-only system require an independently qualified EEG-only gate. EOG/video information used only for offline auditing would not be available to an online EEG-only gate or classifier. Missingness and rejected-window indicators would not silently become neural predictors.
+
+The online gate would abstain when contemporaneously available evidence indicates invalid or unassessable input. Report usable-time coverage, abstention duration, and event-level warning sensitivity both across all prespecified eligible attacks (an attack with no timely emitted warning remains unwarned) and within the assessable subset. Physiological eligibility rules would be fixed independently of signal quality. Report false alarms per assessable hour and per total eligible hour with both denominators, along with precision, warning time, and time under warning. Retain quality-related unavailable periods on the timeline; do not improve apparent performance by deleting difficult pre-attack intervals. Incomplete follow-up at recording end would be censored under prespecified outcome rules, not counted as a confirmed non-event.
 
 ## 9 Testing the four conditions
 
@@ -126,11 +172,11 @@ A condition by state interaction would support a mechanistic difference if repli
 
 ## 10 Falsifiable hypotheses and failure criteria
 
-The first hypothesis is that a prespecified depth feature changes before attack onset after accounting for movement, EMG, and non-aggressive social behavior. Failure to replicate the change in independent animals would weaken the proposed mechanism.
+The first hypothesis is that a prespecified depth feature changes before attack onset after accounting for movement, EMG, ocular events/artifacts, and non-aggressive social behavior. Failure to replicate the change in independent animals would weaken the proposed mechanism.
 
 The second hypothesis is that a reproducible correlate of that feature can be recovered from external EEG. A strong depth association with no reliable external correlate would identify a translation barrier. Successful correlation alone would still leave behavioral prediction unproven.
 
-The third hypothesis is that external EEG improves future attack prediction over behavioral history, video, and EMG at a prespecified warning horizon. A benefit that disappears under animal level holdout, causal preprocessing, or movement matching would fail this test.
+The third hypothesis is that external EEG improves future attack prediction over behavioral history, video, and EMG at a prespecified warning horizon. A benefit that disappears under animal level holdout, causal preprocessing, conservative ocular-artifact exclusion, or movement matching would fail this test.
 
 The fourth hypothesis is that the combined experimental condition modifies either the underlying physiology or the prediction relationship beyond the effects of its component manipulations. A null interaction would support a shared or additive account within the tested design. It would not imply that human ASD and SCZ comorbidity lacks biological importance.
 
@@ -142,7 +188,7 @@ Any implementation would require prospective institutional and veterinary approv
 
 An implemented study should follow ARRIVE 2.0 reporting principles, including experimental design, sample size justification, inclusion and exclusion rules, randomization, blinding, outcome definitions, and statistical methods [16]. The present article is not a registered or approved animal protocol. No ethics approval identifier is claimed.
 
-Future data sharing should include synchronized timing information, recording geometry, references, preprocessing details, behavior labels, onset uncertainty, exclusions, and immutable animal level train-test splits. Code should reproduce event based evaluation as well as feature extraction. Negative results, particularly failure of a depth signal to transfer to scalp EEG, would be scientifically informative and should remain reportable.
+Future data sharing should include synchronized timing information, recording geometry, references, preprocessing details, ocular-monitoring qualification, behavior and artifact labels, onset uncertainty, exclusions, quality-flag availability times, immutable alarm logs, and immutable animal level train-test splits. Code should reproduce event based evaluation as well as feature extraction. Negative results, particularly failure of a depth signal to transfer to scalp EEG, would be scientifically informative and should remain reportable.
 
 ## 12 Conclusion
 
@@ -201,3 +247,13 @@ OpenAI ChatGPT assisted with literature discovery, drafting, organization, and d
 [15] Vinck M, Oostenveld R, van Wingerden M, Battaglia F, Pennartz CMA. An improved index of phase-synchronization for electrophysiological data in the presence of volume-conduction, noise and sample-size bias. NeuroImage. 2011;55(4):1548-1565. https://doi.org/10.1016/j.neuroimage.2011.01.055
 
 [16] Percie du Sert N, Hurst V, Ahluwalia A, et al. The ARRIVE guidelines 2.0: Updated guidelines for reporting animal research. PLoS Biology. 2020;18(7):e3000410. https://doi.org/10.1371/journal.pbio.3000410
+
+[17] Kadam SD, D'Ambrosio R, Duveau V, et al. Methodological standards and interpretation of video-EEG in adult control rodents. A TASK1-WG1 report of the AES/ILAE Translational Task Force of the ILAE. Epilepsia. 2017;58(Suppl 4):10-27. https://doi.org/10.1111/epi.13903
+
+[18] Kumar R, Ramaswamy R, Nath Mallick B. Local Properties of Vigilance States: EMD Analysis of EEG Signals during Sleep-Waking States of Freely Moving Rats. PLoS ONE. 2013;8(10):e78174. https://doi.org/10.1371/journal.pone.0078174
+
+[19] Meyer AF, Poort J, O'Keefe J, Sahani M, Linden JF. A Head-Mounted Camera System Integrates Detailed Behavioral Monitoring with Multichannel Electrophysiology in Freely Moving Mice. Neuron. 2018;100(1):46-60.e7. https://doi.org/10.1016/j.neuron.2018.09.020
+
+[20] Michaiel AM, Abe ETT, Niell CM. Dynamics of gaze control during prey capture in freely moving mice. eLife. 2020;9:e57458. https://doi.org/10.7554/eLife.57458
+
+[21] Plöchl M, Ossandón JP, König P. Combining EEG and eye tracking: identification, characterization, and correction of eye movement artifacts in electroencephalographic data. Frontiers in Human Neuroscience. 2012;6:278. https://doi.org/10.3389/fnhum.2012.00278
